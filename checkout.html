@@ -413,11 +413,6 @@
             color: #E2E8F0;
         }
 
-        .benefits-list li.excluded {
-            color: var(--text-muted);
-            text-decoration: line-through;
-        }
-
         .benefit-icon {
             width: 20px;
             height: 20px;
@@ -432,45 +427,6 @@
         .benefit-icon.ok {
             background: rgba(16, 185, 129, 0.16);
             color: var(--success);
-        }
-
-        .benefit-icon.no {
-            background: rgba(239, 68, 68, 0.14);
-            color: var(--danger);
-        }
-
-        .upgrade-banner {
-            background: rgba(251, 191, 36, 0.08);
-            border: 1px dashed rgba(251, 191, 36, 0.38);
-            border-radius: 12px;
-            padding: 0.75rem 0.9rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            font-size: 0.8rem;
-        }
-
-        .upgrade-banner span {
-            color: #FDE68A;
-        }
-
-        .btn-upgrade-mini {
-            background: var(--gold);
-            color: #090A0F;
-            border: none;
-            padding: 0.4rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: var(--transition);
-        }
-
-        .btn-upgrade-mini:hover {
-            transform: scale(1.04);
         }
 
         .cart-item-footer {
@@ -817,6 +773,8 @@
             color: var(--accent);
             letter-spacing: 0.6px;
             word-break: break-all;
+            user-select: all;
+            -webkit-user-select: all;
         }
 
         .copy-code.white-code {
@@ -827,10 +785,10 @@
             background: rgba(0, 240, 255, 0.12);
             color: var(--accent);
             border: 1px solid rgba(0, 240, 255, 0.32);
-            padding: 0.38rem 0.75rem;
+            padding: 0.5rem 0.85rem;
             border-radius: 8px;
             font-family: inherit;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
@@ -839,9 +797,12 @@
             white-space: nowrap;
             transition: var(--transition);
             flex-shrink: 0;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-copy-chip:hover {
+        .btn-copy-chip:hover,
+        .btn-copy-chip:active {
             background: var(--accent);
             color: #07080D;
         }
@@ -1098,6 +1059,13 @@
                 grid-template-columns: 1fr;
                 gap: 0.6rem;
             }
+            .copy-box {
+                flex-wrap: wrap;
+            }
+            .btn-copy-chip {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -1215,11 +1183,23 @@
 
                 <div class="field-group">
                     <label class="field-label" for="custPhone">
-                        <span>WhatsApp para Suporte</span>
+                        <span>WhatsApp / Telefone (9 dígitos)</span>
+                        <span class="field-badge" id="phoneDigitBadge">0/9 dígitos</span>
                     </label>
                     <div class="input-wrapper">
                         <i class="fa-brands fa-whatsapp"></i>
-                        <input type="tel" id="custPhone" class="form-control" required placeholder="+244 9XX XXX XXX">
+                        <input
+                            type="tel"
+                            id="custPhone"
+                            class="form-control"
+                            inputmode="numeric"
+                            pattern="[0-9]{9}"
+                            minlength="9"
+                            maxlength="9"
+                            required
+                            placeholder="Ex: 924034159"
+                            oninput="sanitizePhoneInput(this)"
+                        >
                     </div>
                 </div>
 
@@ -1262,10 +1242,10 @@
                         </div>
 
                         <div class="copy-field-group">
-                            <span class="copy-field-label">Número IBAN (BAI):</span>
+                            <span class="copy-field-label">Número IBAN (BAI) — Copia sem o AO06:</span>
                             <div class="copy-box">
-                                <span class="copy-code">AO06 0040 0000 6562 1494 1019 2</span>
-                                <button type="button" class="btn-copy-chip" onclick="copyText('004000006562149410192', 'IBAN do BAI')">
+                                <span class="copy-code" id="ibanDisplayText">AO06 0040 0000 6562 1494 1019 2</span>
+                                <button type="button" class="btn-copy-chip" onclick="copyIbanWithoutPrefix()">
                                     <i class="fa-regular fa-copy"></i> Copiar IBAN
                                 </button>
                             </div>
@@ -1427,11 +1407,34 @@ document.addEventListener('DOMContentLoaded', () => {
         "admin@nplugins.online"
     ];
 
+    const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/joseeduardoloneke2023@gmail.com";
+
     const PAYMENT_RULES = {
         beneficiaryName: 'JOSE EDUARDO LONEKE',
+        fullIban: 'AO06004000006562149410192',
         ibanDigits: '004000006562149410192',
         entity: '10116',
         referenceDigits: '936380720'
+    };
+
+    // ==========================================
+    // 2. VALIDAÇÃO DE TELEFONE (MÁXIMO 9 DÍGITOS)
+    // ==========================================
+    window.sanitizePhoneInput = function(input) {
+        if (!input) return '';
+        let digits = String(input.value || '').replace(/\D/g, '');
+        if (digits.startsWith('244') && digits.length > 9) {
+            digits = digits.slice(3);
+        }
+        digits = digits.slice(0, 9);
+        input.value = digits;
+
+        const badge = document.getElementById('phoneDigitBadge');
+        if (badge) {
+            badge.textContent = `${digits.length}/9 dígitos`;
+            badge.style.color = digits.length === 9 ? '#10B981' : '#A78BFA';
+        }
+        return digits;
     };
 
     function escapeHtml(str) {
@@ -1471,13 +1474,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (snap.exists) {
                 const data = snap.data();
                 if (nameInput && !nameInput.value && data.name) nameInput.value = data.name;
-                if (phoneInput && !phoneInput.value && data.whatsapp) phoneInput.value = data.whatsapp;
+                if (phoneInput && !phoneInput.value && data.whatsapp) {
+                    phoneInput.value = data.whatsapp;
+                    sanitizePhoneInput(phoneInput);
+                }
             }
         } catch (_) {}
     });
 
     // ==========================================
-    // 2. CATÁLOGO OFICIAL DOS 3 PLANOS (ANGOLA - AKZ)
+    // 3. CATÁLOGO OFICIAL DOS 3 PLANOS (TODOS COM AULAS DE INSTALAÇÃO)
     // ==========================================
     const PLANS = {
         mensal: {
@@ -1487,7 +1493,7 @@ document.addEventListener('DOMContentLoaded', () => {
             price: 1000,
             subtitle: 'Acesso completo por 30 dias • Mac & Windows',
             durationDays: 30,
-            hasInstallLessons: false
+            hasInstallLessons: true
         },
         bimestral: {
             id: 'bimestral',
@@ -1516,7 +1522,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedPaymentMethod = 'transfer'; // 'transfer' ou 'reference'
 
     // ==========================================
-    // 3. GESTÃO DO CARRINHO & MÉTODO DE PAGAMENTO
+    // 4. GESTÃO DO CARRINHO & MÉTODO DE PAGAMENTO
     // ==========================================
     window.selectPaymentMethod = function(method) {
         selectedPaymentMethod = method === 'reference' ? 'reference' : 'transfer';
@@ -1634,17 +1640,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSubmit.disabled = false;
         btnSubmitLabel.textContent = `Validar Comprovativo & Criar Conta • ${formattedKz}`;
 
-        const lessonItemHTML = currentPlan.hasInstallLessons
-            ? `<li><span class="benefit-icon ok"><i class="fa-solid fa-check"></i></span><span><strong>Aula de instalação dos plugins</strong> incluída</span></li>`
-            : `<li class="excluded"><span class="benefit-icon no"><i class="fa-solid fa-xmark"></i></span><span>Aula de instalação dos plugins (não incluída)</span></li>`;
-
-        const upgradeHTML = !currentPlan.hasInstallLessons
-            ? `<div class="upgrade-banner">
-                   <span><i class="fa-solid fa-graduation-cap"></i> Quer a <strong>aula de instalação</strong>? Mude para 2 Meses por +1.000 Kz</span>
-                   <button type="button" class="btn-upgrade-mini" onclick="selectSinglePlan('bimestral')">Mudar</button>
-               </div>`
-            : '';
-
         cartSlot.innerHTML = `
             <div class="cart-item-card">
                 <div class="cart-item-header">
@@ -1666,12 +1661,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </li>
                     <li>
                         <span class="benefit-icon ok"><i class="fa-solid fa-check"></i></span>
-                        <span>Direito a <strong>Suporte</strong> via WhatsApp e E-mail</span>
+                        <span>Download dos <strong>Vídeos de Instalação</strong> de cada plugin</span>
                     </li>
-                    ${lessonItemHTML}
+                    <li>
+                        <span class="benefit-icon ok"><i class="fa-solid fa-check"></i></span>
+                        <span>Direito a <strong>Suporte</strong> via WhatsApp e Chat</span>
+                    </li>
                 </ul>
-
-                ${upgradeHTML}
 
                 <div class="cart-item-footer">
                     <span><i class="fa-solid fa-circle-check" style="color: var(--success);"></i> Carrinho limitado a 1 plano</span>
@@ -1684,21 +1680,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 4. UTILITÁRIOS DE CÓPIA E UPLOAD (IMAGEM OU PDF)
+    // 5. CÓPIA COMPATÍVEL COM TELEMÓVEL (MOBILE + DESKTOP)
     // ==========================================
-    window.copyText = function(value, label) {
-        navigator.clipboard.writeText(value).then(() => {
+    function fallbackCopyMobile(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+        textArea.style.padding = '0';
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+        textArea.style.fontSize = '16px';
+        document.body.appendChild(textArea);
+
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, text.length);
+
+        let copied = false;
+        try {
+            copied = document.execCommand('copy');
+        } catch (err) {
+            copied = false;
+        }
+        document.body.removeChild(textArea);
+        return copied;
+    }
+
+    window.copyText = async function(value, label) {
+        const textToCopy = String(value || '').trim();
+        let success = false;
+
+        if (navigator.clipboard && window.isSecureContext) {
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                success = true;
+            } catch (_) {
+                success = fallbackCopyMobile(textToCopy);
+            }
+        } else {
+            success = fallbackCopyMobile(textToCopy);
+        }
+
+        if (success) {
             Swal.fire({
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
                 title: `${label} copiado!`,
+                text: textToCopy,
                 showConfirmButton: false,
-                timer: 2200,
+                timer: 2400,
                 background: '#161926',
                 color: '#FFFFFF'
             });
-        });
+        } else {
+            Swal.fire({
+                title: `Copiar ${label}`,
+                text: 'Pressione e segure o número abaixo para copiar:',
+                input: 'text',
+                inputValue: textToCopy,
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED',
+                confirmButtonText: 'Fechar'
+            });
+        }
+    };
+
+    window.copyIbanWithoutPrefix = function() {
+        const cleanIban = PAYMENT_RULES.fullIban.replace(/^AO06/i, '').replace(/\s+/g, '');
+        copyText(cleanIban, 'IBAN (sem AO06)');
     };
 
     window.copyCurrentAmount = function() {
@@ -1706,6 +1764,38 @@ document.addEventListener('DOMContentLoaded', () => {
         copyText(String(currentPlan.price), `Valor ${currentPlan.price.toLocaleString('pt-AO')} Kz`);
     };
 
+    // ==========================================
+    // 6. NOTIFICAÇÃO DE ATIVIDADE VIA FORMSUBMIT
+    // ==========================================
+    async function notifyAdminActivityFormSubmit(activityTitle, detailsObj) {
+        try {
+            const payload = {
+                _subject: `NPLUGINS • ${activityTitle}`,
+                _template: "table",
+                _captcha: "false",
+                Atividade: activityTitle,
+                Pagina: "checkout.html",
+                Data_Hora: new Date().toLocaleString('pt-PT'),
+                ...detailsObj
+            };
+
+            await fetch(FORMSUBMIT_ENDPOINT, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(payload),
+                keepalive: true
+            });
+        } catch (err) {
+            console.warn("Aviso FormSubmit:", err);
+        }
+    }
+
+    // ==========================================
+    // 7. UPLOAD DE COMPROVATIVO (IMAGEM OU PDF)
+    // ==========================================
     function setupDropzone() {
         const dropzone = document.getElementById('dropzone');
         if (!dropzone) return;
@@ -1830,7 +1920,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. MOTOR DE EXTRAÇÃO & VALIDAÇÃO OCR (PDF + IMAGEM)
+    // 8. MOTOR DE EXTRAÇÃO & VALIDAÇÃO OCR (PDF + IMAGEM)
     // ==========================================
     function normalizeText(str) {
         return (str || '')
@@ -1992,7 +2082,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. UPLOAD DO COMPROVATIVO (STORAGE + FALLBACK)
+    // 9. UPLOAD DO COMPROVATIVO (STORAGE + FALLBACK)
     // ==========================================
     function compressImageToDataUrl(file, maxWidth = 900, quality = 0.68) {
         return new Promise((resolve, reject) => {
@@ -2053,7 +2143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 7. PROCESSAR CHECKOUT, VALIDAR OCR E ABRIR CONTA
+    // 10. PROCESSAR CHECKOUT, VALIDAR OCR E ABRIR CONTA
     // ==========================================
     window.processCheckout = async function(e) {
         e.preventDefault();
@@ -2067,6 +2157,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 color: '#FFFFFF',
                 confirmButtonColor: '#7C3AED'
             });
+            return;
+        }
+
+        const phoneInput = document.getElementById('custPhone');
+        const cleanPhone = sanitizePhoneInput(phoneInput);
+        if (cleanPhone.length !== 9) {
+            Swal.fire({
+                title: 'Número de Telefone Inválido',
+                text: 'O número de telefone deve conter exatamente 9 dígitos (Ex: 924034159).',
+                icon: 'warning',
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED'
+            });
+            phoneInput.focus();
             return;
         }
 
@@ -2084,7 +2189,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const name = document.getElementById('custName').value.trim();
         const email = document.getElementById('custEmail').value.trim().toLowerCase();
-        const phone = document.getElementById('custPhone').value.trim();
         const methodLabel = selectedPaymentMethod === 'reference'
             ? 'Pagamento por Referência (Ent. 10116)'
             : 'Transferência Bancária (IBAN BAI)';
@@ -2145,11 +2249,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // ETAPA 3: CRIAR / AUTENTICAR CONTA AUTOMATICAMENTE (Senha inicial = próprio e-mail)
             btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando conta automática...';
             let user = auth.currentUser;
+            let isNewAccount = false;
 
             if (!user || (user.email || '').toLowerCase() !== email) {
                 try {
                     const userCredential = await auth.createUserWithEmailAndPassword(email, email);
                     user = userCredential.user;
+                    isNewAccount = true;
                     await user.updateProfile({ displayName: name });
                 } catch (authErr) {
                     if (authErr.code === 'auth/email-already-in-use') {
@@ -2202,11 +2308,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const userPayload = {
                 name: name,
                 email: email,
-                whatsapp: phone,
+                whatsapp: cleanPhone,
                 subscriptionPlan: currentPlan.name,
                 planId: currentPlan.id,
                 planPriceKz: currentPlan.price,
-                hasInstallLessons: currentPlan.hasInstallLessons,
+                hasInstallLessons: true,
                 expiresAt: expiresAt,
                 mustChangePassword: true,
                 role: isAdmin ? 'admin' : 'client',
@@ -2223,7 +2329,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 userId: user.uid,
                 customerName: name,
                 customerEmail: email,
-                customerWhatsapp: phone,
+                customerWhatsapp: cleanPhone,
                 planId: currentPlan.id,
                 planName: currentPlan.name,
                 interestedPlugin: selectedPluginInterest || '',
@@ -2232,11 +2338,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 paymentType: selectedPaymentMethod,
                 ocrVerified: true,
                 receiptType: isPdfFile(selectedReceiptFile) ? 'pdf' : 'image',
-                hasInstallLessons: currentPlan.hasInstallLessons,
+                hasInstallLessons: true,
                 receiptUrl: receiptUrl,
                 status: 'completed',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+
+            // ETAPA 5: NOTIFICAÇÃO FORMSUBMIT PARA joseeduardoloneke2023@gmail.com
+            await notifyAdminActivityFormSubmit(
+                isNewAccount ? 'Nova Assinatura no Checkout' : 'Renovação / Atualização de Plano no Checkout',
+                {
+                    Cliente: name,
+                    Email: email,
+                    Telefone_9_Digitos: cleanPhone,
+                    Plano_Assinado: currentPlan.name,
+                    Valor_Pago: `${currentPlan.price.toLocaleString('pt-AO')} Kz`,
+                    Metodo_Pagamento: methodLabel,
+                    Plugin_Interesse: selectedPluginInterest || 'Catálogo Geral',
+                    Aulas_Instalacao: 'Liberadas (Todos os Planos)'
+                }
+            );
 
             localStorage.removeItem(CART_KEY);
 
