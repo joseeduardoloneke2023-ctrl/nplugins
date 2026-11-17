@@ -1527,7 +1527,7 @@
                     <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">30 DIAS</span>
                     <strong style="font-size:1rem;">Acesso 1 Mês</strong>
                     <span style="font-size:1.2rem; font-weight:800; color:var(--success);">1.000 Kz</span>
-                    <span style="font-size:0.75rem; color:var(--text-muted);">Plugins + Suporte (sem aulas)</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">Plugins + Aulas + Suporte</span>
                 </div>
 
                 <div class="plan-option-card selected" data-plan="bimestral" onclick="selectUpgradePlan('bimestral')">
@@ -1651,13 +1651,13 @@ document.addEventListener('DOMContentLoaded', () => {
         preferredOS: 'windows',
         planId: 'mensal',
         subscriptionPlan: 'Acesso 1 Mês',
-        hasInstallLessons: false,
+        hasInstallLessons: true,
         expiresAt: null,
         role: 'client'
     };
 
     const PLANS_CONFIG = {
-        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 1000, days: 30, hasInstallLessons: false },
+        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 1000, days: 30, hasInstallLessons: true },
         bimestral: { id: 'bimestral', name: 'Acesso 2 Meses', price: 2000, days: 60, hasInstallLessons: true },
         vitalicio: { id: 'vitalicio', name: 'Acesso Vitalício', price: 5000, days: null, hasInstallLessons: true }
     };
@@ -1824,15 +1824,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         preferredOS: d.preferredOS || 'windows',
                         planId: planId,
                         subscriptionPlan: d.subscriptionPlan || 'Acesso 1 Mês',
-                        hasInstallLessons: d.hasInstallLessons !== undefined
-                            ? Boolean(d.hasInstallLessons)
-                            : (planId === 'bimestral' || planId === 'vitalicio'),
+                        hasInstallLessons: true,
                         expiresAt: d.expiresAt || null,
                         role: isAdmin ? 'admin' : 'client'
                     };
                 } else {
                     userState.email = user.email;
                     userState.name = user.displayName || user.email.split('@')[0];
+                    userState.hasInstallLessons = true;
                     userState.role = ADMIN_EMAILS.includes(emailLower) ? 'admin' : 'client';
                 }
 
@@ -1845,6 +1844,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resolve();
             }, () => {
                 userState.email = user.email;
+                userState.hasInstallLessons = true;
                 updateDashboardUI();
                 resolve();
             });
@@ -1971,7 +1971,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         document.getElementById('stat-products-count').textContent = `${allProducts.length} Produtos`;
-        document.getElementById('stat-lessons-label').textContent = userState.hasInstallLessons ? 'Liberadas' : 'Bloqueadas (Plano 1 Mês)';
+        document.getElementById('stat-lessons-label').textContent = 'Liberadas';
 
         document.getElementById('prof-name').value = userState.name;
         document.getElementById('prof-email').value = userState.email;
@@ -2093,17 +2093,13 @@ document.addEventListener('DOMContentLoaded', () => {
                    <i class="fa-solid fa-clock"></i> Ainda não disponível
                </button>`;
 
-        const aulaBtnHtml = !userState.hasInstallLessons
-            ? `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.75;" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
-                   <i class="fa-solid fa-lock"></i> Baixar a Aula
+        const aulaBtnHtml = hasAula
+            ? `<button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
+                   <i class="fa-solid fa-circle-play"></i> Baixar a Aula
                </button>`
-            : (hasAula
-                ? `<button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
-                       <i class="fa-solid fa-circle-play"></i> Baixar a Aula
-                   </button>`
-                : `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.65;" onclick="handleDownloadLesson(${titleJs}, '#')">
-                       <i class="fa-solid fa-clock"></i> Aula não disponível
-                   </button>`);
+            : `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.65;" onclick="handleDownloadLesson(${titleJs}, '#')">
+                   <i class="fa-solid fa-clock"></i> Aula não disponível
+               </button>`;
 
         return `
             <div class="product-card">
@@ -2415,12 +2411,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const sub = getSubscriptionStatus();
         if (sub.isExpired) {
             showToast('O seu plano expirou. Actualize o plano para baixar.', 'warning');
-            openUpgradePlanModal();
-            return;
-        }
-
-        if (!userState.hasInstallLessons) {
-            showToast('As aulas de instalação estão disponíveis nos planos 2 Meses e Vitalício.', 'warning');
             openUpgradePlanModal();
             return;
         }
