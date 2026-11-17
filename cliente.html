@@ -2,7 +2,7 @@
 <html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Área do Cliente | NPLUGINS</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://nplugins.online/cliente.html">
@@ -33,14 +33,14 @@
             --primary: #7C3AED;
             --primary-hover: #6D28D9;
             --primary-soft: rgba(124, 58, 237, 0.14);
-            --primary-glow: rgba(124, 58, 237, 0.32);
+            --primary-glow: rgba(124, 58, 237, 0.35);
 
             --success: #10B981;
             --success-soft: rgba(16, 185, 129, 0.14);
             --warning: #F59E0B;
             --warning-soft: rgba(245, 158, 11, 0.14);
             --danger: #EF4444;
-            --danger-soft: rgba(239, 68, 68, 0.14);
+            --danger-soft: rgba(239, 68, 68, 0.16);
             --info: #38BDF8;
 
             --bg-body: #0d0d12;
@@ -54,16 +54,23 @@
             --text-muted: #A1A1AA;
             --sidebar-width: 260px;
             --nav-height: 68px;
+            --mobile-footer-height: 64px;
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
-            --transition: all 0.22s ease;
+            --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+            --transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -78,6 +85,65 @@
         a { text-decoration: none; color: inherit; }
         button, input, select, textarea { font-family: inherit; }
 
+        /* ANIMAÇÕES GLOBAIS */
+        @keyframes viewSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px) scale(0.99);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes cardPopIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes modalZoomIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes msgBubbleIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.25);
+            }
+            50% {
+                box-shadow: 0 0 22px 2px rgba(124, 58, 237, 0.28);
+            }
+        }
+
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
         /* PRELOADER */
         #preloader {
             position: fixed;
@@ -89,7 +155,7 @@
             align-items: center;
             justify-content: center;
             gap: 1rem;
-            transition: opacity 0.25s ease, visibility 0.25s ease;
+            transition: opacity 0.35s var(--ease-smooth), visibility 0.35s var(--ease-smooth);
         }
         #preloader.hidden {
             opacity: 0;
@@ -104,6 +170,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            animation: subtlePulse 1.8s infinite ease-in-out;
         }
         .loader-brand span { color: var(--primary); }
         .loader-bar {
@@ -148,7 +215,7 @@
             align-items: flex-start;
             gap: 12px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
-            animation: toastIn 0.25s ease forwards;
+            animation: toastIn 0.3s var(--ease-smooth) forwards;
         }
         @keyframes toastIn {
             from { transform: translateX(110%); opacity: 0; }
@@ -160,6 +227,22 @@
         .toast-warning .toast-icon { color: var(--warning); }
         .toast-title { font-weight: 700; font-size: 0.86rem; margin-bottom: 2px; }
         .toast-msg { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* BACKDROP SIDEBAR MOBILE */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 950;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.28s var(--ease-smooth), visibility 0.28s var(--ease-smooth);
+        }
+        .sidebar-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
 
         /* LAYOUT PRINCIPAL */
         .app-container {
@@ -176,12 +259,12 @@
             position: fixed;
             top: 0;
             left: 0;
-            height: 100vh;
+            height: 100dvh;
             z-index: 1000;
             padding: 20px 14px 0 14px;
             display: flex;
             flex-direction: column;
-            transition: var(--transition);
+            transition: transform 0.32s var(--ease-smooth), box-shadow 0.32s var(--ease-smooth);
         }
 
         .sidebar-brand {
@@ -201,7 +284,9 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: var(--transition);
         }
+        .brand-logo:hover { transform: scale(1.02); }
         .brand-logo i { color: var(--primary); }
         .brand-logo span { color: var(--primary); }
 
@@ -220,6 +305,11 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+        .user-profile-box:hover {
+            border-color: rgba(124, 58, 237, 0.35);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .user-avatar {
@@ -236,6 +326,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            transition: var(--transition);
         }
 
         .menu-label {
@@ -269,11 +360,17 @@
             font-size: 1rem;
             width: 20px;
             text-align: center;
+            transition: transform 0.25s var(--ease-smooth);
         }
 
         .menu-item:hover {
             color: var(--text-main);
             background: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+        }
+
+        .menu-item:hover i {
+            transform: scale(1.1);
         }
 
         .menu-item.active {
@@ -300,14 +397,104 @@
             display: none;
             align-items: center;
             justify-content: center;
+            animation: subtlePulse 1.8s infinite ease-in-out;
         }
         .unread-badge.visible {
             display: inline-flex;
         }
 
         .sidebar-fixed-bottom {
-            padding: 12px 0 18px 0;
+            padding: 12px 0 calc(18px + env(safe-area-inset-bottom)) 0;
             border-top: 1px solid var(--border-color);
+            background: var(--bg-sidebar);
+            flex-shrink: 0;
+        }
+
+        .btn-logout-sidebar {
+            color: #F87171 !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            border: 1px solid rgba(239, 68, 68, 0.25) !important;
+            font-weight: 600 !important;
+            margin-bottom: 0 !important;
+        }
+        .btn-logout-sidebar:hover {
+            background: rgba(239, 68, 68, 0.18) !important;
+            color: #FCA5A5 !important;
+        }
+
+        /* RODAPÉ FIXO NO TELEMÓVEL PARA TERMINAR SESSÃO / FECHAR CONTA */
+        .mobile-fixed-footer {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 940;
+            background: rgba(18, 18, 26, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid var(--border-color);
+            padding: 10px 16px calc(10px + env(safe-area-inset-bottom)) 16px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.55);
+            animation: viewSlideUp 0.35s var(--ease-smooth);
+        }
+
+        .mobile-footer-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mobile-footer-tab {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        .mobile-footer-tab:active {
+            transform: scale(0.92);
+        }
+        .mobile-footer-tab.active {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            color: #FFF;
+        }
+
+        .btn-mobile-logout-fixed {
+            flex: 1;
+            max-width: 215px;
+            height: 40px;
+            padding: 0 14px;
+            border-radius: 10px;
+            background: var(--danger-soft);
+            border: 1px solid rgba(239, 68, 68, 0.38);
+            color: #FCA5A5;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-mobile-logout-fixed:hover,
+        .btn-mobile-logout-fixed:active {
+            background: var(--danger);
+            color: #FFF;
+            transform: scale(0.97);
         }
 
         /* TOP NAVBAR */
@@ -317,7 +504,9 @@
             right: 0;
             left: var(--sidebar-width);
             height: var(--nav-height);
-            background: var(--bg-sidebar);
+            background: rgba(18, 18, 26, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             z-index: 900;
             display: flex;
@@ -338,6 +527,7 @@
             font-size: 1.05rem;
             font-weight: 700;
             color: #FFF;
+            transition: opacity 0.2s ease;
         }
 
         .nav-actions {
@@ -359,6 +549,10 @@
             border: 1px solid rgba(16, 185, 129, 0.3);
             cursor: pointer;
             transition: var(--transition);
+        }
+        .plan-pill-top:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
         }
 
         .plan-pill-top.warning {
@@ -387,7 +581,13 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .icon-btn:hover { background: rgba(255, 255, 255, 0.12); }
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+        .icon-btn:active {
+            transform: scale(0.93);
+        }
 
         .notif-dot {
             position: absolute;
@@ -399,6 +599,7 @@
             background: var(--danger);
             border: 2px solid var(--bg-sidebar);
             display: none;
+            animation: subtlePulse 1.5s infinite;
         }
         .notif-dot.visible { display: block; }
 
@@ -410,6 +611,7 @@
             padding: 2rem;
             width: calc(100% - var(--sidebar-width));
             min-height: calc(100vh - var(--nav-height));
+            transition: var(--transition);
         }
 
         .panel-view {
@@ -419,11 +621,7 @@
         }
         .panel-view.active {
             display: block;
-            animation: fadeIn 0.22s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            animation: viewSlideUp 0.35s var(--ease-smooth) forwards;
         }
 
         .view-header {
@@ -456,6 +654,7 @@
             margin-bottom: 1.5rem;
             background: var(--warning-soft);
             border: 1px solid rgba(245, 158, 11, 0.4);
+            animation: cardPopIn 0.35s var(--ease-smooth);
         }
         .expiry-alert-banner.visible { display: flex; }
         .expiry-alert-banner.urgent {
@@ -496,6 +695,12 @@
             justify-content: space-between;
             gap: 1.5rem;
             flex-wrap: wrap;
+            transition: var(--transition);
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+        .subscription-card:hover {
+            border-color: rgba(124, 58, 237, 0.35);
+            transform: translateY(-2px);
         }
 
         .sub-plan-details {
@@ -555,7 +760,7 @@
             height: 100%;
             background: var(--success);
             border-radius: 10px;
-            transition: width 0.4s ease;
+            transition: width 0.6s var(--ease-smooth), background-color 0.3s ease;
         }
         .time-progress-fill.warning { background: var(--warning); }
         .time-progress-fill.expired { background: var(--danger); }
@@ -576,6 +781,17 @@
             display: flex;
             align-items: center;
             gap: 14px;
+            transition: var(--transition);
+            animation: cardPopIn 0.4s var(--ease-smooth) backwards;
+        }
+        .stat-box:nth-child(1) { animation-delay: 0.05s; }
+        .stat-box:nth-child(2) { animation-delay: 0.12s; }
+        .stat-box:nth-child(3) { animation-delay: 0.19s; }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.16);
         }
 
         .stat-icon {
@@ -587,6 +803,10 @@
             justify-content: center;
             font-size: 1.2rem;
             flex-shrink: 0;
+            transition: transform 0.25s var(--ease-smooth);
+        }
+        .stat-box:hover .stat-icon {
+            transform: scale(1.08) rotate(-3deg);
         }
 
         /* BOTÕES PADRÃO */
@@ -603,13 +823,17 @@
             transition: var(--transition);
             border: none;
         }
+        .btn-action:active:not(:disabled) {
+            transform: scale(0.97);
+        }
         .btn-primary {
             background: var(--primary);
             color: #FFF;
         }
         .btn-primary:hover:not(:disabled) {
             background: var(--primary-hover);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
         }
         .btn-primary:disabled {
             opacity: 0.6;
@@ -622,6 +846,7 @@
         }
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
         }
         .btn-warning {
             background: var(--warning);
@@ -630,6 +855,7 @@
         }
         .btn-warning:hover {
             filter: brightness(1.08);
+            transform: translateY(-1px);
         }
 
         /* BARRA DE FILTROS DE PRODUTOS */
@@ -664,6 +890,7 @@
         }
         .search-input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18);
         }
 
         .cat-tabs {
@@ -689,12 +916,17 @@
         }
         .cat-tab:hover {
             color: #FFF;
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.22);
+            transform: translateY(-1px);
+        }
+        .cat-tab:active {
+            transform: scale(0.95);
         }
         .cat-tab.active {
             background: var(--primary);
             border-color: var(--primary);
             color: #FFF;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
         }
 
         /* GRID DE PRODUTOS */
@@ -726,11 +958,13 @@
             display: flex;
             flex-direction: column;
             transition: var(--transition);
+            animation: cardPopIn 0.38s var(--ease-smooth) backwards;
         }
         .product-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
             background: var(--bg-card-hover);
-            border-color: rgba(255, 255, 255, 0.18);
+            border-color: rgba(124, 58, 237, 0.38);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
         }
 
         .product-thumb-container {
@@ -744,10 +978,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.35s ease;
+            transition: transform 0.45s var(--ease-smooth);
         }
         .product-card:hover .product-thumb {
-            transform: scale(1.04);
+            transform: scale(1.06);
         }
 
         .product-os-tag {
@@ -755,6 +989,7 @@
             top: 10px;
             right: 10px;
             background: rgba(13, 13, 18, 0.85);
+            backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.14);
             color: #FFF;
             font-size: 0.68rem;
@@ -854,6 +1089,7 @@
         .page-btn:hover:not(:disabled) {
             color: #FFF;
             border-color: var(--primary);
+            transform: translateY(-1px);
         }
         .page-btn.active {
             background: var(--primary);
@@ -946,6 +1182,7 @@
             display: flex;
             flex-direction: column;
             max-width: 76%;
+            animation: msgBubbleIn 0.25s var(--ease-smooth) forwards;
         }
         .msg-row.client {
             align-self: flex-end;
@@ -1029,6 +1266,7 @@
             border-radius: var(--radius-lg);
             padding: 1.75rem;
             max-width: 580px;
+            animation: cardPopIn 0.35s var(--ease-smooth);
         }
         .form-label {
             font-size: 0.76rem;
@@ -1058,7 +1296,9 @@
             z-index: 20000;
             padding: 1rem;
         }
-        .modal-backdrop.open { display: flex; }
+        .modal-backdrop.open {
+            display: flex;
+        }
 
         .modal-box {
             background: #12121a;
@@ -1069,6 +1309,7 @@
             max-height: 92vh;
             overflow-y: auto;
             padding: 1.75rem;
+            animation: modalZoomIn 0.3s var(--ease-smooth) forwards;
         }
 
         .plans-select-grid {
@@ -1091,6 +1332,7 @@
         }
         .plan-option-card:hover {
             border-color: rgba(124, 58, 237, 0.5);
+            transform: translateY(-2px);
         }
         .plan-option-card.selected {
             border-color: var(--primary);
@@ -1147,20 +1389,39 @@
         }
         .upload-box:hover {
             border-color: var(--primary);
+            background: rgba(124, 58, 237, 0.05);
         }
 
         /* RESPONSIVO */
         @media (max-width: 1024px) {
             #sidebar {
                 transform: translateX(-100%);
-                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.85);
             }
             #sidebar.open { transform: translateX(0); }
             .top-navbar { left: 0; padding: 0 1.2rem; }
-            .main-content { margin-left: 0; width: 100%; padding: 1.5rem 1rem; }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem 1rem calc(var(--mobile-footer-height) + 28px + env(safe-area-inset-bottom)) 1rem;
+            }
             #menuToggle { display: flex !important; }
             .filter-top { grid-template-columns: 1fr; }
             .stats-row { grid-template-columns: 1fr; }
+            .mobile-fixed-footer { display: flex; }
+            #toast-container {
+                bottom: calc(var(--mobile-footer-height) + 18px + env(safe-area-inset-bottom));
+                right: 14px;
+                left: 14px;
+            }
+            .toast {
+                min-width: auto;
+                max-width: 100%;
+            }
+            .chat-wrapper {
+                height: calc(100dvh - 260px);
+                min-height: 380px;
+            }
         }
 
         @media (max-width: 680px) {
@@ -1180,6 +1441,9 @@
 
     <!-- TOASTS -->
     <div id="toast-container"></div>
+
+    <!-- BACKDROP MENU MOBILE -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 
     <div class="app-container">
 
@@ -1256,11 +1520,34 @@
             </div>
 
             <div class="sidebar-fixed-bottom">
-                <button type="button" class="menu-item" onclick="logoutUser()" style="color:#F87171; margin-bottom:0;">
+                <button type="button" class="menu-item btn-logout-sidebar" onclick="logoutUser()">
                     <i class="fa-solid fa-right-from-bracket"></i> Terminar a Sessão
                 </button>
             </div>
         </aside>
+
+        <!-- RODAPÉ FIXO NO TELEMÓVEL (MOBILE) -->
+        <footer class="mobile-fixed-footer" aria-label="Rodapé de Acesso Rápido">
+            <div class="mobile-footer-nav">
+                <button type="button" class="mobile-footer-tab active" data-mobile-view="home" onclick="switchView('home')" title="Home">
+                    <i class="fa-solid fa-house"></i>
+                </button>
+                <button type="button" class="mobile-footer-tab" data-mobile-view="produtos" onclick="switchView('produtos')" title="Produtos">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </button>
+                <button type="button" class="mobile-footer-tab" data-mobile-view="mensagens" onclick="switchView('mensagens')" title="Mensagens">
+                    <i class="fa-solid fa-comments"></i>
+                    <span class="notif-dot" id="mobile-footer-msg-dot"></span>
+                </button>
+                <button type="button" class="mobile-footer-tab" data-mobile-view="perfil" onclick="switchView('perfil')" title="Perfil">
+                    <i class="fa-solid fa-user-pen"></i>
+                </button>
+            </div>
+
+            <button type="button" class="btn-mobile-logout-fixed" onclick="logoutUser()">
+                <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+            </button>
+        </footer>
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
@@ -1761,7 +2048,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentUser = user;
 
-        // Regista o acesso diário para o Dashboard Administrativo
         db.collection('users').doc(user.uid).set({
             lastAccessAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true }).catch(() => {});
@@ -1983,7 +2269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 7. NAVEGAÇÃO DA SIDEBAR
+    // 7. NAVEGAÇÃO DA SIDEBAR E RODAPÉ MOBILE
     // ==========================================
     const VIEW_NAMES = {
         home: 'Home',
@@ -1998,6 +2284,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('.menu-item[data-view]').forEach(el => {
             el.classList.toggle('active', el.getAttribute('data-view') === viewId);
+        });
+
+        document.querySelectorAll('.mobile-footer-tab[data-mobile-view]').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-mobile-view') === viewId);
         });
 
         document.querySelectorAll('.panel-view').forEach(sec => {
@@ -2016,8 +2306,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleSidebar = function(force) {
         const sidebar = document.getElementById('sidebar');
         const closeBtn = document.getElementById('closeSidebarBtn');
+        const overlay = document.getElementById('sidebarOverlay');
         const shouldOpen = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
         sidebar.classList.toggle('open', shouldOpen);
+        if (overlay) overlay.classList.toggle('visible', shouldOpen);
         if (closeBtn) closeBtn.style.display = shouldOpen ? 'flex' : 'none';
     };
 
@@ -2066,7 +2358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return map[cat] || cat;
     }
 
-    function createProductCardHTML(p) {
+    function createProductCardHTML(p, index = 0) {
         let osTag = `<span class="product-os-tag"><i class="fa-brands fa-windows" style="color:#60A5FA;"></i> <i class="fa-brands fa-apple"></i> Mac & Win</span>`;
         if (p.sistema === 'mac') {
             osTag = `<span class="product-os-tag"><i class="fa-brands fa-apple"></i> Mac</span>`;
@@ -2084,6 +2376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleJs = JSON.stringify(p.titulo).replace(/"/g, '&quot;');
         const pluginUrlJs = JSON.stringify(p.pluginUrl || '#').replace(/"/g, '&quot;');
         const aulaUrlJs = JSON.stringify(p.aulaUrl || '#').replace(/"/g, '&quot;');
+        const animDelay = `${Math.min(index * 40, 400)}ms`;
 
         const pluginBtnHtml = hasPlugin
             ? `<button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
@@ -2102,7 +2395,7 @@ document.addEventListener('DOMContentLoaded', () => {
                </button>`;
 
         return `
-            <div class="product-card">
+            <div class="product-card" style="animation-delay: ${animDelay};">
                 <div class="product-thumb-container">
                     <img src="${imgEsc}" alt="${tituloEsc}" class="product-thumb" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'">
                     ${osTag}
@@ -2133,7 +2426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         wrapper.style.display = 'block';
-        grid.innerHTML = allProducts.slice(0, 5).map(p => createProductCardHTML(p)).join('');
+        grid.innerHTML = allProducts.slice(0, 5).map((p, idx) => createProductCardHTML(p, idx)).join('');
     }
 
     function renderCatalog() {
@@ -2170,7 +2463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (paginationBar) paginationBar.style.display = 'flex';
         document.getElementById('pagination-info').textContent = `Página ${currentPage} de ${totalPages}`;
 
-        grid.innerHTML = items.map(p => createProductCardHTML(p)).join('');
+        grid.innerHTML = items.map((p, idx) => createProductCardHTML(p, idx)).join('');
 
         let btns = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
         for (let i = 1; i <= totalPages; i++) {
@@ -2192,7 +2485,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function listenChatMessages(user) {
         const uid = user.uid;
 
-        // 1. Subcoleção oficial sincronizada com admin.html: chats/{uid}/messages
         db.collection('chats').doc(uid).collection('messages')
             .onSnapshot((snap) => {
                 snap.forEach((doc) => {
@@ -2218,7 +2510,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('Erro ao ouvir chats/{uid}/messages:', err);
             });
 
-        // 2. Fallback para histórico antigo na coleção "mensagens" (se existir)
         db.collection('mensagens').where('userId', '==', uid).onSnapshot((snap) => {
             snap.forEach((doc) => {
                 const d = doc.data();
@@ -2242,6 +2533,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listEl = document.getElementById('chat-messages-list');
         const badgeEl = document.getElementById('sidebar-unread-badge');
         const dotEl = document.getElementById('topbar-msg-dot');
+        const mobileDotEl = document.getElementById('mobile-footer-msg-dot');
         if (!listEl) return;
 
         const messages = Array.from(chatMessagesMap.values())
@@ -2256,6 +2548,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (dotEl) {
             dotEl.classList.toggle('visible', unreadAdminCount > 0);
+        }
+        if (mobileDotEl) {
+            mobileDotEl.classList.toggle('visible', unreadAdminCount > 0);
         }
 
         if (messages.length === 0) {
@@ -2354,7 +2649,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const chatDocRef = db.collection('chats').doc(currentUser.uid);
 
-            // Grava na subcoleção exatamente como o admin.html escuta
             await chatDocRef.collection('messages').add({
                 sender: 'client',
                 senderName: userState.name,
@@ -2364,7 +2658,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // Atualiza documento resumo da conversa para a lista lateral do admin.html
             await chatDocRef.set({
                 userId: currentUser.uid,
                 userName: userState.name,
@@ -2748,3 +3041,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+```[cite: 15]
