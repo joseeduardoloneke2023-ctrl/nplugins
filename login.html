@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sessão | NPLUGINS</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://nplugins.online/login.html">
+
+    <!-- Fontes Google & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-body: #0d0d12;
+            --bg-card: #181824;
+            --bg-input: #12121a;
+            --border-color: rgba(255, 255, 255, 0.08);
+
+            --primary: #7C3AED;
+            --primary-hover: #6D28D9;
+            --primary-soft: rgba(124, 58, 237, 0.14);
+            --primary-glow: rgba(124, 58, 237, 0.32);
+
+            --success: #10B981;
+            --danger: #EF4444;
+
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --text-dark: #71717A;
+
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --transition: all 0.22s ease;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background-image:
+                radial-gradient(circle at 50% -15%, rgba(124, 58, 237, 0.2) 0%, transparent 55%),
+                radial-gradient(circle at 100% 100%, rgba(124, 58, 237, 0.06) 0%, transparent 45%);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.4rem 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+            animation: cardFadeIn 0.35s ease;
+        }
+
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .brand-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            text-decoration: none;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.45rem;
+        }
+
+        .brand-logo i { color: var(--primary); }
+        .brand-logo span { color: var(--primary); }
+
+        .brand-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .form-group {
+            margin-bottom: 1.15rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.45rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-dark);
+            font-size: 0.92rem;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            padding: 0.88rem 2.7rem 0.88rem 2.7rem;
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-control::placeholder { color: var(--text-dark); }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+        .form-control:focus ~ .input-icon {
+            color: var(--primary);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            font-size: 0.92rem;
+            transition: var(--transition);
+        }
+
+        .toggle-password:hover { color: var(--text-main); }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 1.4rem;
+            margin-top: -0.2rem;
+        }
+
+        .link-forgot {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .link-forgot:hover { color: #A78BFA; }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: #FFFFFF;
+            padding: 0.95rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.92rem;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            box-shadow: 0 8px 22px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .account-notice {
+            margin-top: 1.5rem;
+            padding: 0.9rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            text-align: center;
+        }
+
+        .account-notice a {
+            color: #A78BFA;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .account-notice a:hover { text-decoration: underline; }
+
+        .footer-back {
+            text-align: center;
+            margin-top: 1.4rem;
+            padding-top: 1.1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.83rem;
+        }
+
+        .footer-back a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .footer-back a:hover { color: #FFF; }
+
+        /* TOASTS */
+        .toast-container {
+            position: fixed;
+            top: 22px;
+            right: 22px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast-card {
+            background: #181824;
+            color: var(--text-main);
+            padding: 0.9rem 1.2rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--danger);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            max-width: 360px;
+            animation: slideIn 0.25s ease forwards;
+        }
+
+        .toast-card.success { border-left-color: var(--success); }
+        .toast-card.success i { color: var(--success); }
+        .toast-card.error i { color: var(--danger); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .auth-card { padding: 2rem 1.4rem; }
+            .toast-container { right: 14px; left: 14px; top: 14px; }
+            .toast-card { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <main class="auth-card">
+        <div class="brand-header">
+            <a href="index.html" class="brand-logo"><i class="fa-solid fa-sliders"></i> N<span>PLUGINS</span></a>
+            <p class="brand-subtitle">Inicie sessão para aceder aos seus plugins, DAWs e aulas</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail" class="form-label">E-mail</label>
+                <div class="input-wrapper">
+                    <input type="email" id="loginEmail" class="form-control" placeholder="seu.email@exemplo.com" required>
+                    <i class="fa-solid fa-envelope input-icon"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword" class="form-label">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <button type="button" class="toggle-password" id="btnTogglePassword" title="Mostrar/Ocultar Senha">
+                        <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <a href="esquece.html" class="link-forgot">Esqueceu a senha?</a>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnLoginSubmit">
+                <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sessão
+            </button>
+        </form>
+
+        <div class="account-notice">
+            As contas de acesso são criadas exclusivamente no Checkout ao adquirir um plano ou pelo Administrador.<br>
+            <a href="index.html#planos"><i class="fa-solid fa-crown"></i> Adquirir Plano no Checkout</a>
+        </div>
+
+        <div class="footer-back">
+            <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Voltar à Página Inicial</a>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
+            authDomain: "bd-nplugins.firebaseapp.com",
+            projectId: "bd-nplugins",
+            storageBucket: "bd-nplugins.firebasestorage.app",
+            messagingSenderId: "946055919532",
+            appId: "1:946055919532:web:a51efb8c7540b12b18ec09",
+            measurementId: "G-G4SNHNND2Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        auth.languageCode = 'pt';
+
+        const ADMIN_EMAILS = [
+            "joseeduardoloneke2023@gmail.com",
+            "suporte@lonekenobeat.com",
+            "admin@nplugins.online"
+        ];
+
+        function showToast(message, type = "error") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast-card ${type}`;
+            const icon = type === "success"
+                ? '<i class="fa-solid fa-circle-check"></i>'
+                : '<i class="fa-solid fa-circle-exclamation"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4500);
+        }
+
+        // Mostrar / Ocultar Senha
+        const btnTogglePassword = document.getElementById("btnTogglePassword");
+        const passwordInput = document.getElementById("loginPassword");
+        const eyeIcon = document.getElementById("eyeIcon");
+
+        btnTogglePassword.addEventListener("click", () => {
+            const isPassword = passwordInput.type === "password";
+            passwordInput.type = isPassword ? "text" : "password";
+            eyeIcon.className = isPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+        });
+
+        async function handleAuthenticatedUser(user) {
+            const emailLower = (user.email || "").toLowerCase();
+            const isAdminEmail = ADMIN_EMAILS.includes(emailLower);
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists() && !isAdminEmail) {
+                await signOut(auth);
+                throw new Error("ACCOUNT_NOT_PROVISIONED");
+            }
+
+            const userData = userSnap.exists() ? userSnap.data() : {};
+            const isAdmin = isAdminEmail || userData.role === "admin";
+
+            await setDoc(userRef, {
+                uid: user.uid,
+                email: user.email,
+                role: isAdmin ? "admin" : (userData.role || "client"),
+                lastAccessAt: serverTimestamp()
+            }, { merge: true });
+
+            showToast("Sessão iniciada com sucesso! A redirecionar...", "success");
+
+            setTimeout(() => {
+                window.location.href = isAdmin ? "admin.html" : "cliente.html";
+            }, 850);
+        }
+
+        const loginForm = document.getElementById("loginForm");
+        const btnSubmit = document.getElementById("btnLoginSubmit");
+
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = passwordInput.value;
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A verificar...`;
+
+            try {
+                const credential = await signInWithEmailAndPassword(auth, email, password);
+                await handleAuthenticatedUser(credential.user);
+            } catch (error) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Iniciar Sessão`;
+
+                if (error.message === "ACCOUNT_NOT_PROVISIONED") {
+                    showToast("Conta não activada. As contas são criadas apenas no Checkout ou pelo Administrador.");
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    showToast("Domínio não autorizado no Firebase. Adicione nplugins.online em Authentication > Settings > Authorized domains.");
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    showToast("Ative o método E-mail/Senha em Authentication > Sign-in method no Firebase.");
+                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    showToast("E-mail ou senha incorretos.");
+                } else if (error.code === 'auth/too-many-requests') {
+                    showToast("Muitas tentativas. Tente novamente dentro de alguns minutos.");
+                } else {
+                    showToast(`Erro ao iniciar sessão (${error.code || error.message}).`);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

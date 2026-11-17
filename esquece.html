@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha | NPLUGINS</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://nplugins.online/esquece.html">
+
+    <!-- Fontes Google & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-body: #0d0d12;
+            --bg-card: #181824;
+            --bg-input: #12121a;
+            --border-color: rgba(255, 255, 255, 0.08);
+
+            --primary: #7C3AED;
+            --primary-hover: #6D28D9;
+            --primary-soft: rgba(124, 58, 237, 0.14);
+            --primary-glow: rgba(124, 58, 237, 0.32);
+
+            --success: #10B981;
+            --danger: #EF4444;
+
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --text-dark: #71717A;
+
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --transition: all 0.22s ease;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background-image:
+                radial-gradient(circle at 50% -15%, rgba(124, 58, 237, 0.2) 0%, transparent 55%),
+                radial-gradient(circle at 100% 100%, rgba(124, 58, 237, 0.06) 0%, transparent 45%);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .recovery-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.4rem 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+            animation: cardFadeIn 0.35s ease;
+        }
+
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 1.9rem;
+        }
+
+        .brand-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            text-decoration: none;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-logo i { color: var(--primary); }
+        .brand-logo span { color: var(--primary); }
+
+        .brand-subtitle {
+            font-size: 0.87rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.45rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-dark);
+            font-size: 0.92rem;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            padding: 0.88rem 1rem 0.88rem 2.7rem;
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-control::placeholder { color: var(--text-dark); }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+        .form-control:focus ~ .input-icon {
+            color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: #FFFFFF;
+            padding: 0.95rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.92rem;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            box-shadow: 0 8px 22px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .back-to-login {
+            text-align: center;
+            margin-top: 1.6rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .back-to-login a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-to-login a:hover { color: #A78BFA; }
+
+        /* TOASTS */
+        .toast-container {
+            position: fixed;
+            top: 22px;
+            right: 22px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast-card {
+            background: #181824;
+            color: var(--text-main);
+            padding: 0.9rem 1.2rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--danger);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            max-width: 360px;
+            animation: slideIn 0.25s ease forwards;
+        }
+
+        .toast-card.success { border-left-color: var(--success); }
+        .toast-card.success i { color: var(--success); }
+        .toast-card.error i { color: var(--danger); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .recovery-card { padding: 2rem 1.4rem; }
+            .toast-container { right: 14px; left: 14px; top: 14px; }
+            .toast-card { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <main class="recovery-card">
+        <div class="brand-header">
+            <a href="index.html" class="brand-logo"><i class="fa-solid fa-sliders"></i> N<span>PLUGINS</span></a>
+            <p class="brand-subtitle">Introduza o e-mail da sua conta para receber o link de redefinição da senha.</p>
+        </div>
+
+        <form id="recoveryForm">
+            <div class="form-group">
+                <label for="recoveryEmail" class="form-label">E-mail Cadastrado</label>
+                <div class="input-wrapper">
+                    <input type="email" id="recoveryEmail" class="form-control" placeholder="seu.email@exemplo.com" required>
+                    <i class="fa-solid fa-envelope input-icon"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnRecoverySubmit">
+                <i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação
+            </button>
+        </form>
+
+        <div class="back-to-login">
+            <a href="login.html"><i class="fa-solid fa-arrow-left"></i> Voltar ao Login</a>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
+            authDomain: "bd-nplugins.firebaseapp.com",
+            projectId: "bd-nplugins",
+            storageBucket: "bd-nplugins.firebasestorage.app",
+            messagingSenderId: "946055919532",
+            appId: "1:946055919532:web:a51efb8c7540b12b18ec09",
+            measurementId: "G-G4SNHNND2Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        auth.languageCode = 'pt';
+
+        function showToast(message, type = "error") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast-card ${type}`;
+            const icon = type === "success"
+                ? '<i class="fa-solid fa-circle-check"></i>'
+                : '<i class="fa-solid fa-circle-exclamation"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4500);
+        }
+
+        const recoveryForm = document.getElementById("recoveryForm");
+        const btnSubmit = document.getElementById("btnRecoverySubmit");
+
+        recoveryForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("recoveryEmail").value.trim();
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A enviar...`;
+
+            try {
+                await sendPasswordResetEmail(auth, email, {
+                    url: "https://nplugins.online/login.html",
+                    handleCodeInApp: false
+                });
+                showToast(`Enviamos um link de recuperação para ${email}! Verifique também o Spam.`, "success");
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> Reenviar Link`;
+            } catch (error) {
+                if (error.code === 'auth/unauthorized-continue-uri') {
+                    try {
+                        await sendPasswordResetEmail(auth, email);
+                        showToast(`Enviamos um link de recuperação para ${email}! Verifique também o Spam.`, "success");
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> Reenviar Link`;
+                        return;
+                    } catch (_) {}
+                }
+
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação`;
+
+                if (error.code === 'auth/user-not-found') {
+                    showToast("Nenhuma conta encontrada com este e-mail.");
+                } else if (error.code === 'auth/invalid-email') {
+                    showToast("Introduza um endereço de e-mail válido.");
+                } else {
+                    showToast("Não foi possível enviar o e-mail. Tente novamente.");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

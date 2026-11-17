@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Seguro | NPLUGINS (nplugins.online)</title>
+    <meta name="description" content="Finalize a sua assinatura na NPLUGINS e libere acesso imediato aos Plugins VST, DAWs e Livrarias para Mac e Windows.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- SDKs do Firebase (Projeto bd-nplugins) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #07080D;
+            --bg-surface: #0F111A;
+            --bg-elevated: #161926;
+            --bg-input: #0A0C12;
+            --primary: #7C3AED;
+            --primary-light: #A78BFA;
+            --primary-hover: #6D28D9;
+            --primary-glow: rgba(124, 58, 237, 0.28);
+            --accent: #00F0FF;
+            --gold: #FBBF24;
+            --success: #10B981;
+            --danger: #EF4444;
+            --white: #FFFFFF;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-accent: rgba(124, 58, 237, 0.42);
+
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-display: 'Montserrat', sans-serif;
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--white);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+            background-image:
+                radial-gradient(ellipse 80% 45% at 50% -10%, rgba(124, 58, 237, 0.22), transparent),
+                radial-gradient(circle at 90% 85%, rgba(0, 240, 255, 0.06), transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 44px 44px, 44px 44px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- TOP NAVIGATION BAR --- */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 8, 13, 0.85);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .topbar-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            color: var(--white);
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .brand span {
+            color: var(--primary-light);
+        }
+
+        /* --- STEPPER --- */
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .step {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: var(--text-muted);
+        }
+
+        .step.done {
+            color: var(--success);
+        }
+
+        .step.active {
+            color: var(--white);
+        }
+
+        .step-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .step.done .step-num {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: var(--success);
+        }
+
+        .step.active .step-num {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .step-divider {
+            width: 24px;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0.5rem 0.95rem;
+            border-radius: 50px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.02);
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            color: var(--white);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- MAIN GRID --- */
+        .checkout-container {
+            max-width: 1180px;
+            margin: 2.5rem auto 4.5rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 0.95fr 1.15fr;
+            gap: 2.25rem;
+            align-items: start;
+        }
+
+        .card-shell {
+            background: linear-gradient(180deg, rgba(22, 25, 38, 0.85) 0%, rgba(15, 17, 26, 0.95) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(14px);
+        }
+
+        .sticky-summary {
+            position: sticky;
+            top: 86px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .card-title i {
+            color: var(--primary-light);
+        }
+
+        .cart-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            background: rgba(124, 58, 237, 0.16);
+            border: 1px solid rgba(124, 58, 237, 0.38);
+            color: #DDD6FE;
+        }
+
+        /* --- QUICK PLAN SWITCHER (SINGLE SELECT) --- */
+        .plan-switcher-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .plan-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.55rem;
+            background: var(--bg-input);
+            padding: 0.4rem;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 1.35rem;
+        }
+
+        .plan-tab {
+            padding: 0.65rem 0.5rem;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.15rem;
+        }
+
+        .plan-tab:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .plan-tab.active {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.25) 0%, rgba(79, 70, 229, 0.2) 100%);
+            border-color: var(--border-accent);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .plan-tab-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .plan-tab-price {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--gold);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* --- SINGLE CART ITEM --- */
+        .cart-item-card {
+            background: linear-gradient(145deg, rgba(124, 58, 237, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%);
+            border: 1px solid var(--border-accent);
+            border-radius: 18px;
+            padding: 1.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cart-item-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .item-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .item-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .item-sub {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+        }
+
+        .item-price-block {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .item-price {
+            font-family: var(--font-display);
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--gold);
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .item-qty {
+            display: inline-block;
+            margin-top: 0.25rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.15rem 0.55rem;
+            border-radius: 6px;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .benefits-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.86rem;
+            color: #E2E8F0;
+        }
+
+        .benefits-list li.excluded {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .benefit-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.68rem;
+            flex-shrink: 0;
+        }
+
+        .benefit-icon.ok {
+            background: rgba(16, 185, 129, 0.16);
+            color: var(--success);
+        }
+
+        .benefit-icon.no {
+            background: rgba(239, 68, 68, 0.14);
+            color: var(--danger);
+        }
+
+        .upgrade-banner {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px dashed rgba(251, 191, 36, 0.38);
+            border-radius: 12px;
+            padding: 0.75rem 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .upgrade-banner span {
+            color: #FDE68A;
+        }
+
+        .btn-upgrade-mini {
+            background: var(--gold);
+            color: #090A0F;
+            border: none;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .btn-upgrade-mini:hover {
+            transform: scale(1.04);
+        }
+
+        .cart-item-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.85rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-remove {
+            background: transparent;
+            border: none;
+            color: #FCA5A5;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-remove:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--white);
+        }
+
+        /* --- EMPTY CART STATE --- */
+        .empty-cart {
+            text-align: center;
+            padding: 2rem 1.25rem;
+            border-radius: 18px;
+            border: 1px dashed rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .empty-cart-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--primary-light);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-cart h4 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .empty-cart p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* --- TOTALS --- */
+        .totals-box {
+            margin-top: 1.35rem;
+            padding-top: 1.15rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .total-row.grand-total {
+            margin-top: 0.4rem;
+            padding-top: 0.85rem;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--white);
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .grand-total-values {
+            text-align: right;
+        }
+
+        .grand-total-val {
+            font-family: var(--font-display);
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--gold);
+            display: block;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* --- FORM & PAYMENT METHODS --- */
+        .form-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin-top: -1rem;
+            margin-bottom: 1.65rem;
+        }
+
+        .field-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .field-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #CBD5E1;
+            margin-bottom: 0.5rem;
+        }
+
+        .field-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            background: rgba(124, 58, 237, 0.14);
+            padding: 0.15rem 0.55rem;
+            border-radius: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 13px;
+            padding: 0.92rem 1rem 0.92rem 2.75rem;
+            color: var(--white);
+            font-family: inherit;
+            font-size: 0.94rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.18);
+        }
+
+        .input-wrapper:focus-within i {
+            color: var(--primary-light);
+        }
+
+        /* --- PAYMENT METHOD (ANGOLA - BAI) --- */
+        .payment-section-divider {
+            margin: 1.75rem 0 1.25rem 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .method-banner-angola {
+            border: 1.5px solid var(--primary);
+            background: linear-gradient(145deg, rgba(124, 58, 237, 0.18) 0%, rgba(10, 12, 18, 0.95) 100%);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
+            border-radius: 15px;
+            padding: 0.95rem 1.15rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .method-banner-angola::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .method-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(124, 58, 237, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .method-banner-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .method-card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .method-card-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* --- BANK DETAILS PANEL --- */
+        .payment-details-panel {
+            background: rgba(10, 12, 18, 0.85);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.35rem;
+        }
+
+        .bank-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.9rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .bank-meta-item small {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .bank-meta-item strong {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .copy-field-group {
+            margin-bottom: 0.85rem;
+        }
+
+        .copy-field-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .copy-field-label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-secondary);
+            margin-bottom: 0.35rem;
+        }
+
+        .copy-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.65rem;
+            background: #06070B;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 11px;
+            padding: 0.7rem 0.9rem;
+        }
+
+        .copy-code {
+            font-family: monospace;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.6px;
+            word-break: break-all;
+        }
+
+        .copy-code.white-code {
+            color: var(--white);
+        }
+
+        .btn-copy-chip {
+            background: rgba(0, 240, 255, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(0, 240, 255, 0.32);
+            padding: 0.38rem 0.75rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            white-space: nowrap;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .btn-copy-chip:hover {
+            background: var(--accent);
+            color: #07080D;
+        }
+
+        /* --- CUSTOM UPLOAD DROPZONE --- */
+        .upload-dropzone {
+            border: 1.5px dashed rgba(124, 58, 237, 0.45);
+            background: rgba(10, 12, 18, 0.75);
+            border-radius: 16px;
+            padding: 1.4rem 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .upload-dropzone:hover,
+        .upload-dropzone.dragover {
+            border-color: var(--accent);
+            background: rgba(0, 240, 255, 0.04);
+        }
+
+        .upload-icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.16);
+            color: var(--primary-light);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            margin-bottom: 0.55rem;
+        }
+
+        .upload-dropzone h5 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.2rem;
+        }
+
+        .upload-dropzone p {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .upload-preview-card {
+            display: none;
+            margin-top: 0.85rem;
+            background: var(--bg-input);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 14px;
+            padding: 0.75rem;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .upload-preview-card.visible {
+            display: flex;
+        }
+
+        .upload-thumb {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+        }
+
+        .upload-pdf-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.38);
+            color: #FCA5A5;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            gap: 2px;
+        }
+
+        .upload-pdf-badge span {
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .upload-meta {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .upload-file-name {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--white);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-file-size {
+            font-size: 0.74rem;
+            color: var(--success);
+        }
+
+        .btn-clear-file {
+            background: rgba(239, 68, 68, 0.14);
+            color: #FCA5A5;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .btn-clear-file:hover {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        /* --- SUBMIT BUTTON --- */
+        .btn-checkout-submit {
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 1.05rem 1.5rem;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 50%, #4F46E5 100%);
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            box-shadow: 0 10px 28px rgba(124, 58, 237, 0.4);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-checkout-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 36px rgba(124, 58, 237, 0.55);
+        }
+
+        .btn-checkout-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        /* --- TRUST SIGNALS --- */
+        .trust-grid {
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border-subtle);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            text-align: center;
+        }
+
+        .trust-item {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .trust-item i {
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .footer-help {
+            margin-top: 1.15rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-help a {
+            color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 920px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+                margin-top: 1.5rem;
+            }
+            .sticky-summary {
+                position: static;
+            }
+            .stepper {
+                display: none;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .card-shell {
+                padding: 1.4rem;
+                border-radius: 20px;
+            }
+            .bank-meta-grid {
+                grid-template-columns: 1fr;
+            }
+            .trust-grid {
+                grid-template-columns: 1fr;
+                gap: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="index.html" class="brand">
+                <span class="brand-icon"><i class="fa-solid fa-sliders"></i></span>
+                N<span>PLUGINS</span>
+            </a>
+
+            <div class="stepper" aria-label="Etapas da assinatura">
+                <div class="step done">
+                    <span class="step-num"><i class="fa-solid fa-check"></i></span>
+                    <span>Plano Escolhido</span>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step active">
+                    <span class="step-num">2</span>
+                    <span>Pagamento & Conta</span>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <span>Painel Liberado</span>
+                </div>
+            </div>
+
+            <a href="index.html#planos" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN CHECKOUT -->
+    <main class="checkout-container">
+
+        <!-- COLUNA 1: RESUMO & CARRINHO DE PLANO ÚNICO -->
+        <aside class="card-shell sticky-summary">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fa-solid fa-bag-shopping"></i> Resumo do Pedido</h2>
+                <span class="cart-pill" id="cartBadge">1 plano no carrinho</span>
+            </div>
+
+            <span class="plan-switcher-label">Escolha o seu Plano (Angola • AKZ):</span>
+            <div class="plan-tabs" role="tablist">
+                <button type="button" class="plan-tab" id="tab-mensal" onclick="selectSinglePlan('mensal')">
+                    <span class="plan-tab-name">1 Mês</span>
+                    <span class="plan-tab-price">1.000 Kz</span>
+                </button>
+                <button type="button" class="plan-tab" id="tab-bimestral" onclick="selectSinglePlan('bimestral')">
+                    <span class="plan-tab-name">2 Meses</span>
+                    <span class="plan-tab-price">2.000 Kz</span>
+                </button>
+                <button type="button" class="plan-tab" id="tab-vitalicio" onclick="selectSinglePlan('vitalicio')">
+                    <span class="plan-tab-name">Vitalício</span>
+                    <span class="plan-tab-price">5.000 Kz</span>
+                </button>
+            </div>
+
+            <!-- CONTAINER DO ITEM ÚNICO NO CARRINHO -->
+            <div id="cartSlot"></div>
+
+            <!-- TOTAIS -->
+            <div class="totals-box">
+                <div class="total-row">
+                    <span>Subtotal do Plano</span>
+                    <span id="subtotalText" style="font-variant-numeric: tabular-nums;">0 Kz</span>
+                </div>
+                <div class="total-row">
+                    <span>Taxa de Ativação</span>
+                    <span style="color: var(--success); font-weight: 600;">Grátis</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>Total a Pagar</span>
+                    <div class="grand-total-values">
+                        <span class="grand-total-val" id="grandTotalText">0 Kz</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- COLUNA 2: FORMULÁRIO DE CONTA, PAGAMENTO ANGOLA & COMPROVATIVO -->
+        <section class="card-shell">
+            <div class="card-header">
+                <h1 class="card-title"><i class="fa-solid fa-user-shield"></i> Dados de Acesso & Pagamento</h1>
+            </div>
+            <p class="form-subtitle">
+                Preencha os seus dados, faça a transferência em Kwanzas e anexe o comprovativo (Imagem ou PDF). A sua conta será criada e aberta automaticamente.
+            </p>
+
+            <form id="checkoutForm" onsubmit="processCheckout(event)">
+                <div class="field-group">
+                    <label class="field-label" for="custName">
+                        <span>Nome Completo</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" id="custName" class="form-control" required placeholder="Ex: João Manuel">
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="custEmail">
+                        <span>E-mail de Acesso</span>
+                        <span class="field-badge">Login & Senha Inicial</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="custEmail" class="form-control" required placeholder="seuemail@exemplo.com">
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="custPhone">
+                        <span>WhatsApp para Suporte</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <input type="tel" id="custPhone" class="form-control" required placeholder="+244 9XX XXX XXX">
+                    </div>
+                </div>
+
+                <!-- PAGAMENTO EXCLUSIVO ANGOLA (IBAN BAI / MULTICAIXA EXPRESS) -->
+                <div class="payment-section-divider">
+                    <label class="field-label" style="margin-bottom: 0.75rem;">
+                        <span>Dados para Pagamento em Angola</span>
+                        <span class="field-badge">Kwanzas (AKZ)</span>
+                    </label>
+
+                    <div class="method-banner-angola">
+                        <div class="method-card-icon"><i class="fa-solid fa-building-columns"></i></div>
+                        <div class="method-banner-info">
+                            <span class="method-card-title">Transferência IBAN / Multicaixa Express (BAI)</span>
+                            <span class="method-card-sub">Ativação rápida • Exclusivo para Angola (AKZ)</span>
+                        </div>
+                    </div>
+
+                    <!-- PAINEL: TRANSFERÊNCIA BANCÁRIA (IBAN BAI) -->
+                    <div class="payment-details-panel" id="panel-transfer">
+                        <div class="bank-meta-grid">
+                            <div class="bank-meta-item">
+                                <small>Banco</small>
+                                <strong>BAI - Banco Angolano de Investimentos</strong>
+                            </div>
+                            <div class="bank-meta-item">
+                                <small>Titular da Conta</small>
+                                <strong>JOSÉ EDUARDO LONEKE</strong>
+                            </div>
+                        </div>
+
+                        <div class="copy-field-group">
+                            <span class="copy-field-label">Número IBAN (BAI):</span>
+                            <div class="copy-box">
+                                <span class="copy-code">AO06 0040 0000 6562 1494 1019 2</span>
+                                <button type="button" class="btn-copy-chip" onclick="copyText('004000006562149410192', 'IBAN do BAI')">
+                                    <i class="fa-regular fa-copy"></i> Copiar IBAN
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="copy-field-group">
+                            <span class="copy-field-label">Valor Exato a Transferir:</span>
+                            <div class="copy-box">
+                                <span class="copy-code white-code" id="baiAmountDisplay">1.000 Kz</span>
+                                <button type="button" class="btn-copy-chip" onclick="copyCurrentAmount()">
+                                    <i class="fa-regular fa-copy"></i> Copiar Valor
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UPLOAD DO COMPROVATIVO (IMAGEM OU PDF) -->
+                <div class="field-group">
+                    <label class="field-label">
+                        <span>Comprovativo Bancário (BAI / Express)</span>
+                        <span class="field-badge">Imagem ou PDF</span>
+                    </label>
+
+                    <input type="file" id="custReceipt" accept="image/*,application/pdf,.pdf" hidden onchange="handleFileInput(event)">
+
+                    <div class="upload-dropzone" id="dropzone" onclick="document.getElementById('custReceipt').click()">
+                        <div class="upload-icon-circle">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <h5>Clique para selecionar ou arraste o comprovativo</h5>
+                        <p>Aceita comprovativo em <strong>PDF</strong> ou <strong>Imagem</strong> (JPG, PNG, WEBP)</p>
+                    </div>
+
+                    <div class="upload-preview-card" id="uploadPreview">
+                        <img id="previewThumb" class="upload-thumb" src="" alt="Comprovativo">
+                        <div id="previewPdfBadge" class="upload-pdf-badge">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </div>
+                        <div class="upload-meta">
+                            <div class="upload-file-name" id="previewFileName">comprovativo.pdf</div>
+                            <div class="upload-file-size" id="previewFileSize">Pronto para envio</div>
+                        </div>
+                        <button type="button" class="btn-clear-file" title="Remover ficheiro" onclick="clearSelectedFile(event)">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-checkout-submit" id="btnSubmit">
+                    <i class="fa-solid fa-lock"></i>
+                    <span id="btnSubmitLabel">Finalizar & Abrir Minha Conta</span>
+                </button>
+
+                <div class="trust-grid">
+                    <div class="trust-item">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Conta Criada na Hora</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fa-brands fa-apple"></i>
+                        <span>Mac & Windows</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fa-solid fa-headset"></i>
+                        <span>Suporte Angola</span>
+                    </div>
+                </div>
+
+                <p class="footer-help">
+                    Dúvidas? Contacte <a href="mailto:suporte@nplugins.online">suporte@nplugins.online</a> ou <a href="https://wa.me/244924034159" target="_blank">+244 924 034 159</a>
+                </p>
+            </form>
+        </section>
+
+    </main>
+
+<script>
+    // ==========================================
+    // 1. CONFIGURAÇÃO DO FIREBASE (PROJETO bd-nplugins)
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
+        authDomain: "bd-nplugins.firebaseapp.com",
+        projectId: "bd-nplugins",
+        storageBucket: "bd-nplugins.firebasestorage.app",
+        messagingSenderId: "946055919532",
+        appId: "1:946055919532:web:a51efb8c7540b12b18ec09",
+        measurementId: "G-G4SNHNND2Q"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+
+    // Evita que o Firebase Storage fique preso por minutos em caso de erro de rede/CORS
+    if (storage && typeof storage.setMaxUploadRetryTime === 'function') {
+        storage.setMaxUploadRetryTime(4000);
+        storage.setMaxOperationRetryTime(4000);
+    }
+
+    const ADMIN_EMAILS = [
+        "joseeduardoloneke2023@gmail.com",
+        "suporte@lonekenobeat.com",
+        "admin@nplugins.online"
+    ];
+
+    // Preenche automaticamente caso o cliente já tenha sessão ativa
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) return;
+        const emailInput = document.getElementById('custEmail');
+        const nameInput = document.getElementById('custName');
+        const phoneInput = document.getElementById('custPhone');
+
+        if (emailInput && !emailInput.value && user.email) {
+            emailInput.value = user.email;
+        }
+        if (nameInput && !nameInput.value && user.displayName) {
+            nameInput.value = user.displayName;
+        }
+
+        try {
+            const snap = await db.collection('users').doc(user.uid).get();
+            if (snap.exists) {
+                const data = snap.data();
+                if (nameInput && !nameInput.value && data.name) nameInput.value = data.name;
+                if (phoneInput && !phoneInput.value && data.whatsapp) phoneInput.value = data.whatsapp;
+            }
+        } catch (_) {}
+    });
+
+    // ==========================================
+    // 2. CATÁLOGO OFICIAL DOS 3 PLANOS (ANGOLA - AKZ)
+    // ==========================================
+    const PLANS = {
+        mensal: {
+            id: 'mensal',
+            kicker: 'Pacote Mensal • 30 Dias',
+            name: 'Acesso 1 Mês',
+            price: 1000,
+            subtitle: 'Acesso completo por 30 dias • Mac & Windows',
+            durationDays: 30,
+            hasInstallLessons: false
+        },
+        bimestral: {
+            id: 'bimestral',
+            kicker: 'Mais Escolhido • 60 Dias',
+            name: 'Acesso 2 Meses',
+            price: 2000,
+            subtitle: 'Acesso completo por 60 dias • Mac & Windows',
+            durationDays: 60,
+            hasInstallLessons: true
+        },
+        vitalicio: {
+            id: 'vitalicio',
+            kicker: 'VIP • Acesso Permanente',
+            name: 'Acesso Vitalício',
+            price: 5000,
+            subtitle: 'Sem mensalidades • Atualizações inclusas',
+            durationDays: null,
+            hasInstallLessons: true
+        }
+    };
+
+    const CART_KEY = 'nplugins_single_plan_cart';
+    let currentPlan = null;
+    let selectedPluginInterest = '';
+    let selectedReceiptFile = null;
+
+    // ==========================================
+    // 3. GESTÃO DO CARRINHO (APENAS 1 PLANO)
+    // ==========================================
+    function detectPlanFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const planIdParam = (params.get('planId') || '').toLowerCase();
+        const planStr = (params.get('plan') || '').toLowerCase();
+        const priceNum = Number(params.get('price') || 0);
+
+        if (PLANS[planIdParam]) return planIdParam;
+        if (planStr.includes('vital') || priceNum === 5000) return 'vitalicio';
+        if (planStr.includes('2') || planStr.includes('dois') || planStr.includes('bimestral') || priceNum === 2000) return 'bimestral';
+        if (planStr.includes('1') || planStr.includes('mês') || planStr.includes('mes') || priceNum === 1000) return 'mensal';
+        return null;
+    }
+
+    function selectSinglePlan(planId) {
+        currentPlan = planId && PLANS[planId] ? { ...PLANS[planId] } : null;
+
+        if (currentPlan) {
+            localStorage.setItem(CART_KEY, JSON.stringify({
+                id: currentPlan.id,
+                plugin: selectedPluginInterest
+            }));
+        } else {
+            localStorage.removeItem(CART_KEY);
+        }
+
+        renderCheckoutState();
+    }
+
+    function initCheckoutCart() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(CART_KEY) || 'null');
+            if (saved && saved.plugin) {
+                selectedPluginInterest = saved.plugin;
+            }
+        } catch (_) {}
+
+        const fromUrl = detectPlanFromUrl();
+        if (fromUrl) {
+            selectSinglePlan(fromUrl);
+            window.history.replaceState({}, document.title, 'checkout.html');
+            return;
+        }
+
+        try {
+            const saved = JSON.parse(localStorage.getItem(CART_KEY) || 'null');
+            if (saved && saved.id && PLANS[saved.id]) {
+                selectSinglePlan(saved.id);
+                return;
+            }
+        } catch (e) {
+            localStorage.removeItem(CART_KEY);
+        }
+
+        selectSinglePlan('mensal');
+    }
+
+    function renderCheckoutState() {
+        ['mensal', 'bimestral', 'vitalicio'].forEach(id => {
+            const tab = document.getElementById(`tab-${id}`);
+            if (tab) {
+                tab.classList.toggle('active', currentPlan && currentPlan.id === id);
+            }
+        });
+
+        const cartSlot = document.getElementById('cartSlot');
+        const cartBadge = document.getElementById('cartBadge');
+        const subtotalText = document.getElementById('subtotalText');
+        const grandTotalText = document.getElementById('grandTotalText');
+        const baiAmountDisplay = document.getElementById('baiAmountDisplay');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnSubmitLabel = document.getElementById('btnSubmitLabel');
+
+        if (!currentPlan) {
+            cartBadge.textContent = '0 planos no carrinho';
+            subtotalText.textContent = '0 Kz';
+            grandTotalText.textContent = '0 Kz';
+            if (baiAmountDisplay) baiAmountDisplay.textContent = '0 Kz';
+            btnSubmit.disabled = true;
+            btnSubmitLabel.textContent = 'Selecione 1 Plano para Continuar';
+
+            cartSlot.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                    <h4>Seu carrinho está vazio</h4>
+                    <p>Escolha <strong>1 plano</strong> nos botões acima para liberar o seu acesso na NPLUGINS.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const formattedKz = currentPlan.price.toLocaleString('pt-AO') + ' Kz';
+
+        cartBadge.textContent = '1 plano no carrinho';
+        subtotalText.textContent = formattedKz;
+        grandTotalText.textContent = formattedKz;
+        if (baiAmountDisplay) baiAmountDisplay.textContent = formattedKz;
+
+        btnSubmit.disabled = false;
+        btnSubmitLabel.textContent = `Finalizar & Criar Conta • ${formattedKz}`;
+
+        const lessonItemHTML = currentPlan.hasInstallLessons
+            ? `<li><span class="benefit-icon ok"><i class="fa-solid fa-check"></i></span><span><strong>Aula de instalação dos plugins</strong> incluída</span></li>`
+            : `<li class="excluded"><span class="benefit-icon no"><i class="fa-solid fa-xmark"></i></span><span>Aula de instalação dos plugins (não incluída)</span></li>`;
+
+        const upgradeHTML = !currentPlan.hasInstallLessons
+            ? `<div class="upgrade-banner">
+                   <span><i class="fa-solid fa-graduation-cap"></i> Quer a <strong>aula de instalação</strong>? Mude para 2 Meses por +1.000 Kz</span>
+                   <button type="button" class="btn-upgrade-mini" onclick="selectSinglePlan('bimestral')">Mudar</button>
+               </div>`
+            : '';
+
+        cartSlot.innerHTML = `
+            <div class="cart-item-card">
+                <div class="cart-item-header">
+                    <div>
+                        <div class="item-kicker"><i class="fa-solid fa-crown"></i> ${currentPlan.kicker}</div>
+                        <div class="item-title">${currentPlan.name}</div>
+                        <div class="item-sub">${currentPlan.subtitle}</div>
+                    </div>
+                    <div class="item-price-block">
+                        <div class="item-price">${formattedKz}</div>
+                        <span class="item-qty">1 plano selecionado</span>
+                    </div>
+                </div>
+
+                <ul class="benefits-list">
+                    <li>
+                        <span class="benefit-icon ok"><i class="fa-solid fa-check"></i></span>
+                        <span>Plugins VST, DAWs e Livrarias (Mac & Windows)</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon ok"><i class="fa-solid fa-check"></i></span>
+                        <span>Direito a <strong>Suporte</strong> via WhatsApp e E-mail</span>
+                    </li>
+                    ${lessonItemHTML}
+                </ul>
+
+                ${upgradeHTML}
+
+                <div class="cart-item-footer">
+                    <span><i class="fa-solid fa-circle-check" style="color: var(--success);"></i> Carrinho limitado a 1 plano</span>
+                    <button type="button" class="btn-remove" onclick="selectSinglePlan(null)">
+                        <i class="fa-regular fa-trash-can"></i> Remover
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // ==========================================
+    // 4. UTILITÁRIOS DE CÓPIA E UPLOAD (IMAGEM OU PDF)
+    // ==========================================
+    function copyText(value, label) {
+        navigator.clipboard.writeText(value).then(() => {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: `${label} copiado!`,
+                showConfirmButton: false,
+                timer: 2200,
+                background: '#161926',
+                color: '#FFFFFF'
+            });
+        });
+    }
+
+    function copyCurrentAmount() {
+        if (!currentPlan) return;
+        copyText(String(currentPlan.price), `Valor ${currentPlan.price.toLocaleString('pt-AO')} Kz`);
+    }
+
+    function setupDropzone() {
+        const dropzone = document.getElementById('dropzone');
+        if (!dropzone) return;
+
+        ['dragenter', 'dragover'].forEach(evtName => {
+            dropzone.addEventListener(evtName, (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(evtName => {
+            dropzone.addEventListener(evtName, (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+            });
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                applyReceiptFile(files[0]);
+            }
+        });
+    }
+
+    function isPdfFile(file) {
+        return file && (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+    }
+
+    function isImageFile(file) {
+        return file && file.type.startsWith('image/');
+    }
+
+    function handleFileInput(event) {
+        const file = event.target.files[0];
+        if (file) {
+            applyReceiptFile(file);
+        }
+    }
+
+    function applyReceiptFile(file) {
+        if (!isImageFile(file) && !isPdfFile(file)) {
+            Swal.fire({
+                title: 'Formato inválido',
+                text: 'Envie o comprovativo em Imagem (JPG, PNG, WEBP) ou documento PDF.',
+                icon: 'warning',
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED'
+            });
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            Swal.fire({
+                title: 'Ficheiro muito grande',
+                text: 'O comprovativo deve ter no máximo 10 MB.',
+                icon: 'warning',
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED'
+            });
+            return;
+        }
+
+        selectedReceiptFile = file;
+        const previewCard = document.getElementById('uploadPreview');
+        const thumb = document.getElementById('previewThumb');
+        const pdfBadge = document.getElementById('previewPdfBadge');
+        const nameEl = document.getElementById('previewFileName');
+        const sizeEl = document.getElementById('previewFileSize');
+
+        nameEl.textContent = file.name;
+        const sizeKB = Math.max(1, Math.round(file.size / 1024));
+        const sizeLabel = sizeKB >= 1024 ? `${(sizeKB / 1024).toFixed(1)} MB` : `${sizeKB} KB`;
+
+        if (isPdfFile(file)) {
+            thumb.style.display = 'none';
+            thumb.src = '';
+            pdfBadge.style.display = 'flex';
+            sizeEl.textContent = `${sizeLabel} • PDF anexado`;
+            previewCard.classList.add('visible');
+        } else {
+            pdfBadge.style.display = 'none';
+            thumb.style.display = 'block';
+            sizeEl.textContent = `${sizeLabel} • Imagem anexada`;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                thumb.src = e.target.result;
+                previewCard.classList.add('visible');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function clearSelectedFile(e) {
+        if (e) e.stopPropagation();
+        selectedReceiptFile = null;
+        document.getElementById('custReceipt').value = '';
+        document.getElementById('uploadPreview').classList.remove('visible');
+        document.getElementById('previewThumb').src = '';
+        document.getElementById('previewPdfBadge').style.display = 'none';
+    }
+
+    // Fallback rápido para imagens (comprime via canvas em milissegundos)
+    function compressImageToDataUrl(file, maxWidth = 900, quality = 0.68) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const scale = Math.min(1, maxWidth / img.width);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = reject;
+                img.src = ev.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Fallback rápido para PDFs
+    function readPdfFallback(file) {
+        return new Promise((resolve) => {
+            // Limite de segurança do Firestore (~700 KB em base64 para não estourar 1MB do documento)
+            if (file.size > 700 * 1024) {
+                resolve(`pdf_anexado://${encodeURIComponent(file.name)} (${Math.round(file.size / 1024)}KB)`);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => resolve(ev.target.result);
+            reader.onerror = () => resolve(`pdf_anexado://${encodeURIComponent(file.name)}`);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Envia para o Firebase Storage com timeout rígido de 4 segundos; se demorar ou falhar, usa fallback imediato
+    async function uploadReceiptAsLink(file) {
+        const uploadTaskPromise = (async () => {
+            const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const ref = storage.ref(`receipts/${Date.now()}_${safeName}`);
+            const metadata = { contentType: file.type || (isPdfFile(file) ? 'application/pdf' : 'image/jpeg') };
+            const snap = await ref.put(file, metadata);
+            return await snap.ref.getDownloadURL();
+        })();
+
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Storage timeout (4s)')), 4000);
+        });
+
+        try {
+            return await Promise.race([uploadTaskPromise, timeoutPromise]);
+        } catch (storageErr) {
+            console.warn("Usando processamento rápido local para o comprovativo:", storageErr.message);
+            if (isPdfFile(file)) {
+                return await readPdfFallback(file);
+            }
+            return await compressImageToDataUrl(file);
+        }
+    }
+
+    // ==========================================
+    // 5. PROCESSAR CHECKOUT, CRIAR CONTA E ABRIR PAINEL
+    // ==========================================
+    async function processCheckout(e) {
+        e.preventDefault();
+
+        if (!currentPlan) {
+            Swal.fire({
+                title: 'Carrinho Vazio',
+                text: 'Selecione 1 plano antes de finalizar a sua assinatura.',
+                icon: 'warning',
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED'
+            });
+            return;
+        }
+
+        if (!selectedReceiptFile) {
+            Swal.fire({
+                title: 'Comprovativo Obrigatório',
+                text: 'Anexe o comprovativo de pagamento (Imagem ou PDF) para ativar a sua conta.',
+                icon: 'warning',
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED'
+            });
+            return;
+        }
+
+        const name = document.getElementById('custName').value.trim();
+        const email = document.getElementById('custEmail').value.trim().toLowerCase();
+        const phone = document.getElementById('custPhone').value.trim();
+        const methodLabel = 'Transferência IBAN / Express (BAI)';
+
+        const btn = document.getElementById('btnSubmit');
+        const btnLabel = document.getElementById('btnSubmitLabel');
+        btn.disabled = true;
+        btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando comprovativo...';
+
+        try {
+            // 1. Processar comprovativo (Imagem ou PDF) em poucos segundos
+            const receiptUrl = await uploadReceiptAsLink(selectedReceiptFile);
+
+            btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando conta automática...';
+
+            // 2. Criar conta automaticamente (Senha inicial = próprio e-mail)
+            let user = auth.currentUser;
+
+            if (!user || (user.email || '').toLowerCase() !== email) {
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, email);
+                    user = userCredential.user;
+                    await user.updateProfile({ displayName: name });
+                } catch (authErr) {
+                    if (authErr.code === 'auth/email-already-in-use') {
+                        try {
+                            const userCredential = await auth.signInWithEmailAndPassword(email, email);
+                            user = userCredential.user;
+                        } catch (signInErr) {
+                            const { value: userPassword } = await Swal.fire({
+                                title: 'Conta Já Cadastrada',
+                                text: `Digite a senha da conta ${email} para renovar ou atualizar o seu plano:`,
+                                input: 'password',
+                                inputPlaceholder: 'Sua senha atual',
+                                background: '#161926',
+                                color: '#FFFFFF',
+                                confirmButtonColor: '#7C3AED',
+                                showCancelButton: true,
+                                cancelButtonText: 'Cancelar'
+                            });
+
+                            if (!userPassword) {
+                                throw new Error('Autenticação cancelada. Faça login para renovar o plano.');
+                            }
+
+                            const userCredential = await auth.signInWithEmailAndPassword(email, userPassword);
+                            user = userCredential.user;
+                        }
+                    } else {
+                        throw authErr;
+                    }
+                }
+            }
+
+            btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Liberando seu painel...';
+
+            // 3. Calcular expiração conforme o plano selecionado
+            let expiresAt = null;
+            if (currentPlan.durationDays) {
+                const expDate = new Date();
+                expDate.setDate(expDate.getDate() + currentPlan.durationDays);
+                expiresAt = firebase.firestore.Timestamp.fromDate(expDate);
+            }
+
+            // Preserva papel de admin caso seja teste de administrador
+            const existingUserSnap = await db.collection('users').doc(user.uid).get();
+            const isAdmin = ADMIN_EMAILS.includes(email) || (existingUserSnap.exists && existingUserSnap.data().role === 'admin');
+
+            // 4. Registrar Usuário e Transação no Firestore
+            const userPayload = {
+                name: name,
+                email: email,
+                whatsapp: phone,
+                subscriptionPlan: currentPlan.name,
+                planId: currentPlan.id,
+                planPriceKz: currentPlan.price,
+                hasInstallLessons: currentPlan.hasInstallLessons,
+                expiresAt: expiresAt,
+                mustChangePassword: true,
+                role: isAdmin ? 'admin' : 'client',
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            if (!existingUserSnap.exists) {
+                userPayload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
+
+            await db.collection('users').doc(user.uid).set(userPayload, { merge: true });
+
+            await db.collection('transactions').add({
+                userId: user.uid,
+                customerName: name,
+                customerEmail: email,
+                customerWhatsapp: phone,
+                planId: currentPlan.id,
+                planName: currentPlan.name,
+                interestedPlugin: selectedPluginInterest || '',
+                amountKz: currentPlan.price,
+                paymentMethod: methodLabel,
+                receiptType: isPdfFile(selectedReceiptFile) ? 'pdf' : 'image',
+                hasInstallLessons: currentPlan.hasInstallLessons,
+                receiptUrl: receiptUrl,
+                status: 'completed',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // 5. Liberar produtos no Firestore para o cliente
+            try {
+                const pSnap = await db.collection('produtos').get();
+                if (!pSnap.empty) {
+                    const batch = db.batch();
+                    let count = 0;
+                    pSnap.forEach(pDoc => {
+                        if (count < 450) {
+                            const accessRef = db.collection('user_access').doc(`${email.replace(/[^a-z0-9]/gi, '_')}_${pDoc.id}`);
+                            batch.set(accessRef, {
+                                userEmail: email,
+                                productId: pDoc.id,
+                                productTitle: pDoc.data().titulo || 'Plugin',
+                                planId: currentPlan.id,
+                                hasInstallLessons: currentPlan.hasInstallLessons,
+                                status: 'unlocked',
+                                unlocked: true,
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            }, { merge: true });
+                            count++;
+                        }
+                    });
+                    await batch.commit();
+                }
+            } catch (accessErr) {
+                console.warn("Aviso ao sincronizar lista de produtos:", accessErr);
+            }
+
+            // Limpar carrinho após finalizar
+            localStorage.removeItem(CART_KEY);
+
+            // Exibe confirmação rápida e abre a conta automaticamente em cliente.html
+            await Swal.fire({
+                title: 'Conta Criada & Ativada!',
+                html: `Plano <strong>${currentPlan.name}</strong> liberado!<br><br>
+                       <strong>Login:</strong> ${email}<br>
+                       <strong>Senha inicial:</strong> ${email}<br>
+                       <small style="color:#94A3B8;display:block;margin-top:8px;">Você poderá alterar a sua senha dentro do painel. Abrindo a sua conta...</small>`,
+                icon: 'success',
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED',
+                confirmButtonText: 'Abrir Painel Agora',
+                timer: 2800,
+                timerProgressBar: true
+            });
+
+            window.location.href = 'cliente.html';
+
+        } catch (err) {
+            Swal.fire({
+                title: 'Não foi possível concluir',
+                text: err.message,
+                icon: 'error',
+                background: '#161926',
+                color: '#FFFFFF',
+                confirmButtonColor: '#7C3AED'
+            });
+            btn.disabled = false;
+            btnLabel.textContent = `Finalizar & Criar Conta • ${currentPlan.price.toLocaleString('pt-AO')} Kz`;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initCheckoutCart();
+        setupDropzone();
+    });
+</script>
+</body>
+</html>

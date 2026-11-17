@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>NPLUGINS | Assinatura de Plugins VST, DAWs e Livrarias (Mac & Windows)</title>
+    <meta name="description" content="Assine um plano na NPLUGINS a partir de 1.000 Kz e tenha acesso a Plugins VST, DAWs e Livrarias para Mac e Windows, com suporte em todos os planos e aulas de instalação.">
+    <meta name="keywords" content="nplugins, plugins vst, daw, livrarias kontakt, plugins mac e windows, fl studio, assinatura de plugins, angola">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://nplugins.online/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nplugins.online/">
+    <meta property="og:title" content="NPLUGINS | Plugins, DAWs e Livrarias para Mac & Windows">
+    <meta property="og:description" content="Acesso completo a Plugins VST, DAWs e Livrarias para Mac e Windows a partir de 1.000 Kz, com suporte incluso e aulas de instalação.">
+    <meta property="og:image" content="https://nplugins.online/assets/og-image.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://nplugins.online/">
+    <meta property="twitter:title" content="NPLUGINS | Plugins, DAWs e Livrarias para Mac & Windows">
+    <meta property="twitter:description" content="Acesso completo a Plugins VST, DAWs e Livrarias para Mac e Windows a partir de 1.000 Kz, com suporte incluso e aulas de instalação.">
+    <meta property="twitter:image" content="https://nplugins.online/assets/og-image.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "NPLUGINS",
+      "url": "https://nplugins.online",
+      "logo": "https://nplugins.online/assets/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "suporte@nplugins.online",
+        "contactType": "customer support"
+      }
+    }
+    </script>
+
+<style>
+        /* --- DESIGN SYSTEM & PALETA DE CORES --- */
+        :root {
+            --primary: #7C3AED;
+            --primary-glow: rgba(124, 58, 237, 0.25);
+            --primary-hover: #6D28D9;
+            --accent: #00F0FF;
+            --accent-glow: rgba(0, 240, 255, 0.2);
+            --dark-gray: #12131C;
+            --bg: #0A0B10;
+            --card-bg: #141622;
+            --white: #FFFFFF;
+            --text-secondary: #A0AEC0;
+            --glass-bg: rgba(20, 22, 34, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
+            --font-poppins: 'Poppins', sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.2s ease;
+        }
+
+        /* --- BASE STYLES --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: var(--font-poppins);
+            overflow-x: hidden;
+        }
+
+        body {
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition-fast);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        input, textarea, button {
+            font-family: inherit;
+            background: none;
+            border: none;
+            outline: none;
+        }
+
+        /* --- UTILITIES & LAYOUT --- */
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-padding {
+            padding: 6rem 0;
+        }
+
+        .text-center { text-align: center; }
+
+        .section-title {
+            font-family: var(--font-montserrat);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto 3rem auto;
+            font-weight: 300;
+        }
+
+        /* --- PREMIUM BUTTONS --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background-color: rgba(0, 240, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn-vip {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000000 !important;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .btn-vip:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 22px rgba(255, 215, 0, 0.4);
+        }
+
+        /* --- HEADER / NAVIGATION --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            padding: 1.5rem 0;
+        }
+
+        header.scrolled {
+            background-color: rgba(10, 11, 16, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: var(--font-montserrat);
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.15rem;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        .nav-link.btn-vip {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--white);
+        }
+
+        /* --- HERO BANNER --- */
+        .hero {
+            min-height: 92vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 140px 0 90px 0;
+            overflow: hidden;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70vw;
+            height: 45vw;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.22) 0%, rgba(0, 240, 255, 0.06) 45%, rgba(0, 0, 0, 0) 75%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10, 11, 16, 0.2) 0%, var(--bg) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero-centered-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-top-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.45rem 1.2rem;
+            border-radius: 50px;
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            color: #C4B5FD;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-bottom: 1.75rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.3); }
+        }
+
+        .hero-headline {
+            font-family: var(--font-montserrat);
+            font-size: 4.3rem;
+            line-height: 1.08;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+            max-width: 900px;
+        }
+
+        .hero-headline span {
+            background: linear-gradient(135deg, var(--accent) 20%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            margin: 0 auto 2.5rem auto;
+            font-weight: 300;
+            max-width: 680px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+        }
+
+        .hero-os-pills {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        .hero-os-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .hero-os-pill i {
+            color: var(--accent);
+        }
+
+        /* --- STATS SECTION --- */
+        .stats {
+            background-color: var(--dark-gray);
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-family: var(--font-montserrat);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* --- SEÇÃO DE PLANOS (1.000 KZ / 2.000 KZ / 5.000 KZ) --- */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            align-items: stretch;
+            margin-top: 2.5rem;
+        }
+
+        .pricing-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 22px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 25px var(--primary-glow);
+        }
+
+        .pricing-popular {
+            border: 2px solid var(--primary);
+            background: linear-gradient(180deg, rgba(124, 58, 237, 0.14) 0%, var(--card-bg) 100%);
+            box-shadow: 0 12px 35px var(--primary-glow);
+            transform: scale(1.03);
+        }
+
+        .pricing-popular:hover {
+            transform: scale(1.03) translateY(-8px);
+        }
+
+        .pricing-vip-card {
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.06) 0%, var(--card-bg) 100%);
+        }
+
+        .pricing-vip-card:hover {
+            border-color: #FFD700;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.18);
+        }
+
+        .popular-tag {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, #9333EA 100%);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.35rem 1.25rem;
+            border-radius: 50px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 14px var(--primary-glow);
+            white-space: nowrap;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 1.5rem;
+        }
+
+        .pricing-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-popular {
+            color: #C4B5FD;
+        }
+
+        .badge-vip {
+            color: #FFD700;
+        }
+
+        .pricing-header h3 {
+            font-family: var(--font-montserrat);
+            font-size: 1.55rem;
+            font-weight: 700;
+            margin-bottom: 0.9rem;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .pricing-price .amount {
+            font-family: var(--font-montserrat);
+            font-size: 2.9rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+        }
+
+        .pricing-price .currency {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .pricing-price .period {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-left: 0.3rem;
+        }
+
+        .pricing-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2.2rem;
+            flex-grow: 1;
+        }
+
+        .pricing-features li {
+            font-size: 0.94rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            line-height: 1.45;
+        }
+
+        .pricing-features li.included {
+            color: var(--white);
+        }
+
+        .pricing-features li i.fa-check {
+            color: #10B981;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .pricing-features li i.fa-xmark {
+            color: #EF4444;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .pricing-features li.disabled {
+            opacity: 0.45;
+            text-decoration: line-through;
+        }
+
+        .pricing-btn {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.98rem;
+            font-weight: 600;
+        }
+
+        /* --- CARROSSEL DE PLUGINS --- */
+        .featured-slider-container {
+            position: relative;
+            width: 100%;
+            padding: 1rem 0;
+        }
+
+        .featured-slider-track {
+            display: flex;
+            gap: 1.75rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 1rem 0.25rem 1.5rem 0.25rem;
+            scrollbar-width: none;
+        }
+
+        .featured-slider-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .featured-slider-track .product-card-premium {
+            flex: 0 0 calc(33.333% - 1.17rem);
+            min-width: calc(33.333% - 1.17rem);
+        }
+
+        @media(max-width: 992px) {
+            .featured-slider-track .product-card-premium {
+                flex: 0 0 calc(50% - 0.88rem);
+                min-width: calc(50% - 0.88rem);
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .pricing-popular {
+                transform: none;
+            }
+            .pricing-popular:hover {
+                transform: translateY(-8px);
+            }
+        }
+        @media(max-width: 650px) {
+            .featured-slider-track .product-card-premium {
+                flex: 0 0 100%;
+                min-width: 100%;
+            }
+        }
+
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(10, 11, 16, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition-fast);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .slider-arrow:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 18px var(--primary-glow);
+        }
+
+        .arrow-left { left: -12px; }
+        .arrow-right { right: -12px; }
+
+        /* --- FAQ ACCORDION --- */
+        .faq-container {
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            overflow: hidden;
+            transition: var(--transition-fast);
+        }
+
+        .faq-trigger {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            text-align: left;
+            font-family: var(--font-montserrat);
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .faq-icon {
+            transition: var(--transition-smooth);
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 0 2rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .faq-item.faq-open {
+            border-color: rgba(124, 58, 237, 0.4);
+        }
+
+        .faq-item.faq-open .faq-icon {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        .faq-item.faq-open .faq-content {
+            padding-bottom: 1.5rem;
+        }
+
+        /* --- CONTACT FORM --- */
+        .contact-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 3.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            background-color: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--white);
+            font-size: 0.95rem;
+            transition: var(--transition-fast);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
+        }
+
+        textarea.form-control {
+            resize: none;
+            height: 140px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #06070a;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 5rem 0 2rem 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 0.8fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            font-weight: 300;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .footer-links h7 {
+            display: block;
+            font-family: var(--font-montserrat);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
+        }
+
+        /* --- SCROLL TO TOP --- */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- CARDS PREMIUM (PLUGINS) --- */
+        .product-card-premium {
+            background: linear-gradient(145deg, #181a29 0%, #11121d 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+
+        .product-card-premium:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px var(--primary-glow);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background-color: #090909;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .product-card-premium:hover .card-img-wrapper img {
+            transform: scale(1.06);
+        }
+
+        .card-badge-vip {
+            position: absolute;
+            top: 1.1rem;
+            left: 1.1rem;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .os-badge {
+            position: absolute;
+            bottom: 1.1rem;
+            right: 1.1rem;
+            background: rgba(10, 11, 16, 0.85);
+            backdrop-filter: blur(6px);
+            color: var(--accent);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .card-details {
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-details h3 {
+            font-family: var(--font-montserrat);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.55rem;
+            color: var(--white);
+        }
+
+        .card-details p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            font-weight: 300;
+            line-height: 1.5;
+            margin-bottom: 1.4rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-plan-tag {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.9rem;
+            margin-bottom: 1.1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.82rem;
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .card-plan-tag span.tutorial-pill {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-size: 0.76rem;
+        }
+
+        .btn-card-subscribe {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #9333EA 100%);
+            color: var(--white);
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            box-shadow: 0 6px 18px var(--primary-glow);
+        }
+
+        .btn-card-subscribe:hover {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000000;
+            box-shadow: 0 8px 22px rgba(255, 215, 0, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            padding-top: 4rem;
+        }
+
+        .detail-plans-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .video-showcase {
+            margin-top: 3rem;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 16px;
+            background: #000;
+            border: 1px solid var(--glass-border);
+        }
+
+        .video-showcase iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .suggestion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* TOAST NOTIFICATIONS */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast-notification {
+            pointer-events: auto;
+            background: rgba(20, 22, 34, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 4px solid var(--primary);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            opacity: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 992px) {
+            .hero-headline { font-size: 3.2rem; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+            .detail-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
+
+        @media(max-width: 768px) {
+            .section-padding { padding: 4rem 0; }
+            .menu-toggle { display: block; }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 400px;
+                height: 100vh;
+                background-color: #12131C;
+                flex-direction: column;
+                justify-content: center;
+                gap: 2rem;
+                transition: var(--transition-smooth);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+
+            .nav-menu.open { right: 0; }
+            .hero { padding: 120px 0 70px 0; min-height: auto; }
+            .hero-headline { font-size: 2.5rem; letter-spacing: -1px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+            .arrow-left { left: 4px; }
+            .arrow-right { right: 4px; }
+        }
+</style>
+</head>
+<body oncontextmenu="return false;" onkeydown="if(event.keyCode==123 || (event.ctrlKey && event.shiftKey && (event.keyCode==73 || event.keyCode==74)) || (event.ctrlKey && (event.keyCode==85 || event.keyCode==83))) return false;">
+
+    <header id="header">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">N<span>PLUGINS</span></a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="#destaques" class="nav-link">Plugins & DAWs</a>
+                <a href="#planos" class="nav-link">Planos</a>
+                <a href="#como-comprar" class="nav-link">Como Funciona</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+                <a href="#contact" class="nav-link">Contato</a>
+                <a href="login.html" id="navAuthBtn" class="nav-link btn-vip">Login</a>
+            </nav>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+   <main id="mainContent">
+        <section class="hero">
+            <div class="container hero-centered-layout">
+                <div class="hero-top-badge reveal">
+                    <span class="hero-pulse-dot"></span>
+                    <span>NPLUGINS • Mac & Windows</span>
+                </div>
+
+                <h1 class="hero-headline reveal">Transforme Seus Beats Em <span>Hits Globais</span></h1>
+                
+                <p class="hero-subtitle reveal">Equipe seu estúdio com os melhores Plugins VST, DAWs e Livrarias para Mac e Windows. Escolha o seu plano na NPLUGINS, envie o comprovativo e acesse o nosso painel exclusivo.</p>
+                
+                <div class="hero-buttons reveal">
+                    <a href="#planos" class="btn btn-vip">
+                        <i class="fa-solid fa-crown"></i> Ver Planos a partir de 1.000 Kz
+                    </a>
+                    <a href="#destaques" class="btn btn-secondary">
+                        Explorar Plugins <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+                </div>
+
+                <div class="hero-os-pills reveal">
+                    <span class="hero-os-pill"><i class="fa-brands fa-windows"></i> <i class="fa-brands fa-apple"></i> Mac & Windows</span>
+                    <span class="hero-os-pill"><i class="fa-solid fa-headset"></i> Suporte em Todos os Planos</span>
+                    <span class="hero-os-pill"><i class="fa-solid fa-video"></i> Aula de Instalação (Planos 2.000 Kz e 5.000 Kz)</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="container stats-grid">
+                <div class="stat-item">
+                    <h3 class="counter" data-target="8500">0</h3>
+                    <p>Produtores Assinantes</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-target="150">0</h3>
+                    <p>Plugins, DAWs & Livrarias</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-target="24000">0</h3>
+                    <p>Downloads Realizados</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-target="5">0</h3>
+                    <p>Estrelas em Avaliações</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CARROSSEL DE PLUGINS, DAWS E LIVRARIAS -->
+        <section id="destaques" class="section-padding" style="position: relative;">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Plugins, DAWs & Livrarias Disponíveis</h2>
+                    <p class="section-subtitle">Navegue pelo nosso acervo. Assine qualquer um dos nossos planos para liberar o download completo no seu painel.</p>
+                </div>
+                
+                <div class="featured-slider-container">
+                    <button class="slider-arrow arrow-left" id="featuredPrevBtn" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="featured-slider-track" id="featuredSliderTrack">
+                        <!-- Cards carregados automaticamente do Firebase bd-nplugins -->
+                    </div>
+                    <button class="slider-arrow arrow-right" id="featuredNextBtn" aria-label="Próximo"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO DE PLANOS (1.000 KZ, 2.000 KZ E 5.000 KZ) -->
+        <section id="planos" class="section-padding" style="background-color: var(--dark-gray); border-top: 1px solid rgba(255, 255, 255, 0.03);">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Escolha o Seu Plano de Acesso</h2>
+                    <p class="section-subtitle">Todos os planos dão acesso aos Plugins, DAWs e Livrarias para Mac e Windows com suporte incluído.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <!-- Plano 1 Mês: 1.000 Kz -->
+                    <div class="pricing-card reveal">
+                        <div class="pricing-header">
+                            <span class="pricing-badge">Mensal • 30 Dias</span>
+                            <h3>Acesso 1 Mês</h3>
+                            <div class="pricing-price">
+                                <span class="amount">1.000</span>
+                                <span class="currency">Kz</span>
+                                <span class="period">/ mês</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="included"><i class="fa-solid fa-check"></i> Acesso total a Plugins, DAWs e Livrarias por 30 dias</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Compatível com Mac e Windows</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Acesso ao Painel do Cliente</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Direito a Suporte via WhatsApp</li>
+                            <li class="disabled"><i class="fa-solid fa-xmark"></i> Aula de instalação dos plugins</li>
+                        </ul>
+                        <button class="btn btn-secondary pricing-btn" onclick="assinarPlano('Acesso 1 Mês', 1000)">
+                            Assinar Agora
+                        </button>
+                    </div>
+
+                    <!-- Plano 2 Meses: 2.000 Kz -->
+                    <div class="pricing-card pricing-popular reveal">
+                        <div class="popular-tag"><i class="fa-solid fa-fire"></i> Mais Escolhido</div>
+                        <div class="pricing-header">
+                            <span class="pricing-badge badge-popular">Bimestral • 60 Dias</span>
+                            <h3>Acesso 2 Meses</h3>
+                            <div class="pricing-price">
+                                <span class="amount">2.000</span>
+                                <span class="currency">Kz</span>
+                                <span class="period">/ 2 meses</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="included"><i class="fa-solid fa-check"></i> Acesso ilimitado a Plugins, DAWs e Livrarias por 60 dias</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Compatível com Mac e Windows</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Acesso ao Painel do Cliente</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> <strong>Direito a Aula de Instalação dos Plugins</strong></li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Direito a Suporte prioritário via WhatsApp</li>
+                        </ul>
+                        <button class="btn btn-primary pricing-btn" onclick="assinarPlano('Acesso 2 Meses', 2000)">
+                            Assinar Agora
+                        </button>
+                    </div>
+
+                    <!-- Plano Vitalício: 5.000 Kz -->
+                    <div class="pricing-card pricing-vip-card reveal">
+                        <div class="pricing-header">
+                            <span class="pricing-badge badge-vip">VIP • Sem Mensalidades</span>
+                            <h3>Acesso Vitalício</h3>
+                            <div class="pricing-price">
+                                <span class="amount">5.000</span>
+                                <span class="currency">Kz</span>
+                                <span class="period">/ para sempre</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="included"><i class="fa-solid fa-check"></i> Acesso permanente a Plugins, DAWs e Livrarias</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Compatível com Mac e Windows</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Novos plugins e atualizações futuras grátis</li>
+                            <li class="included"><i class="fa-solid fa-check"></i> <strong>Direito a Aula de Instalação dos Plugins</strong></li>
+                            <li class="included"><i class="fa-solid fa-check"></i> Direito a Suporte VIP via WhatsApp</li>
+                        </ul>
+                        <button class="btn btn-vip pricing-btn" onclick="assinarPlano('Acesso Vitalício', 5000)">
+                            <i class="fa-solid fa-crown"></i> Garantir Vitalício
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO COMO FUNCIONA -->
+        <section id="como-comprar" class="section-padding" style="background-color: var(--bg); border-top: 1px solid rgba(255,255,255,0.03);">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Como Funciona a Assinatura</h2>
+                    <p class="section-subtitle">Escolha o plano ideal (1.000 Kz, 2.000 Kz ou 5.000 Kz), envie o comprovativo e acesse o seu painel exclusivo na NPLUGINS.</p>
+                </div>
+                <div class="video-showcase reveal" style="max-width: 850px; margin: 0 auto;">
+                    <iframe src="https://www.youtube.com/embed/Qp3CxBQITig" title="Como Assinar o Plano e Acessar o Painel NPLUGINS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SOBRE O SITE DE PLUGINS, PAGAMENTO E PAINEL -->
+        <section id="faq" class="section-padding" style="background-color: var(--dark-gray); border-top: 1px solid rgba(255,255,255,0.03);">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Perguntas Frequentes</h2>
+                    <p class="section-subtitle">
+                        Tire todas as suas dúvidas sobre os planos da NPLUGINS, envio do comprovativo, suporte e aulas de instalação.
+                    </p>
+                </div>
+
+                <div class="faq-container">
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Como funciona a assinatura e a criação da minha conta na NPLUGINS?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Escolha um dos nossos planos — <strong>1.000 Kz (1 Mês)</strong>, <strong>2.000 Kz (2 Meses)</strong> ou <strong>5.000 Kz (Vitalício)</strong> — efetue a transferência no Checkout e envie o comprovativo (Imagem ou PDF). A sua conta é criada e aberta automaticamente com o seu e-mail como login e senha inicial.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Quais planos têm direito a suporte e aula de instalação dos plugins?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                <strong>Todos os planos</strong> (1.000 Kz, 2.000 Kz e 5.000 Kz) têm direito a suporte via WhatsApp e chat interno. Além disso, os pacotes de <strong>2.000 Kz (Acesso 2 Meses)</strong> e <strong>5.000 Kz (Acesso Vitalício)</strong> dão direito às <strong>aulas completas de instalação dos plugins</strong> dentro do painel.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Onde vou baixar os Plugins, DAWs e Livrarias após o pagamento?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Após anexar o comprovativo no checkout, o seu <strong>Painel do Cliente</strong> em <strong>nplugins.online</strong> é aberto automaticamente, organizado por categorias (Plugins, DAWs, Livrarias, Mac, Windows e Aulas) para baixar tudo rapidamente.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Os Plugins, DAWs e Livrarias funcionam em Mac e Windows?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Sim! O nosso catálogo disponibiliza instaladores dedicados tanto para <strong>Windows</strong> quanto para <strong>macOS</strong>, cobrindo os principais Plugins VST/AU, DAWs completas e Livrarias de instrumentos usados na produção musical profissional.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item reveal">
+                        <button class="faq-trigger">
+                            Como envio o comprovativo de pagamento?
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>
+                                Ao selecionar o plano desejado e avançar para o <strong>Checkout</strong>, você preenche os seus dados de acesso e anexa o comprovativo em <strong>Imagem ou PDF</strong> diretamente na página. Caso precise de ajuda, contacte o suporte pelo WhatsApp <strong>+244 924 034 159</strong> ou e-mail <strong>suporte@nplugins.online</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section-padding" style="background-color: var(--bg);">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-title">Fale Conosco</h2>
+                    <p class="section-subtitle">
+                        Dúvidas sobre os planos, envio de comprovativo ou suporte técnico? Envie uma mensagem ou escreva para suporte@nplugins.online.
+                    </p>
+                </div>
+
+                <div class="contact-container reveal">
+                    <form id="contactForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="name" class="form-control" placeholder="Ex: João Silva" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Telefone / WhatsApp</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="+244 9xx xxx xxx" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid" style="grid-template-columns:1fr;">
+                            <div class="form-group">
+                                <label>E-mail</label>
+                                <input type="email" id="email" class="form-control" placeholder="email@exemplo.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mensagem</label>
+                                <textarea id="message" class="form-control" rows="6" placeholder="Escreva a sua mensagem..." required></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">
+                            <i class="fa-brands fa-whatsapp"></i> Enviar pelo WhatsApp
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">N<span>PLUGINS</span></a>
+                <p>Plataforma oficial de assinatura de Plugins VST, DAWs e Livrarias para Mac e Windows. Equipando produtores musicais em Angola com ferramentas de alto nível.</p>
+                <div class="footer-socials">
+                    <a href="https://nplugins.online" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://nplugins.online" class="social-icon" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://nplugins.online" class="social-icon" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://wa.me/244924034159" class="social-icon" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+                <p style="margin-top:1rem;">Email: suporte@nplugins.online</p>
+                <p>Contacto: +244 924 034 159</p>
+            </div>
+            <div class="footer-links">
+                <h7>Navegação</h7>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#destaques">Plugins & DAWs</a></li>
+                    <li><a href="#planos">Planos de Acesso</a></li>
+                    <li><a href="#faq">Perguntas Frequentes</a></li>
+                    <li><a href="login.html">Área do Cliente / Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h7>Planos Disponíveis</h7>
+                <ul>
+                    <li><a href="#planos">1 Mês — 1.000 Kz</a></li>
+                    <li><a href="#planos">2 Meses — 2.000 Kz (+ Aulas)</a></li>
+                    <li><a href="#planos">Vitalício — 5.000 Kz (+ Aulas)</a></li>
+                    <li><a href="#destaques">Plugins Mac & Windows</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h7>Acesso & Suporte</h7>
+                <p style="font-size:0.85rem; color:var(--text-secondary); font-weight:300; margin-bottom:1rem;">Ativação imediata após envio do comprovativo de pagamento em Kwanzas (AKZ). Suporte dedicado em todos os planos.</p>
+                <div style="display:flex; gap:0.8rem; font-size:1.5rem; color:rgba(255,255,255,0.3);">
+                    <i class="fa-brands fa-windows" title="Windows"></i>
+                    <i class="fa-brands fa-apple" title="macOS"></i>
+                    <i class="fa-solid fa-shield-halved" title="Verificado"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 NPLUGINS (nplugins.online). Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <div class="scroll-top" id="scrollTopBtn">
+        <i class="fa-solid fa-arrow-up"></i>
+    </div>
+
+<!-- SDKs do Firebase (Projeto bd-nplugins) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+    // ==========================================
+    // 1. CONFIGURAÇÃO DO FIREBASE (PROJETO bd-nplugins)
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
+        authDomain: "bd-nplugins.firebaseapp.com",
+        projectId: "bd-nplugins",
+        storageBucket: "bd-nplugins.firebasestorage.app",
+        messagingSenderId: "946055919532",
+        appId: "1:946055919532:web:a51efb8c7540b12b18ec09",
+        measurementId: "G-G4SNHNND2Q"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    const ADMIN_EMAILS = [
+        "joseeduardoloneke2023@gmail.com",
+        "suporte@lonekenobeat.com",
+        "admin@nplugins.online"
+    ];
+
+    let produtos = [];
+    let pluginSelecionado = '';
+
+    // Atualiza o botão Login do topo caso o usuário já esteja autenticado
+    auth.onAuthStateChanged(async (user) => {
+        const navBtn = document.getElementById("navAuthBtn");
+        if (!navBtn) return;
+
+        if (user) {
+            const emailLower = (user.email || "").toLowerCase();
+            let isAdmin = ADMIN_EMAILS.includes(emailLower);
+            try {
+                const snap = await db.collection("users").doc(user.uid).get();
+                if (snap.exists && snap.data().role === "admin") isAdmin = true;
+            } catch (_) {}
+
+            navBtn.href = isAdmin ? "admin.html" : "cliente.html";
+            navBtn.innerHTML = `<i class="fa-solid fa-crown"></i> ${isAdmin ? "Painel Admin" : "Meu Painel"}`;
+        } else {
+            navBtn.href = "login.html";
+            navBtn.textContent = "Login";
+        }
+    });
+
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function formatCategoriaLabel(catRaw) {
+        const key = String(catRaw || '').trim().toLowerCase();
+        const labels = {
+            'daw': 'DAW',
+            'livrarias': 'Livrarias',
+            'mix e master vst': 'Mix e Master VST',
+            'instrumentos vsti': 'Instrumentos VSTi'
+        };
+        return labels[key] || catRaw || 'Plugin VST';
+    }
+
+    function formatOsBadgeHtml(sysRaw) {
+        const key = String(sysRaw || 'both').trim().toLowerCase();
+        if (key === 'windows') {
+            return `<i class="fa-brands fa-windows"></i> Windows`;
+        }
+        if (key === 'mac') {
+            return `<i class="fa-brands fa-apple"></i> macOS`;
+        }
+        return `<i class="fa-brands fa-windows"></i> <i class="fa-brands fa-apple"></i> Mac & Win`;
+    }
+
+    // ==========================================
+    // 2. BUSCAR PLUGINS / PRODUTOS DO FIRESTORE
+    // ==========================================
+    async function carregarProdutosDoFirebase() {
+        try {
+            const snapshot = await db.collection("produtos").get();
+            produtos = snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    titulo: data.titulo || 'Produto NPLUGINS',
+                    descricao: data.descricao || 'Produto profissional NPLUGINS pronto para instalação.',
+                    categoria: formatCategoriaLabel(data.categoria),
+                    sistema: data.sistema || 'both',
+                    imagem: data.imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
+                    vendas: Number(data.vendas) || 0,
+                    video: data.video || ''
+                };
+            });
+
+            iniciarPagina();
+        } catch (error) {
+            console.error("Erro ao carregar plugins do Firebase:", error);
+            showToast("Erro ao carregar catálogo de plugins.", "fa-triangle-exclamation");
+        }
+    }
+
+    // ==========================================
+    // 3. INICIALIZAÇÃO DA PÁGINA
+    // ==========================================
+    document.addEventListener("DOMContentLoaded", () => {
+        initHeaderScroll();
+        initMobileMenu();
+        initStatsCounters();
+        initFaqAccordion();
+        initScrollReveal();
+        initScrollTop();
+
+        carregarProdutosDoFirebase();
+    });
+
+    function iniciarPagina() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (productId) {
+            renderProductDetailPage(productId);
+        } else {
+            renderPluginsCarousel();
+        }
+    }
+
+    // ==========================================
+    // 4. SELEÇÃO DE PLUGIN E ASSINATURA DOS PLANOS
+    // ==========================================
+    function selecionarPluginParaPlano(tituloPlugin) {
+        pluginSelecionado = tituloPlugin;
+        const secaoPlanos = document.getElementById("planos");
+        if (secaoPlanos) {
+            secaoPlanos.scrollIntoView({ behavior: "smooth" });
+        }
+        showToast(`Escolha um plano abaixo para liberar "${tituloPlugin}"`, 'fa-crown');
+    }
+
+    function assinarPlano(nomePlano, preco) {
+        let planId = 'mensal';
+        if (preco === 2000) planId = 'bimestral';
+        if (preco === 5000) planId = 'vitalicio';
+
+        localStorage.setItem('nplugins_single_plan_cart', JSON.stringify({
+            id: planId,
+            plugin: pluginSelecionado || ''
+        }));
+
+        showToast(`Adicionando ${nomePlano} ao checkout...`, 'fa-cart-shopping');
+        setTimeout(() => {
+            window.location.href = `checkout.html?planId=${planId}&plan=${encodeURIComponent(nomePlano)}&price=${preco}`;
+        }, 450);
+    }
+
+    function getYouTubeEmbedUrl(url) {
+        if (!url) return '';
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+
+        if (match && match[2].length === 11) {
+            const videoId = match[2];
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+        return url;
+    }
+
+    function showToast(message, icon = "fa-circle-check") {
+        let container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.innerHTML = `<i class="fa-solid ${icon}" style="color: var(--primary); font-size: 1.1rem;"></i> <span>${escapeHtml(message)}</span>`;
+        container.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 50);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3500);
+    }
+
+    // ==========================================
+    // 5. CARDS DO CARROSSEL COM BOTÃO "ASSINAR O PLANO"
+    // ==========================================
+    function createPluginCardHTML(prod) {
+        const tituloEsc = escapeHtml(prod.titulo);
+        const tituloJs = JSON.stringify(prod.titulo).replace(/"/g, '&quot;');
+        const descEsc = escapeHtml(prod.descricao);
+        const catEsc = escapeHtml(prod.categoria);
+        const imgEsc = escapeHtml(prod.imagem);
+        const idJs = JSON.stringify(prod.id).replace(/"/g, '&quot;');
+
+        return `
+            <article class="product-card-premium reveal active" onclick="goToProductDetail(${idJs})">
+                <div class="card-img-wrapper">
+                    <img src="${imgEsc}" alt="${tituloEsc}" loading="lazy">
+                    <span class="card-badge-vip">${catEsc}</span>
+                    <span class="os-badge">${formatOsBadgeHtml(prod.sistema)}</span>
+                </div>
+                <div class="card-details">
+                    <h3>${tituloEsc}</h3>
+                    <p>${descEsc}</p>
+
+                    <div class="card-plan-tag">
+                        <span><i class="fa-solid fa-crown"></i> Desde 1.000 Kz</span>
+                        <span class="tutorial-pill"><i class="fa-solid fa-headset"></i> Suporte Incluso</span>
+                    </div>
+
+                    <button class="btn-card-subscribe" onclick="event.stopPropagation(); selecionarPluginParaPlano(${tituloJs})">
+                        <i class="fa-solid fa-crown"></i> Assinar o Plano
+                    </button>
+                </div>
+            </article>
+        `;
+    }
+
+    function goToProductDetail(id) {
+        window.location.search = `?id=${encodeURIComponent(id)}`;
+    }
+
+    function renderPluginsCarousel() {
+        const track = document.getElementById("featuredSliderTrack");
+        if (!track) return;
+
+        if (produtos.length === 0) {
+            track.innerHTML = `
+                <div style="width:100%; text-align:center; padding:3rem 1.5rem; background:var(--card-bg); border:1px solid var(--glass-border); border-radius:20px; color:var(--text-secondary);">
+                    <i class="fa-solid fa-boxes-stacked" style="font-size:2rem; color:var(--primary); margin-bottom:0.8rem;"></i>
+                    <p>Novos Plugins, DAWs e Livrarias estão a ser adicionados ao catálogo.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const listaPlugins = [...produtos].sort((a, b) => (b.vendas || 0) - (a.vendas || 0));
+        track.innerHTML = listaPlugins.map(prod => createPluginCardHTML(prod)).join('');
+
+        const prevBtn = document.getElementById("featuredPrevBtn");
+        const nextBtn = document.getElementById("featuredNextBtn");
+
+        const getStep = () => {
+            const firstCard = track.firstElementChild;
+            return firstCard ? firstCard.getBoundingClientRect().width + 28 : 340;
+        };
+
+        if (nextBtn) {
+            nextBtn.onclick = (e) => {
+                e.preventDefault();
+                if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 10) {
+                    track.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    track.scrollBy({ left: getStep(), behavior: 'smooth' });
+                }
+            };
+        }
+
+        if (prevBtn) {
+            prevBtn.onclick = (e) => {
+                e.preventDefault();
+                if (track.scrollLeft <= 10) {
+                    track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+                } else {
+                    track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+                }
+            };
+        }
+    }
+
+    // ==========================================
+    // 6. PÁGINA DE DETALHE DO PLUGIN
+    // ==========================================
+    function renderProductDetailPage(id) {
+        const main = document.getElementById("mainContent");
+        const prod = produtos.find(p => String(p.id) === String(id));
+
+        if (!prod) {
+            main.innerHTML = `<div class="container section-padding text-center" style="padding-top: 140px;"><h2>Plugin não encontrado</h2><a href="index.html" class="btn btn-primary" style="margin-top: 1.5rem;">Voltar à Home</a></div>`;
+            return;
+        }
+
+        pluginSelecionado = prod.titulo;
+        const sugestoes = produtos.filter(p => String(p.id) !== String(prod.id)).slice(0, 6);
+        const sysLabel = String(prod.sistema).toLowerCase() === 'windows' ? 'Windows' : (String(prod.sistema).toLowerCase() === 'mac' ? 'macOS' : 'Mac & Windows');
+
+        main.innerHTML = `
+            <section class="section-padding" style="padding-top: 120px;">
+                <div class="container">
+                    <a href="index.html" style="color: var(--primary); display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; font-weight: 600;">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar para a Página Inicial
+                    </a>
+                    
+                    <div class="detail-grid">
+                        <div style="border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative;">
+                            <img src="${escapeHtml(prod.imagem)}" alt="${escapeHtml(prod.titulo)}" style="width:100%; height:auto; object-fit:cover;">
+                        </div>
+                        <div>
+                            <span style="color: var(--accent); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 0.9rem;">
+                                ${escapeHtml(prod.categoria)} • ${sysLabel}
+                            </span>
+                            <h1 style="font-family: var(--font-montserrat); font-size: 2.6rem; font-weight: 700; line-height: 1.2; margin: 0.5rem 0 1.2rem 0;">${escapeHtml(prod.titulo)}</h1>
+                            <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7; font-weight: 300; margin-bottom: 1.8rem;">${escapeHtml(prod.descricao)}</p>
+
+                            <div style="background: rgba(124, 58, 237, 0.08); padding: 1.8rem; border-radius: 16px; border: 1px solid rgba(124, 58, 237, 0.35); margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.9rem;">
+                                <span style="color: var(--white); font-weight: 600; font-size: 1rem;">Escolha o seu plano NPLUGINS para liberar este item:</span>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-headset" style="color: var(--accent);"></i> Todos os planos incluem suporte. Planos de 2.000 Kz e 5.000 Kz incluem aula de instalação.</span>
+                                
+                                <div class="detail-plans-box">
+                                    <button class="btn btn-secondary" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso 1 Mês', 1000)">
+                                        <span>Acesso 1 Mês (Suporte)</span>
+                                        <strong style="color: #FFD700;">1.000 Kz</strong>
+                                    </button>
+                                    <button class="btn btn-primary" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso 2 Meses', 2000)">
+                                        <span>Acesso 2 Meses (+ Aula de Instalação)</span>
+                                        <strong style="color: #FFD700;">2.000 Kz</strong>
+                                    </button>
+                                    <button class="btn btn-vip" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso Vitalício', 5000)">
+                                        <span><i class="fa-solid fa-crown"></i> Acesso Vitalício (+ Aula de Instalação)</span>
+                                        <strong>5.000 Kz</strong>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${prod.video ? `
+                    <div style="margin-top: 5rem;">
+                        <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Demonstração</h2>
+                        <div class="video-showcase">
+                            <iframe src="${escapeHtml(getYouTubeEmbedUrl(prod.video))}" title="Demonstração" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    ${sugestoes.length > 0 ? `
+                    <div style="margin-top: 6rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
+                        <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Também disponíveis na NPLUGINS:</h2>
+                        <div class="suggestion-grid">
+                            ${sugestoes.map(item => createPluginCardHTML(item)).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            </section>
+        `;
+        window.scrollTo({ top: 0 });
+    }
+
+    function initHeaderScroll() {
+        const header = document.getElementById("header");
+        if (!header) return;
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 50) header.classList.add("scrolled");
+            else header.classList.remove("scrolled");
+        });
+    }
+
+    function initMobileMenu() {
+        const menuToggle = document.getElementById("menuToggle");
+        const navMenu = document.getElementById("navMenu");
+        if(!menuToggle || !navMenu) return;
+        
+        menuToggle.addEventListener("click", () => {
+            navMenu.classList.toggle("open");
+            const icon = menuToggle.querySelector("i");
+            if(navMenu.classList.contains("open")) {
+                icon.classList.replace("fa-bars", "fa-xmark");
+            } else {
+                icon.classList.replace("fa-xmark", "fa-bars");
+            }
+        });
+
+        navMenu.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                navMenu.classList.remove("open");
+                const icon = menuToggle.querySelector("i");
+                if (icon) icon.classList.replace("fa-xmark", "fa-bars");
+            });
+        });
+    }
+
+    function initStatsCounters() {
+        const counters = document.querySelectorAll(".counter");
+        const speed = 150;
+
+        const startCount = (counter) => {
+            const target = parseInt(counter.getAttribute("data-target"));
+            let count = 0;
+            const increment = Math.ceil(target / speed);
+
+            const updateCount = () => {
+                count += increment;
+                if (count < target) {
+                    counter.innerText = count.toLocaleString('pt-BR') + (target === 5 ? "" : "+");
+                    setTimeout(updateCount, 15);
+                } else {
+                    counter.innerText = target.toLocaleString('pt-BR') + (target === 5 ? "" : "+");
+                }
+            };
+            updateCount();
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    startCount(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => observer.observe(counter));
+    }
+
+    function initFaqAccordion() {
+        const triggers = document.querySelectorAll(".faq-trigger");
+        triggers.forEach(trigger => {
+            trigger.addEventListener("click", () => {
+                const item = trigger.parentElement;
+                const content = item.querySelector(".faq-content");
+                const isOpen = item.classList.contains("faq-open");
+                
+                document.querySelectorAll(".faq-item").forEach(i => {
+                    i.classList.remove("faq-open");
+                    i.querySelector(".faq-content").style.maxHeight = null;
+                });
+
+                if (isOpen) {
+                    item.classList.remove("faq-open");
+                    content.style.maxHeight = null;
+                } else {
+                    item.classList.add("faq-open");
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+    }
+
+    function initScrollReveal() {
+        const reveals = document.querySelectorAll(".reveal");
+        const revealOnScroll = () => {
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add("active");
+                }
+            });
+        };
+        window.addEventListener("scroll", revealOnScroll);
+        revealOnScroll();
+    }
+
+    function initScrollTop() {
+        const btn = document.getElementById("scrollTopBtn");
+        if(!btn) return;
+        window.addEventListener("scroll", () => {
+            if(window.scrollY > 600) btn.classList.add("show");
+            else btn.classList.remove("show");
+        });
+        btn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const contactForm = document.getElementById("contactForm");
+        if (contactForm) {
+            contactForm.addEventListener("submit", function(e){
+                e.preventDefault();
+
+                showToast('Processando mensagem do formulário...', 'fa-spinner');
+
+                const nome = document.getElementById("name").value;
+                const telefone = document.getElementById("phone").value;
+                const email = document.getElementById("email").value;
+                const mensagem = document.getElementById("message").value;
+
+                const texto =
+`*📩 NOVO CONTACTO PELO SITE (NPLUGINS)*
+
+👤 *Nome:*
+${nome}
+
+📞 *Telefone:*
+${telefone}
+
+📧 *Email:*
+${email}
+
+💬 *Mensagem:*
+${mensagem}`;
+
+                const numero = "244924034159";
+                const url = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+
+                setTimeout(() => {
+                    window.open(url, "_blank");
+                }, 800);
+            });
+        }
+    });
+</script>
+</body>
+</html>

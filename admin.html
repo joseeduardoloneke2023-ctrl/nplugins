@@ -1,0 +1,2695 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | NPLUGINS</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://nplugins.online/admin.html">
+
+    <!-- Fontes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Firebase SDK Compat v10.8.0 (Plano Gratuito: Auth + Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-hover: #6D28D9;
+            --primary-soft: rgba(124, 58, 237, 0.14);
+
+            --success: #10B981;
+            --success-soft: rgba(16, 185, 129, 0.14);
+            --warning: #F59E0B;
+            --warning-soft: rgba(245, 158, 11, 0.14);
+            --danger: #EF4444;
+            --danger-soft: rgba(239, 68, 68, 0.14);
+            --info: #38BDF8;
+            --info-soft: rgba(56, 189, 248, 0.14);
+
+            --bg-body: #0d0d12;
+            --bg-sidebar: #12121a;
+            --bg-card: #181824;
+            --bg-card-hover: #1f1f2e;
+            --bg-input: #12121a;
+            --border-color: rgba(255, 255, 255, 0.08);
+
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --sidebar-width: 265px;
+            --nav-height: 68px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.22s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button, input, select, textarea { font-family: inherit; }
+
+        /* PRELOADER */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: #09090d;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .loader-brand span { color: var(--primary); }
+        .loader-bar {
+            width: 180px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .loader-progress {
+            width: 65%;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            animation: loadSlide 1s infinite ease-in-out alternate;
+        }
+        @keyframes loadSlide {
+            from { transform: translateX(-20%); }
+            to { transform: translateX(75%); }
+        }
+
+        /* TOAST NOTIFICATIONS */
+        #toast-container {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            min-width: 270px;
+            max-width: 380px;
+            background: #181824;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 13px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+            animation: toastIn 0.25s ease forwards;
+        }
+        @keyframes toastIn {
+            from { transform: translateX(110%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-icon { font-size: 1.15rem; margin-top: 2px; }
+        .toast-success .toast-icon { color: var(--success); }
+        .toast-info .toast-icon { color: var(--info); }
+        .toast-warning .toast-icon { color: var(--warning); }
+        .toast-title { font-weight: 700; font-size: 0.86rem; margin-bottom: 2px; }
+        .toast-msg { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* LAYOUT */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* SIDEBAR */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            padding: 20px 14px 0 14px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px 18px 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        .brand-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-logo i { color: var(--primary); }
+        .brand-logo span { color: var(--primary); }
+
+        .sidebar-scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+
+        .user-profile-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--primary-soft);
+            border: 1.5px solid var(--primary);
+            color: #FFF;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .menu-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin: 0.85rem 0 0.5rem 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            color: var(--text-muted);
+            font-size: 0.87rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 4px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .menu-item i {
+            font-size: 0.98rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active {
+            color: var(--text-main);
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.25) 0%, rgba(124, 58, 237, 0.04) 100%);
+            border-left: 3px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-item.active i {
+            color: var(--primary);
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 50px;
+            background: var(--warning);
+            color: #09090d;
+            display: none;
+        }
+
+        .sidebar-fixed-bottom {
+            padding: 12px 0 18px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* TOP NAVBAR */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            height: var(--nav-height);
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            transition: var(--transition);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #FFF;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 13px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            background: var(--success-soft);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .icon-btn:hover { background: rgba(255, 255, 255, 0.12); }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--nav-height);
+            padding: 2rem;
+            width: calc(100% - var(--sidebar-width));
+            min-height: calc(100vh - var(--nav-height));
+        }
+
+        .panel-view {
+            display: none;
+            max-width: 1520px;
+            margin: 0 auto;
+        }
+        .panel-view.active {
+            display: block;
+            animation: fadeIn 0.22s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .view-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .view-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        .view-subtitle {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.15rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .kpi-label {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 3px;
+        }
+
+        .kpi-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #FFF;
+        }
+
+        /* RECEITA POR ASSINATURA (3 PLANOS) */
+        .plans-revenue-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.15rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-rev-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.35rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .plan-rev-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .plan-rev-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .plan-rev-amount {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        .plan-rev-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* TABELAS LIMPAS */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 1.75rem;
+        }
+
+        .section-card-header {
+            padding: 1.15rem 1.4rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .clean-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .clean-table th {
+            padding: 13px 16px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .clean-table td {
+            padding: 13px 16px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            vertical-align: middle;
+        }
+
+        .clean-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .clean-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* BADGES & BOTÕES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .badge-success { background: var(--success-soft); color: var(--success); }
+        .badge-warning { background: var(--warning-soft); color: var(--warning); }
+        .badge-danger { background: var(--danger-soft); color: var(--danger); }
+        .badge-primary { background: var(--primary-soft); color: #C4B5FD; }
+        .badge-info { background: var(--info-soft); color: var(--info); }
+
+        .btn-action {
+            padding: 9px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+        .btn-sm {
+            padding: 6px 11px;
+            font-size: 0.76rem;
+            border-radius: var(--radius-sm);
+        }
+        .btn-primary { background: var(--primary); color: #FFF; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.06); color: #FFF; border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
+        .btn-success { background: var(--success-soft); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .btn-success:hover { background: var(--success); color: #09090d; }
+        .btn-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: var(--danger); color: #FFF; }
+        .btn-info { background: var(--info-soft); color: var(--info); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .btn-info:hover { background: var(--info); color: #09090d; }
+
+        /* INPUTS & FORMULÁRIOS */
+        .search-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-size: 0.86rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .form-container-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            max-width: 580px;
+        }
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+        .form-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        /* CHAT DIRETO COM USUÁRIOS */
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 310px 1fr;
+            height: 70vh;
+            min-height: 480px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            border-right: 1px solid var(--border-color);
+            background: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-list-scroll {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-user-row {
+            padding: 13px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            transition: var(--transition);
+        }
+        .chat-user-row:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .chat-user-row.active {
+            background: rgba(124, 58, 237, 0.16);
+            border-left: 3px solid var(--primary);
+        }
+
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            background: #0f0f15;
+            overflow: hidden;
+        }
+
+        .chat-top-bar {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .chat-messages-area {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg-bubble {
+            max-width: 72%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+        .msg-admin {
+            align-self: flex-end;
+            background: var(--primary);
+            color: #FFF;
+        }
+        .msg-user {
+            align-self: flex-start;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #FFF;
+        }
+        .msg-meta {
+            display: block;
+            font-size: 0.68rem;
+            opacity: 0.72;
+            margin-top: 4px;
+        }
+
+        .chat-compose-bar {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-card);
+            display: flex;
+            gap: 10px;
+        }
+
+        /* MODAL */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            padding: 1rem;
+        }
+        .modal-backdrop.open { display: flex; }
+
+        .modal-box {
+            background: #12121a;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 92vh;
+            overflow-y: auto;
+            padding: 1.75rem;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 1200px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .plans-revenue-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 1024px) {
+            #sidebar {
+                transform: translateX(-100%);
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+            }
+            #sidebar.open { transform: translateX(0); }
+            .top-navbar { left: 0; padding: 0 1.2rem; }
+            .main-content { margin-left: 0; width: 100%; padding: 1.5rem 1rem; }
+            #menuToggle { display: flex !important; }
+            .chat-layout { grid-template-columns: 1fr; height: auto; }
+            .chat-sidebar { max-height: 240px; }
+            .chat-messages-area { min-height: 300px; }
+        }
+
+        @media (max-width: 640px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+            .form-grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="loader-brand"><i class="fa-solid fa-shield-halved"></i> N<span>PLUGINS</span> ADMIN</div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="toast-container"></div>
+
+    <div class="app-container">
+
+        <!-- TOP NAVBAR -->
+        <header class="top-navbar">
+            <div class="nav-left">
+                <button class="icon-btn" id="menuToggle" style="display:none;" onclick="toggleSidebar()" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="nav-page-title" id="topbar-title">Dashboard & Receita</span>
+            </div>
+
+            <div class="nav-actions">
+                <span class="status-pill"><i class="fa-solid fa-circle" style="font-size:0.55rem;"></i> nplugins.online</span>
+                <a href="cliente.html" target="_blank" class="btn-action btn-secondary btn-sm" title="Ver Área do Cliente">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Loja/Cliente
+                </a>
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
+            <div class="sidebar-brand">
+                <a href="index.html" class="brand-logo">
+                    <i class="fa-solid fa-sliders"></i> N<span>PLUGINS</span>
+                </a>
+                <button class="icon-btn" id="closeSidebarBtn" style="display:none; width:32px; height:32px;" onclick="toggleSidebar(false)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-scroll-content">
+                <div class="user-profile-box">
+                    <div class="user-avatar" id="admin-avatar">AD</div>
+                    <div style="overflow:hidden;">
+                        <div style="font-weight:700; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="admin-name-display">Administrador</div>
+                        <div style="font-size:0.74rem; color:#A78BFA; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="admin-email-display">joseeduardoloneke2023@gmail.com</div>
+                    </div>
+                </div>
+
+                <div class="menu-label">Gestão Principal</div>
+                <button type="button" class="menu-item active" data-view="dashboard" onclick="switchView('dashboard', this)">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard & Receita
+                </button>
+                <button type="button" class="menu-item" data-view="receipts" onclick="switchView('receipts', this)">
+                    <i class="fa-solid fa-receipt"></i> Comprovativos & Pedidos
+                    <span class="nav-badge" id="badge-receipts">0</span>
+                </button>
+                <button type="button" class="menu-item" data-view="expiring" onclick="switchView('expiring', this)">
+                    <i class="fa-solid fa-hourglass-half"></i> Quase a Expirar
+                    <span class="nav-badge" id="badge-expiring">0</span>
+                </button>
+                <button type="button" class="menu-item" data-view="users" onclick="switchView('users', this)">
+                    <i class="fa-solid fa-users"></i> Usuários & Acessos
+                </button>
+                <button type="button" class="menu-item" data-view="products" onclick="switchView('products', this)">
+                    <i class="fa-solid fa-boxes-stacked"></i> Produtos (DAW/VST)
+                </button>
+                <button type="button" class="menu-item" data-view="chat" onclick="switchView('chat', this)">
+                    <i class="fa-solid fa-comments"></i> Falar com Usuários
+                    <span class="nav-badge" id="badge-chat">0</span>
+                </button>
+
+                <div class="menu-label">Conta & Segurança</div>
+                <button type="button" class="menu-item" data-view="perfil" onclick="switchView('perfil', this)">
+                    <i class="fa-solid fa-user-pen"></i> Editar Perfil
+                </button>
+                <button type="button" class="menu-item" data-view="senha" onclick="switchView('senha', this)">
+                    <i class="fa-solid fa-key"></i> Mudar Senha
+                </button>
+            </div>
+
+            <div class="sidebar-fixed-bottom">
+                <button type="button" class="menu-item" onclick="logoutAdmin()" style="color:#F87171; margin-bottom:0;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Terminar a Sessão
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- 1. DASHBOARD & RECEITA -->
+            <section id="view-dashboard" class="panel-view active">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title">Dashboard & Controle Geral</h2>
+                        <p class="view-subtitle">Resumo de acessos diários, total de usuários e faturamento por assinatura.</p>
+                    </div>
+                </div>
+
+                <!-- 4 INDICADORES PRINCIPAIS -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: var(--primary-soft); color: #A78BFA;">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <div class="kpi-label">Total de Usuários</div>
+                            <div class="kpi-value" id="kpi-total-users">0</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: var(--info-soft); color: var(--info);">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <div>
+                            <div class="kpi-label">Acessos Hoje</div>
+                            <div class="kpi-value" id="kpi-today-access">0</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: var(--success-soft); color: var(--success);">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div>
+                            <div class="kpi-label">Valor Geral Feito</div>
+                            <div class="kpi-value" id="kpi-total-revenue">0 Kz</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" style="cursor:pointer;" onclick="switchView('expiring')">
+                        <div class="kpi-icon" style="background: var(--warning-soft); color: var(--warning);">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <div class="kpi-label">Quase a Expirar (≤ 5d)</div>
+                            <div class="kpi-value" id="kpi-expiring-count">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VALOR GERAL FEITO POR CADA ASSINATURA -->
+                <h3 style="font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; margin-bottom:0.9rem;">
+                    Valor Geral Feito por Cada Assinatura
+                </h3>
+                <div class="plans-revenue-grid">
+                    <div class="plan-rev-card">
+                        <div class="plan-rev-top">
+                            <span class="plan-rev-title">Acesso 1 Semana</span>
+                            <span class="badge badge-info">1.500 Kz / un</span>
+                        </div>
+                        <div class="plan-rev-amount" id="rev-semanal-total">0 Kz</div>
+                        <div class="plan-rev-meta" id="rev-semanal-count">0 assinaturas registradas</div>
+                    </div>
+
+                    <div class="plan-rev-card">
+                        <div class="plan-rev-top">
+                            <span class="plan-rev-title">Acesso 1 Mês</span>
+                            <span class="badge badge-primary">2.000 Kz / un</span>
+                        </div>
+                        <div class="plan-rev-amount" id="rev-mensal-total">0 Kz</div>
+                        <div class="plan-rev-meta" id="rev-mensal-count">0 assinaturas registradas</div>
+                    </div>
+
+                    <div class="plan-rev-card">
+                        <div class="plan-rev-top">
+                            <span class="plan-rev-title">Acesso Vitalício</span>
+                            <span class="badge badge-warning">5.000 Kz / un</span>
+                        </div>
+                        <div class="plan-rev-amount" id="rev-vitalicio-total">0 Kz</div>
+                        <div class="plan-rev-meta" id="rev-vitalicio-count">0 assinaturas registradas</div>
+                    </div>
+                </div>
+
+                <!-- QUEM ACESSOU NO DIA DE HOJE -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <span class="section-card-title">
+                            <i class="fa-solid fa-clock" style="color:var(--info);"></i> Quem Acessou no Dia de Hoje
+                        </span>
+                        <span class="badge badge-info" id="today-date-label">--/--/----</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Usuário</th>
+                                    <th>E-mail</th>
+                                    <th>Plano Actual</th>
+                                    <th>Hora do Acesso</th>
+                                    <th style="text-align:right;">Contacto Direto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="today-access-tbody">
+                                <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar acessos de hoje...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1B. COMPROVATIVOS & PEDIDOS (CHECKOUT E UPGRADES) -->
+            <section id="view-receipts" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-receipt" style="color:var(--primary);"></i> Comprovativos & Pedidos</h2>
+                        <p class="view-subtitle">Visualize os comprovativos enviados no checkout/upgrade em formato link e aprove ou recuse pedidos.</p>
+                    </div>
+                    <div style="width:280px; max-width:100%;">
+                        <input type="text" id="receipts-search-input" class="search-input" placeholder="Filtrar por nome, e-mail ou plano..." oninput="renderReceiptsTable()">
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="table-responsive">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Plano / Valor</th>
+                                    <th>Data</th>
+                                    <th>Comprovativo</th>
+                                    <th>Status</th>
+                                    <th style="text-align:right;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="receipts-tbody">
+                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar comprovativos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. ASSINATURAS QUASE A EXPIRAR -->
+            <section id="view-expiring" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-hourglass-half" style="color:var(--warning);"></i> Assinaturas Quase a Expirar</h2>
+                        <p class="view-subtitle">Clientes com 5 dias ou menos restantes e assinaturas já expiradas.</p>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="table-responsive">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Plano</th>
+                                    <th>Tempo Restante</th>
+                                    <th>Data de Expiração</th>
+                                    <th style="text-align:right;">Ações Rápidas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expiring-users-tbody">
+                                <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">A verificar vencimentos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. BASE DE USUÁRIOS & ACESSOS -->
+            <section id="view-users" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-users" style="color:var(--primary);"></i> Usuários & Acessos</h2>
+                        <p class="view-subtitle">Crie contas de clientes, pesquise assinantes, ajuste planos ou inicie conversa direta.</p>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                        <input type="text" id="users-search-input" class="search-input" style="width:260px; max-width:100%;" placeholder="Pesquisar nome ou e-mail..." oninput="renderUsersTable()">
+                        <button type="button" class="btn-action btn-primary" onclick="openCreateUserModal()">
+                            <i class="fa-solid fa-user-plus"></i> Criar Conta de Cliente
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="table-responsive">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail / WhatsApp</th>
+                                    <th>Plano</th>
+                                    <th>Validade / Dias</th>
+                                    <th>Último Acesso</th>
+                                    <th style="text-align:right;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-users-tbody">
+                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar usuários...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. CADASTRAR E GERENCIAR PRODUTOS (DAW, PLUGINS, LIVRARIAS) -->
+            <section id="view-products" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-boxes-stacked" style="color:var(--primary);"></i> Produtos (DAW, Plugins, Livrarias)</h2>
+                        <p class="view-subtitle">Cadastre e organize os produtos exibidos no index e na área do cliente usando links de imagem.</p>
+                    </div>
+                    <button type="button" class="btn-action btn-primary" onclick="openProductModal()">
+                        <i class="fa-solid fa-plus"></i> Cadastrar Novo Produto
+                    </button>
+                </div>
+
+                <div style="margin-bottom:1.1rem; max-width:380px;">
+                    <input type="text" id="products-search-input" class="search-input" placeholder="Filtrar produtos por nome, categoria ou OS..." oninput="renderProductsTable()">
+                </div>
+
+                <div class="section-card">
+                    <div class="table-responsive">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:64px;">Capa</th>
+                                    <th>Título do Produto</th>
+                                    <th>Categoria</th>
+                                    <th>Sistema</th>
+                                    <th>Links (Plugin / Aula)</th>
+                                    <th style="text-align:right;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-tbody">
+                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar catálogo...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. FALAR DIRETAMENTE COM USUÁRIOS (CHAT) -->
+            <section id="view-chat" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Falar Diretamente com Usuário</h2>
+                        <p class="view-subtitle">Envie mensagens diretas aos clientes ou responda às dúvidas em tempo real.</p>
+                    </div>
+                </div>
+
+                <div class="chat-layout">
+                    <div class="chat-sidebar">
+                        <div style="padding:12px; border-bottom:1px solid var(--border-color);">
+                            <input type="text" id="chat-user-search" class="search-input" placeholder="Buscar usuário para falar..." oninput="renderChatSidebar()">
+                        </div>
+                        <div class="chat-list-scroll" id="chat-users-list"></div>
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="chat-top-bar" id="chat-header-bar">
+                            <span style="color:var(--text-muted); font-size:0.88rem;">Selecione um usuário à esquerda para iniciar a conversa</span>
+                        </div>
+
+                        <div class="chat-messages-area" id="chat-messages-box">
+                            <p style="color:var(--text-muted); text-align:center; margin:auto; font-size:0.88rem;">Nenhuma conversa selecionada.</p>
+                        </div>
+
+                        <div class="chat-compose-bar">
+                            <input type="text" id="chat-message-input" class="search-input" placeholder="Escreva a sua mensagem para o usuário..." onkeydown="if(event.key==='Enter') sendAdminChatMessage()">
+                            <button type="button" class="btn-action btn-primary" onclick="sendAdminChatMessage()">
+                                <i class="fa-solid fa-paper-plane"></i> Enviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. EDITAR PERFIL -->
+            <section id="view-perfil" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Editar Perfil</h2>
+                        <p class="view-subtitle">Atualize os seus dados de administrador.</p>
+                    </div>
+                </div>
+
+                <div class="form-container-card">
+                    <form class="form-stack" onsubmit="saveAdminProfile(event)">
+                        <div>
+                            <label class="form-label" for="admin-prof-name"><i class="fa-regular fa-user"></i> Nome Completo</label>
+                            <input type="text" id="admin-prof-name" class="search-input" required placeholder="Nome do Administrador">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="admin-prof-email"><i class="fa-regular fa-envelope"></i> E-mail de Acesso</label>
+                            <input type="email" id="admin-prof-email" class="search-input" disabled style="opacity:0.6; cursor:not-allowed;">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="admin-prof-whatsapp"><i class="fa-brands fa-whatsapp" style="color:var(--success);"></i> WhatsApp de Suporte</label>
+                            <input type="tel" id="admin-prof-whatsapp" class="search-input" placeholder="+244 924 034 159">
+                        </div>
+
+                        <button type="submit" class="btn-action btn-primary" id="btn-save-admin-profile" style="width:fit-content; padding:11px 24px;">
+                            <i class="fa-solid fa-floppy-disk"></i> Guardar Alterações
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 7. MUDAR SENHA -->
+            <section id="view-senha" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Mudar Senha</h2>
+                        <p class="view-subtitle">Altere a senha da sua conta administrativa.</p>
+                    </div>
+                </div>
+
+                <div class="form-container-card">
+                    <form id="form-admin-password" class="form-stack" onsubmit="updateAdminPassword(event)">
+                        <div>
+                            <label class="form-label" for="admin-pass-current"><i class="fa-solid fa-lock"></i> Senha Actual</label>
+                            <input type="password" id="admin-pass-current" class="search-input" required placeholder="Digite a senha actual">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="admin-pass-new"><i class="fa-solid fa-key"></i> Nova Senha</label>
+                            <input type="password" id="admin-pass-new" class="search-input" required minlength="6" placeholder="Mínimo 6 caracteres">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="admin-pass-repeat"><i class="fa-solid fa-check-double"></i> Repete Nova Senha</label>
+                            <input type="password" id="admin-pass-repeat" class="search-input" required minlength="6" placeholder="Repita a nova senha">
+                        </div>
+
+                        <button type="submit" class="btn-action btn-primary" id="btn-update-admin-pass" style="width:fit-content; padding:11px 24px;">
+                            <i class="fa-solid fa-shield-halved"></i> Actualizar a Senha
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO DE PRODUTO (VIA LINK DE IMAGEM) -->
+    <div class="modal-backdrop" id="product-modal">
+        <div class="modal-box">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:1.25rem;">
+                <div>
+                    <span style="font-size:0.72rem; font-weight:700; color:#A78BFA; text-transform:uppercase;">Catálogo NPLUGINS</span>
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.18rem; font-weight:800;" id="product-modal-title">Cadastrar Novo Produto</h3>
+                </div>
+                <button type="button" class="icon-btn" style="width:34px; height:34px;" onclick="closeProductModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form class="form-stack" onsubmit="saveProductForm(event)">
+                <div>
+                    <label class="form-label" for="prod-titulo">Título do Produto (Ex: FL Studio 24, FabFilter Bundle, Kontakt 7)</label>
+                    <input type="text" id="prod-titulo" class="search-input" required placeholder="Nome completo do produto">
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-label" for="prod-categoria">Categoria</label>
+                        <select id="prod-categoria" class="search-input" style="cursor:pointer;">
+                            <option value="daw">DAW</option>
+                            <option value="mix e master vst">Mix e Master VST (Plugins)</option>
+                            <option value="instrumentos vsti">Instrumentos VSTi (Plugins)</option>
+                            <option value="livrarias">Livrarias (Kontakt / Packs)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="prod-sistema">Sistema Operacional</label>
+                        <select id="prod-sistema" class="search-input" style="cursor:pointer;">
+                            <option value="windows">Windows</option>
+                            <option value="mac">Mac (macOS)</option>
+                            <option value="both">Windows e Mac</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label" for="prod-descricao">Descrição Curta</label>
+                    <textarea id="prod-descricao" class="search-input" rows="2" style="resize:none;" placeholder="Breve descrição do plugin, DAW ou livraria..."></textarea>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-label" for="prod-plugin-url"><i class="fa-solid fa-download" style="color:var(--primary);"></i> Link Download do Produto</label>
+                        <input type="url" id="prod-plugin-url" class="search-input" required placeholder="https://drive.google.com/...">
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="prod-aula-url"><i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Link da Aula de Instalação</label>
+                        <input type="url" id="prod-aula-url" class="search-input" placeholder="https://youtu.be/... ou Drive">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label" for="prod-imagem-url"><i class="fa-solid fa-link" style="color:var(--success);"></i> Link da Imagem de Capa (URL Direta)</label>
+                    <input type="url" id="prod-imagem-url" class="search-input" placeholder="https://i.imgur.com/... ou link direto da capa">
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:8px; border-top:1px solid var(--border-color);">
+                    <button type="button" class="btn-action btn-secondary" onclick="closeProductModal()">Cancelar</button>
+                    <button type="submit" class="btn-action btn-primary" id="btn-save-product">
+                        <i class="fa-solid fa-check"></i> Guardar Produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE CRIAÇÃO DE CONTA DE CLIENTE PELO ADMIN -->
+    <div class="modal-backdrop" id="create-user-modal">
+        <div class="modal-box" style="max-width:520px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:1.25rem;">
+                <div>
+                    <span style="font-size:0.72rem; font-weight:700; color:#A78BFA; text-transform:uppercase;">Acesso Manual</span>
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.18rem; font-weight:800;">Criar Conta de Cliente</h3>
+                </div>
+                <button type="button" class="icon-btn" style="width:34px; height:34px;" onclick="closeCreateUserModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="form-create-user" class="form-stack" onsubmit="createUserByAdmin(event)">
+                <div>
+                    <label class="form-label" for="new-user-name">Nome Completo do Cliente</label>
+                    <input type="text" id="new-user-name" class="search-input" required placeholder="Ex: Carlos Mendes">
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-label" for="new-user-email">E-mail de Login</label>
+                        <input type="email" id="new-user-email" class="search-input" required placeholder="cliente@email.com">
+                    </div>
+                    <div>
+                        <label class="form-label" for="new-user-whatsapp">WhatsApp</label>
+                        <input type="tel" id="new-user-whatsapp" class="search-input" placeholder="+244 9XX XXX XXX">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-label" for="new-user-password">Senha Inicial</label>
+                        <input type="text" id="new-user-password" class="search-input" required minlength="6" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div>
+                        <label class="form-label" for="new-user-plan">Plano de Acesso</label>
+                        <select id="new-user-plan" class="search-input" style="cursor:pointer;">
+                            <option value="semanal">Acesso 1 Semana (1.500 Kz)</option>
+                            <option value="mensal" selected>Acesso 1 Mês (2.000 Kz)</option>
+                            <option value="vitalicio">Acesso Vitalício (5.000 Kz)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-muted); cursor:pointer;">
+                    <input type="checkbox" id="new-user-record-sale" checked style="accent-color:var(--primary); width:16px; height:16px;">
+                    Registar este valor na receita do Dashboard
+                </label>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:8px; border-top:1px solid var(--border-color);">
+                    <button type="button" class="btn-action btn-secondary" onclick="closeCreateUserModal()">Cancelar</button>
+                    <button type="submit" class="btn-action btn-primary" id="btn-create-user">
+                        <i class="fa-solid fa-user-check"></i> Criar Conta Agora
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVATIVO (LINK / IMAGEM) -->
+    <div class="modal-backdrop" id="receipt-modal">
+        <div class="modal-box" style="max-width:600px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:1rem;">
+                <div>
+                    <span style="font-size:0.72rem; font-weight:700; color:var(--info); text-transform:uppercase;">Comprovativo de Pagamento</span>
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.12rem; font-weight:800;" id="receipt-modal-client">Cliente</h3>
+                </div>
+                <button type="button" class="icon-btn" style="width:34px; height:34px;" onclick="closeReceiptModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="receipt-modal-meta" style="font-size:0.84rem; color:var(--text-muted); margin-bottom:1rem; display:flex; flex-wrap:wrap; gap:12px;"></div>
+
+            <div style="background:#09090d; border:1px solid var(--border-color); border-radius:12px; padding:10px; text-align:center; margin-bottom:1.1rem; max-height:60vh; overflow:auto;">
+                <img id="receipt-modal-img" src="" alt="Comprovativo" style="max-width:100%; border-radius:8px; display:none; margin:0 auto;">
+                <p id="receipt-modal-empty" style="color:var(--text-muted); padding:2rem; display:none;">Nenhum anexo de imagem encontrado neste registo.</p>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="btn-action btn-info btn-sm" id="btn-open-receipt-tab" onclick="openCurrentReceiptInNewTab()">
+                        <i class="fa-solid fa-up-right-from-square"></i> Abrir Link em Nova Aba
+                    </button>
+                    <button type="button" class="btn-action btn-secondary btn-sm" id="btn-copy-receipt-link" onclick="copyCurrentReceiptLink()">
+                        <i class="fa-solid fa-copy"></i> Copiar Link
+                    </button>
+                </div>
+                <button type="button" class="btn-action btn-primary btn-sm" onclick="closeReceiptModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // ==========================================
+    // 1. CONFIGURAÇÃO DO FIREBASE (PROJETO bd-nplugins)
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
+        authDomain: "bd-nplugins.firebaseapp.com",
+        projectId: "bd-nplugins",
+        storageBucket: "bd-nplugins.firebasestorage.app",
+        messagingSenderId: "946055919532",
+        appId: "1:946055919532:web:a51efb8c7540b12b18ec09",
+        measurementId: "G-G4SNHNND2Q"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    const ADMIN_EMAILS = [
+        'joseeduardoloneke2023@gmail.com',
+        'suporte@lonekenobeat.com',
+        'admin@nplugins.online'
+    ];
+
+    // ==========================================
+    // 2. ESTADO GLOBAL DO PAINEL ADMIN
+    // ==========================================
+    let currentAdmin = null;
+    let allUsersList = [];
+    let allProductsList = [];
+    let allTransactionsList = [];
+    let chatThreadsMap = {};
+    let activeChatUid = null;
+    let unsubscribeChatMessages = null;
+    let editingProductDocId = null;
+    let currentReceiptLink = '';
+
+    const PLANS_INFO = {
+        semanal: { id: 'semanal', name: 'Acesso 1 Semana', price: 1500, days: 7, hasInstallLessons: false },
+        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 2000, days: 30, hasInstallLessons: true },
+        vitalicio: { id: 'vitalicio', name: 'Acesso Vitalício', price: 5000, days: null, hasInstallLessons: true }
+    };
+
+    // ==========================================
+    // 3. UTILITÁRIOS
+    // ==========================================
+    function hidePreloader() {
+        const el = document.getElementById('preloader');
+        if (el) el.classList.add('hidden');
+    }
+
+    function showToast(message, type = 'info', title = '') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        const icons = { success: 'fa-circle-check', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+        const titles = { success: 'Sucesso', info: 'Informação', warning: 'Atenção' };
+
+        toast.innerHTML = `
+            <i class="fa-solid ${icons[type] || 'fa-circle-info'} toast-icon"></i>
+            <div>
+                <div class="toast-title">${title || titles[type]}</div>
+                <div class="toast-msg">${escapeHtml(message)}</div>
+            </div>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3800);
+    }
+
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function parseAnyDate(val) {
+        if (!val) return null;
+        if (typeof val.toDate === 'function') return val.toDate();
+        if (val && typeof val === 'object' && val.seconds !== undefined) return new Date(val.seconds * 1000);
+        const parsed = new Date(val);
+        return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function isSameDay(d1, d2) {
+        if (!d1 || !d2) return false;
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+    }
+
+    function getUserPlanStatus(userObj) {
+        const planId = (userObj.planId || 'mensal').toLowerCase();
+        if (planId === 'vitalicio') {
+            return { isLifetime: true, isExpired: false, daysLeft: 9999, label: 'Vitalício', expStr: 'Sem expiração' };
+        }
+
+        const expDate = parseAnyDate(userObj.expiresAt);
+        if (!expDate) {
+            return { isLifetime: false, isExpired: false, daysLeft: null, label: 'Ativo', expStr: 'Não definida' };
+        }
+
+        const now = new Date();
+        const diffMs = expDate.getTime() - now.getTime();
+        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        return {
+            isLifetime: false,
+            isExpired: daysLeft <= 0,
+            daysLeft: Math.max(0, daysLeft),
+            label: daysLeft <= 0 ? 'Expirado' : (daysLeft === 1 ? '1 dia restante' : `${daysLeft} dias restantes`),
+            expStr: expDate.toLocaleDateString('pt-PT')
+        };
+    }
+
+    // ==========================================
+    // 4. AUTENTICAÇÃO E VERIFICAÇÃO DE ADMIN
+    // ==========================================
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+            hidePreloader();
+            openAdminLoginPrompt();
+            return;
+        }
+
+        const emailLower = (user.email || '').toLowerCase();
+        let isAdmin = ADMIN_EMAILS.includes(emailLower);
+
+        try {
+            const doc = await db.collection('users').doc(user.uid).get();
+            if (doc.exists && doc.data().role === 'admin') {
+                isAdmin = true;
+            }
+        } catch (err) {}
+
+        if (!isAdmin) {
+            window.location.href = 'cliente.html';
+            return;
+        }
+
+        currentAdmin = user;
+        document.getElementById('today-date-label').textContent = new Date().toLocaleDateString('pt-PT');
+
+        await loadAdminProfile(user);
+        startRealtimeListeners();
+        hidePreloader();
+    });
+
+    function openAdminLoginPrompt() {
+        Swal.fire({
+            title: 'Acesso Administrativo',
+            html: `
+                <p style="font-size:0.85rem; color:#A1A1AA; margin-bottom:12px;">Entre com a sua conta de administrador NPLUGINS.</p>
+                <input type="email" id="adm-login-email" class="swal2-input" placeholder="E-mail do Admin" value="joseeduardoloneke2023@gmail.com" style="background:#12121a; color:#fff; border:1px solid rgba(255,255,255,0.12); width:88%;">
+                <input type="password" id="adm-login-pass" class="swal2-input" placeholder="Senha" style="background:#12121a; color:#fff; border:1px solid rgba(255,255,255,0.12); width:88%;">
+            `,
+            background: '#181824',
+            color: '#FFFFFF',
+            confirmButtonText: 'Entrar no Painel',
+            confirmButtonColor: '#7C3AED',
+            allowOutsideClick: false,
+            preConfirm: async () => {
+                const email = document.getElementById('adm-login-email').value.trim();
+                const pass = document.getElementById('adm-login-pass').value;
+                if (!email || !pass) {
+                    Swal.showValidationMessage('Preencha o e-mail e a senha.');
+                    return false;
+                }
+                try {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                    return true;
+                } catch (err) {
+                    Swal.showValidationMessage('Credenciais inválidas.');
+                    return false;
+                }
+            }
+        });
+    }
+
+    async function loadAdminProfile(user) {
+        let name = user.displayName || 'José Eduardo Loneke';
+        let whatsapp = '+244 924 034 159';
+
+        try {
+            const doc = await db.collection('users').doc(user.uid).get();
+            if (doc.exists) {
+                const d = doc.data();
+                if (d.name) name = d.name;
+                if (d.whatsapp) whatsapp = d.whatsapp;
+            }
+        } catch (err) {}
+
+        const initials = name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('') || 'AD';
+        document.getElementById('admin-avatar').textContent = initials;
+        document.getElementById('admin-name-display').textContent = name;
+        document.getElementById('admin-email-display').textContent = user.email;
+
+        document.getElementById('admin-prof-name').value = name;
+        document.getElementById('admin-prof-email').value = user.email;
+        document.getElementById('admin-prof-whatsapp').value = whatsapp;
+    }
+
+    // ==========================================
+    // 5. LISTENERS EM TEMPO REAL
+    // ==========================================
+    function startRealtimeListeners() {
+        db.collection('users').onSnapshot((snap) => {
+            const list = [];
+            snap.forEach((doc) => {
+                list.push({ uid: doc.id, ...doc.data() });
+            });
+            allUsersList = list;
+            updateDashboardUsersMetrics();
+            renderExpiringTable();
+            renderUsersTable();
+            renderChatSidebar();
+        });
+
+        listenSubscriptionRevenueAndReceipts();
+
+        db.collection('produtos').onSnapshot((snap) => {
+            const list = [];
+            snap.forEach((doc) => {
+                list.push({ id: doc.id, ...doc.data() });
+            });
+            allProductsList = list;
+            renderProductsTable();
+        });
+
+        db.collection('chats').onSnapshot((snap) => {
+            const map = {};
+            let totalUnread = 0;
+            snap.forEach((doc) => {
+                const d = doc.data();
+                map[doc.id] = d;
+                if (doc.id !== activeChatUid) {
+                    totalUnread += Number(d.unreadAdmin || 0);
+                }
+            });
+            chatThreadsMap = map;
+
+            const chatBadge = document.getElementById('badge-chat');
+            if (chatBadge) {
+                chatBadge.textContent = totalUnread;
+                chatBadge.style.display = totalUnread > 0 ? 'inline-block' : 'none';
+            }
+
+            renderChatSidebar();
+        });
+    }
+
+    function listenSubscriptionRevenueAndReceipts() {
+        let ordersDocs = {};
+        let txDocs = {};
+
+        const recalc = () => {
+            const mergedList = [];
+            const seenIds = new Set();
+
+            Object.entries(txDocs).forEach(([id, data]) => {
+                seenIds.add(id);
+                mergedList.push({ id, _collection: 'transactions', ...data });
+            });
+
+            Object.entries(ordersDocs).forEach(([id, data]) => {
+                if (!seenIds.has(id)) {
+                    mergedList.push({ id, _collection: 'orders', ...data });
+                }
+            });
+
+            mergedList.sort((a, b) => {
+                const da = parseAnyDate(a.createdAt || a.updatedAt) || new Date(0);
+                const dbDate = parseAnyDate(b.createdAt || b.updatedAt) || new Date(0);
+                return dbDate - da;
+            });
+
+            allTransactionsList = mergedList;
+            renderReceiptsTable();
+
+            let totalGeneral = 0;
+            const stats = {
+                semanal: { count: 0, total: 0 },
+                mensal: { count: 0, total: 0 },
+                vitalicio: { count: 0, total: 0 }
+            };
+
+            mergedList.forEach((item) => {
+                const status = String(item.status || 'completed').toLowerCase();
+                if (['rejected', 'recusado', 'cancelado'].includes(status)) return;
+
+                const amount = Number(item.amountKz || item.amount || item.price || 0);
+                const planIdRaw = String(item.planId || '').toLowerCase();
+                const titleRaw = String(item.productTitle || item.subscriptionPlan || item.planName || '').toLowerCase();
+
+                let bucket = null;
+                if (planIdRaw === 'semanal' || titleRaw.includes('semana') || amount === 1500) bucket = 'semanal';
+                else if (planIdRaw === 'mensal' || titleRaw.includes('mês') || titleRaw.includes('mes') || amount === 2000) bucket = 'mensal';
+                else if (planIdRaw === 'vitalicio' || titleRaw.includes('vital') || amount === 5000) bucket = 'vitalicio';
+
+                if (bucket) {
+                    const val = amount > 0 ? amount : PLANS_INFO[bucket].price;
+                    stats[bucket].count += 1;
+                    stats[bucket].total += val;
+                    totalGeneral += val;
+                } else if (amount > 0) {
+                    totalGeneral += amount;
+                }
+            });
+
+            document.getElementById('kpi-total-revenue').textContent = `${totalGeneral.toLocaleString('pt-AO')} Kz`;
+
+            document.getElementById('rev-semanal-total').textContent = `${stats.semanal.total.toLocaleString('pt-AO')} Kz`;
+            document.getElementById('rev-semanal-count').textContent = `${stats.semanal.count} assinatura(s) registrada(s)`;
+
+            document.getElementById('rev-mensal-total').textContent = `${stats.mensal.total.toLocaleString('pt-AO')} Kz`;
+            document.getElementById('rev-mensal-count').textContent = `${stats.mensal.count} assinatura(s) registrada(s)`;
+
+            document.getElementById('rev-vitalicio-total').textContent = `${stats.vitalicio.total.toLocaleString('pt-AO')} Kz`;
+            document.getElementById('rev-vitalicio-count').textContent = `${stats.vitalicio.count} assinatura(s) registrada(s)`;
+        };
+
+        db.collection('orders').onSnapshot((snap) => {
+            ordersDocs = {};
+            snap.forEach((d) => { ordersDocs[d.id] = d.data(); });
+            recalc();
+        });
+
+        db.collection('transactions').onSnapshot((snap) => {
+            txDocs = {};
+            snap.forEach((d) => { txDocs[d.id] = d.data(); });
+            recalc();
+        });
+    }
+
+    // ==========================================
+    // 5B. COMPROVATIVOS & APROVAÇÃO DE PEDIDOS
+    // ==========================================
+    function renderReceiptsTable() {
+        const tbody = document.getElementById('receipts-tbody');
+        if (!tbody) return;
+
+        const query = (document.getElementById('receipts-search-input')?.value || '').trim().toLowerCase();
+
+        let pendingCount = 0;
+        allTransactionsList.forEach(t => {
+            const st = String(t.status || '').toLowerCase();
+            if (st === 'pending' || st === 'pendente' || st === 'awaiting_approval') pendingCount++;
+        });
+
+        const badge = document.getElementById('badge-receipts');
+        if (badge) {
+            badge.textContent = pendingCount;
+            badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+        }
+
+        const filtered = allTransactionsList.filter(t => {
+            if (!query) return true;
+            const text = `${t.userName || t.customerName || ''} ${t.userEmail || t.customerEmail || ''} ${t.subscriptionPlan || t.planName || ''} ${t.productTitle || ''}`.toLowerCase();
+            return text.includes(query);
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum comprovativo ou pedido registado até ao momento.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map((t) => {
+            const dateObj = parseAnyDate(t.createdAt || t.updatedAt);
+            const dateStr = dateObj ? dateObj.toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' }) : '-';
+            const planLabel = t.subscriptionPlan || t.planName || t.productTitle || 'Plano NPLUGINS';
+            const amount = Number(t.amountKz || t.amount || t.price || 0);
+            const receiptLink = t.receiptUrl || t.comprovativoUrl || t.receiptLink || '';
+            const statusRaw = String(t.status || 'completed').toLowerCase();
+            const clientName = t.userName || t.customerName || 'Cliente';
+            const clientEmail = t.userEmail || t.customerEmail || '-';
+
+            let statusBadge = `<span class="badge badge-success"><i class="fa-solid fa-check"></i> Aprovado</span>`;
+            if (statusRaw === 'pending' || statusRaw === 'pendente' || statusRaw === 'awaiting_approval') {
+                statusBadge = `<span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Pendente</span>`;
+            } else if (statusRaw === 'rejected' || statusRaw === 'recusado') {
+                statusBadge = `<span class="badge badge-danger"><i class="fa-solid fa-xmark"></i> Recusado</span>`;
+            }
+
+            return `
+                <tr>
+                    <td>
+                        <strong>${escapeHtml(clientName)}</strong><br>
+                        <span style="font-size:0.76rem; color:var(--text-muted);">${escapeHtml(clientEmail)}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-primary">${escapeHtml(planLabel)}</span>
+                        <div style="font-weight:700; color:var(--success); font-size:0.82rem; margin-top:4px;">${amount.toLocaleString('pt-AO')} Kz</div>
+                    </td>
+                    <td style="color:var(--text-muted); font-size:0.8rem;">${dateStr}</td>
+                    <td>
+                        ${receiptLink
+                            ? `<button type="button" class="btn-action btn-info btn-sm" onclick="viewReceiptModal('${t.id}')">
+                                   <i class="fa-solid fa-link"></i> Ver Comprovativo
+                               </button>`
+                            : `<span style="font-size:0.78rem; color:var(--text-muted);">Sem anexo</span>`
+                        }
+                    </td>
+                    <td>${statusBadge}</td>
+                    <td style="text-align:right;">
+                        <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
+                            ${statusRaw !== 'completed' && statusRaw !== 'approved'
+                                ? `<button type="button" class="btn-action btn-success btn-sm" onclick="approveTransaction('${t.id}')" title="Aprovar e Liberar Acesso">
+                                       <i class="fa-solid fa-check"></i> Aprovar
+                                   </button>`
+                                : ''
+                            }
+                            ${statusRaw !== 'rejected'
+                                ? `<button type="button" class="btn-action btn-danger btn-sm" onclick="rejectTransaction('${t.id}')" title="Recusar">
+                                       <i class="fa-solid fa-xmark"></i>
+                                   </button>`
+                                : ''
+                            }
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function viewReceiptModal(txId) {
+        const item = allTransactionsList.find(t => t.id === txId);
+        if (!item) return;
+
+        currentReceiptLink = item.receiptUrl || item.comprovativoUrl || item.receiptLink || '';
+        const amount = Number(item.amountKz || item.amount || item.price || 0);
+        const clientName = item.userName || item.customerName || 'Cliente';
+        const clientEmail = item.userEmail || item.customerEmail || '';
+        const clientWhatsapp = item.whatsapp || item.customerWhatsapp || '';
+
+        document.getElementById('receipt-modal-client').textContent = `${clientName} (${clientEmail})`;
+        document.getElementById('receipt-modal-meta').innerHTML = `
+            <span><strong>Plano:</strong> ${escapeHtml(item.subscriptionPlan || item.planName || item.productTitle || '-')}</span>
+            <span><strong>Valor:</strong> ${amount.toLocaleString('pt-AO')} Kz</span>
+            ${clientWhatsapp ? `<span><strong>WhatsApp:</strong> ${escapeHtml(clientWhatsapp)}</span>` : ''}
+        `;
+
+        const imgEl = document.getElementById('receipt-modal-img');
+        const emptyEl = document.getElementById('receipt-modal-empty');
+        const btnOpen = document.getElementById('btn-open-receipt-tab');
+        const btnCopy = document.getElementById('btn-copy-receipt-link');
+
+        if (currentReceiptLink) {
+            imgEl.src = currentReceiptLink;
+            imgEl.style.display = 'block';
+            emptyEl.style.display = 'none';
+            btnOpen.style.display = 'inline-flex';
+            btnCopy.style.display = 'inline-flex';
+        } else {
+            imgEl.style.display = 'none';
+            emptyEl.style.display = 'block';
+            btnOpen.style.display = 'none';
+            btnCopy.style.display = 'none';
+        }
+
+        document.getElementById('receipt-modal').classList.add('open');
+    }
+
+    function closeReceiptModal() {
+        document.getElementById('receipt-modal').classList.remove('open');
+    }
+
+    function openCurrentReceiptInNewTab() {
+        if (!currentReceiptLink) return;
+        if (currentReceiptLink.startsWith('data:')) {
+            try {
+                const parts = currentReceiptLink.split(',');
+                const mime = parts[0].match(/:(.*?);/)[1];
+                const bstr = atob(parts[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) u8arr[n] = bstr.charCodeAt(n);
+                const blob = new Blob([u8arr], { type: mime });
+                const blobUrl = URL.createObjectURL(blob);
+                window.open(blobUrl, '_blank');
+                return;
+            } catch (e) {}
+        }
+        window.open(currentReceiptLink, '_blank');
+    }
+
+    async function copyCurrentReceiptLink() {
+        if (!currentReceiptLink) return;
+        try {
+            await navigator.clipboard.writeText(currentReceiptLink);
+            showToast('Link do comprovativo copiado!', 'success');
+        } catch (err) {
+            showToast('Não foi possível copiar o link.', 'warning');
+        }
+    }
+
+    async function approveTransaction(txId) {
+        const item = allTransactionsList.find(t => t.id === txId);
+        if (!item) return;
+
+        try {
+            await db.collection(item._collection || 'transactions').doc(txId).set({
+                status: 'completed',
+                approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            if (item.userId) {
+                const planKey = (item.planId || 'mensal').toLowerCase();
+                const plan = PLANS_INFO[planKey] || PLANS_INFO.mensal;
+                const newExpiresAt = plan.days
+                    ? firebase.firestore.Timestamp.fromDate(new Date(Date.now() + plan.days * 24 * 60 * 60 * 1000))
+                    : null;
+
+                await db.collection('users').doc(item.userId).set({
+                    planId: plan.id,
+                    subscriptionPlan: plan.name,
+                    hasInstallLessons: plan.hasInstallLessons,
+                    status: 'active',
+                    expiresAt: newExpiresAt,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+            }
+
+            showToast('Pedido aprovado e plano do cliente activado!', 'success');
+        } catch (err) {
+            showToast('Erro ao aprovar pedido: ' + err.message, 'warning');
+        }
+    }
+
+    async function rejectTransaction(txId) {
+        const item = allTransactionsList.find(t => t.id === txId);
+        if (!item) return;
+
+        try {
+            await db.collection(item._collection || 'transactions').doc(txId).set({
+                status: 'rejected',
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            showToast('Pedido marcado como recusado.', 'info');
+        } catch (err) {
+            showToast('Erro ao recusar pedido: ' + err.message, 'warning');
+        }
+    }
+
+    // ==========================================
+    // 6. MÉTRICAS DE ACESSOS HOJE & EXPIRAÇÃO
+    // ==========================================
+    function updateDashboardUsersMetrics() {
+        const today = new Date();
+        const todayUsers = [];
+        let expiringSoonCount = 0;
+
+        allUsersList.forEach((u) => {
+            const accessDate = parseAnyDate(u.lastAccessAt || u.lastLoginAt || u.updatedAt || u.createdAt);
+            if (accessDate && isSameDay(accessDate, today)) {
+                todayUsers.push({ ...u, _accessDate: accessDate });
+            }
+
+            const status = getUserPlanStatus(u);
+            if (!status.isLifetime && (status.isExpired || (status.daysLeft !== null && status.daysLeft <= 5))) {
+                expiringSoonCount++;
+            }
+        });
+
+        todayUsers.sort((a, b) => b._accessDate - a._accessDate);
+
+        document.getElementById('kpi-total-users').textContent = allUsersList.length;
+        document.getElementById('kpi-today-access').textContent = todayUsers.length;
+        document.getElementById('kpi-expiring-count').textContent = expiringSoonCount;
+
+        const badge = document.getElementById('badge-expiring');
+        badge.textContent = expiringSoonCount;
+        badge.style.display = expiringSoonCount > 0 ? 'inline-block' : 'none';
+
+        const tbody = document.getElementById('today-access-tbody');
+        if (todayUsers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:1.8rem;">Nenhum acesso registrado hoje até ao momento.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = todayUsers.map((u) => {
+            const timeStr = u._accessDate.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+            const planName = u.subscriptionPlan || 'Acesso 1 Mês';
+            const cleanWa = String(u.whatsapp || '').replace(/\D/g, '');
+
+            return `
+                <tr>
+                    <td><strong>${escapeHtml(u.name || 'Assinante')}</strong></td>
+                    <td style="color:var(--text-muted);">${escapeHtml(u.email || '-')}</td>
+                    <td><span class="badge badge-primary">${escapeHtml(planName)}</span></td>
+                    <td><span class="badge badge-info"><i class="fa-regular fa-clock"></i> ${timeStr}</span></td>
+                    <td style="text-align:right;">
+                        <div style="display:inline-flex; gap:6px;">
+                            <button type="button" class="btn-action btn-primary btn-sm" onclick="openDirectChat('${u.uid}')">
+                                <i class="fa-solid fa-comment-dots"></i> Falar
+                            </button>
+                            ${cleanWa ? `<a href="https://wa.me/${cleanWa}" target="_blank" class="btn-action btn-success btn-sm"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderExpiringTable() {
+        const tbody = document.getElementById('expiring-users-tbody');
+        const list = allUsersList
+            .map((u) => ({ ...u, _status: getUserPlanStatus(u) }))
+            .filter((u) => !u._status.isLifetime && (u._status.isExpired || (u._status.daysLeft !== null && u._status.daysLeft <= 5)))
+            .sort((a, b) => (a._status.daysLeft ?? 0) - (b._status.daysLeft ?? 0));
+
+        if (list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum assinante com plano prestes a expirar nos próximos 5 dias.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map((u) => {
+            const st = u._status;
+            const badgeClass = st.isExpired || st.daysLeft <= 2 ? 'badge-danger' : 'badge-warning';
+            const cleanWa = String(u.whatsapp || '').replace(/\D/g, '');
+
+            return `
+                <tr>
+                    <td>
+                        <strong>${escapeHtml(u.name || 'Assinante')}</strong><br>
+                        <span style="font-size:0.76rem; color:var(--text-muted);">${escapeHtml(u.email || '')}</span>
+                    </td>
+                    <td><span class="badge badge-primary">${escapeHtml(u.subscriptionPlan || 'Acesso 1 Mês')}</span></td>
+                    <td><span class="badge ${badgeClass}"><i class="fa-solid fa-hourglass-end"></i> ${st.label}</span></td>
+                    <td style="color:var(--text-muted);">${st.expStr}</td>
+                    <td style="text-align:right;">
+                        <div style="display:inline-flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+                            <button type="button" class="btn-action btn-primary btn-sm" onclick="openDirectChat('${u.uid}')">
+                                <i class="fa-solid fa-comments"></i> Falar com Usuário
+                            </button>
+                            ${cleanWa ? `<a href="https://wa.me/${cleanWa}" target="_blank" class="btn-action btn-success btn-sm"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>` : ''}
+                            <button type="button" class="btn-action btn-secondary btn-sm" onclick="promptAssignPlan('${u.uid}')">
+                                <i class="fa-solid fa-rotate"></i> Renovar
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderUsersTable() {
+        const tbody = document.getElementById('all-users-tbody');
+        const query = (document.getElementById('users-search-input')?.value || '').trim().toLowerCase();
+
+        const filtered = allUsersList.filter((u) => {
+            if (!query) return true;
+            const text = `${u.name || ''} ${u.email || ''} ${u.whatsapp || ''} ${u.subscriptionPlan || ''}`.toLowerCase();
+            return text.includes(query);
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum usuário encontrado.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map((u) => {
+            const st = getUserPlanStatus(u);
+            const lastDate = parseAnyDate(u.lastAccessAt || u.updatedAt || u.createdAt);
+            const lastStr = lastDate ? lastDate.toLocaleDateString('pt-PT') : '-';
+            const cleanWa = String(u.whatsapp || '').replace(/\D/g, '');
+
+            let statusBadge = `<span class="badge badge-success">${st.label}</span>`;
+            if (st.isExpired) statusBadge = `<span class="badge badge-danger">${st.label}</span>`;
+            else if (!st.isLifetime && st.daysLeft !== null && st.daysLeft <= 5) statusBadge = `<span class="badge badge-warning">${st.label}</span>`;
+
+            return `
+                <tr>
+                    <td><strong>${escapeHtml(u.name || 'Assinante')}</strong></td>
+                    <td>
+                        <div style="font-size:0.82rem;">${escapeHtml(u.email || '-')}</div>
+                        ${u.whatsapp ? `<div style="font-size:0.74rem; color:var(--success);"><i class="fa-brands fa-whatsapp"></i> ${escapeHtml(u.whatsapp)}</div>` : ''}
+                    </td>
+                    <td><span class="badge badge-primary">${escapeHtml(u.subscriptionPlan || 'Acesso 1 Mês')}</span></td>
+                    <td>${statusBadge}</td>
+                    <td style="color:var(--text-muted); font-size:0.8rem;">${lastStr}</td>
+                    <td style="text-align:right;">
+                        <div style="display:inline-flex; gap:6px; justify-content:flex-end;">
+                            <button type="button" class="btn-action btn-primary btn-sm" onclick="openDirectChat('${u.uid}')" title="Falar no Chat">
+                                <i class="fa-solid fa-comment-dots"></i> Falar
+                            </button>
+                            ${cleanWa ? `<a href="https://wa.me/${cleanWa}" target="_blank" class="btn-action btn-success btn-sm" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
+                            <button type="button" class="btn-action btn-secondary btn-sm" onclick="promptAssignPlan('${u.uid}')" title="Alterar Plano">
+                                <i class="fa-solid fa-crown"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // ==========================================
+    // 6B. CRIAR CONTA DE CLIENTE SEM DESLOGAR ADMIN
+    // ==========================================
+    function openCreateUserModal() {
+        document.getElementById('form-create-user').reset();
+        document.getElementById('create-user-modal').classList.add('open');
+    }
+
+    function closeCreateUserModal() {
+        document.getElementById('create-user-modal').classList.remove('open');
+    }
+
+    async function createUserByAdmin(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-create-user');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A criar conta...';
+
+        const name = document.getElementById('new-user-name').value.trim();
+        const email = document.getElementById('new-user-email').value.trim().toLowerCase();
+        const whatsapp = document.getElementById('new-user-whatsapp').value.trim();
+        const password = document.getElementById('new-user-password').value;
+        const planKey = document.getElementById('new-user-plan').value;
+        const recordSale = document.getElementById('new-user-record-sale').checked;
+        const plan = PLANS_INFO[planKey] || PLANS_INFO.mensal;
+
+        let secondaryApp = null;
+        try {
+            secondaryApp = firebase.initializeApp(firebaseConfig, `SecondaryAdmin_${Date.now()}`);
+            const secondaryAuth = secondaryApp.auth();
+
+            const cred = await secondaryAuth.createUserWithEmailAndPassword(email, password);
+            await cred.user.updateProfile({ displayName: name });
+            const newUid = cred.user.uid;
+            await secondaryAuth.signOut();
+
+            const expiresAt = plan.days
+                ? firebase.firestore.Timestamp.fromDate(new Date(Date.now() + plan.days * 24 * 60 * 60 * 1000))
+                : null;
+
+            await db.collection('users').doc(newUid).set({
+                uid: newUid,
+                name,
+                email,
+                whatsapp,
+                role: 'client',
+                status: 'active',
+                planId: plan.id,
+                subscriptionPlan: plan.name,
+                hasInstallLessons: plan.hasInstallLessons,
+                expiresAt,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            if (recordSale) {
+                await db.collection('transactions').add({
+                    userId: newUid,
+                    userName: name,
+                    userEmail: email,
+                    whatsapp,
+                    planId: plan.id,
+                    subscriptionPlan: plan.name,
+                    amountKz: plan.price,
+                    status: 'completed',
+                    source: 'admin_manual',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+
+            showToast(`Conta criada com sucesso para ${name}!`, 'success');
+            closeCreateUserModal();
+        } catch (err) {
+            let msg = err.message;
+            if (err.code === 'auth/email-already-in-use') msg = 'Este e-mail já possui uma conta registada.';
+            else if (err.code === 'auth/weak-password') msg = 'A senha deve ter pelo menos 6 caracteres.';
+            showToast(msg, 'warning');
+        } finally {
+            if (secondaryApp) {
+                try { await secondaryApp.delete(); } catch (_) {}
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-user-check"></i> Criar Conta Agora';
+        }
+    }
+
+    async function promptAssignPlan(uid) {
+        const userObj = allUsersList.find(u => u.uid === uid);
+        if (!userObj) return;
+
+        const { value: selectedPlan } = await Swal.fire({
+            title: `Alterar Plano de ${userObj.name || 'Cliente'}`,
+            input: 'select',
+            inputOptions: {
+                semanal: 'Acesso 1 Semana (7 dias — 1.500 Kz)',
+                mensal: 'Acesso 1 Mês (30 dias — 2.000 Kz)',
+                vitalicio: 'Acesso Vitalício (Ilimitado — 5.000 Kz)'
+            },
+            inputValue: userObj.planId || 'mensal',
+            background: '#181824',
+            color: '#FFF',
+            confirmButtonText: 'Aplicar Plano',
+            confirmButtonColor: '#7C3AED',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!selectedPlan) return;
+
+        const plan = PLANS_INFO[selectedPlan];
+        const newExpiresAt = plan.days
+            ? firebase.firestore.Timestamp.fromDate(new Date(Date.now() + plan.days * 24 * 60 * 60 * 1000))
+            : null;
+
+        try {
+            await db.collection('users').doc(uid).set({
+                planId: plan.id,
+                subscriptionPlan: plan.name,
+                hasInstallLessons: plan.hasInstallLessons,
+                expiresAt: newExpiresAt,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            showToast(`Plano actualizado para ${plan.name}!`, 'success');
+        } catch (err) {
+            showToast('Erro ao actualizar plano: ' + err.message, 'warning');
+        }
+    }
+
+    // ==========================================
+    // 7. NAVEGAÇÃO DA SIDEBAR
+    // ==========================================
+    const VIEW_TITLES = {
+        dashboard: 'Dashboard & Receita',
+        receipts: 'Comprovativos & Pedidos',
+        expiring: 'Assinaturas Quase a Expirar',
+        users: 'Usuários & Acessos',
+        products: 'Produtos (DAW, Plugins, Livrarias)',
+        chat: 'Falar Diretamente com Usuário',
+        perfil: 'Editar Perfil',
+        senha: 'Mudar Senha'
+    };
+
+    function switchView(viewId, btnEl) {
+        document.querySelectorAll('.menu-item[data-view]').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-view') === viewId);
+        });
+
+        document.querySelectorAll('.panel-view').forEach(sec => {
+            sec.classList.toggle('active', sec.id === `view-${viewId}`);
+        });
+
+        document.getElementById('topbar-title').textContent = VIEW_TITLES[viewId] || 'Admin';
+        toggleSidebar(false);
+    }
+
+    function toggleSidebar(force) {
+        const sidebar = document.getElementById('sidebar');
+        const closeBtn = document.getElementById('closeSidebarBtn');
+        const shouldOpen = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
+        sidebar.classList.toggle('open', shouldOpen);
+        if (closeBtn) closeBtn.style.display = shouldOpen ? 'flex' : 'none';
+    }
+
+    // ==========================================
+    // 8. CADASTRO E EDIÇÃO DE PRODUTOS (VIA LINK DE IMAGEM)
+    // ==========================================
+    function renderProductsTable() {
+        const tbody = document.getElementById('products-tbody');
+        const query = (document.getElementById('products-search-input')?.value || '').trim().toLowerCase();
+
+        const filtered = allProductsList.filter((p) => {
+            if (!query) return true;
+            const hay = `${p.titulo || ''} ${p.categoria || ''} ${p.sistema || ''} ${p.descricao || ''}`.toLowerCase();
+            return hay.includes(query);
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum produto cadastrado no banco de dados ainda.</td></tr>`;
+            return;
+        }
+
+        const catNames = {
+            'daw': 'DAW',
+            'livrarias': 'Livrarias',
+            'mix e master vst': 'Mix e Master VST',
+            'instrumentos vsti': 'Instrumentos VSTi'
+        };
+
+        tbody.innerHTML = filtered.map((p) => {
+            const catLabel = catNames[String(p.categoria || '').toLowerCase()] || p.categoria || 'Plugin';
+            const sysRaw = String(p.sistema || 'windows').toLowerCase();
+            const sysBadge = sysRaw === 'mac'
+                ? `<span class="badge badge-info"><i class="fa-brands fa-apple"></i> Mac</span>`
+                : sysRaw === 'both'
+                ? `<span class="badge badge-primary">Win & Mac</span>`
+                : `<span class="badge badge-info"><i class="fa-brands fa-windows"></i> Windows</span>`;
+
+            const img = p.imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=200&q=70';
+
+            return `
+                <tr>
+                    <td><img src="${escapeHtml(img)}" alt="" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);"></td>
+                    <td>
+                        <strong>${escapeHtml(p.titulo || 'Produto')}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-muted); max-width:340px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.descricao || '')}</div>
+                    </td>
+                    <td><span class="badge badge-primary">${escapeHtml(catLabel)}</span></td>
+                    <td>${sysBadge}</td>
+                    <td>
+                        <span class="badge ${p.pluginUrl && p.pluginUrl !== '#' ? 'badge-success' : 'badge-warning'}">Plugin</span>
+                        <span class="badge ${p.aulaUrl && p.aulaUrl !== '#' ? 'badge-success' : 'badge-warning'}">Aula</span>
+                    </td>
+                    <td style="text-align:right;">
+                        <div style="display:inline-flex; gap:6px;">
+                            <button type="button" class="btn-action btn-secondary btn-sm" onclick="editProduct('${p.id}')" title="Editar">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button type="button" class="btn-action btn-danger btn-sm" onclick="deleteProduct('${p.id}')" title="Eliminar">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function openProductModal() {
+        editingProductDocId = null;
+        document.getElementById('product-modal-title').textContent = 'Cadastrar Novo Produto';
+        document.getElementById('prod-titulo').value = '';
+        document.getElementById('prod-categoria').value = 'daw';
+        document.getElementById('prod-sistema').value = 'windows';
+        document.getElementById('prod-descricao').value = '';
+        document.getElementById('prod-plugin-url').value = '';
+        document.getElementById('prod-aula-url').value = '';
+        document.getElementById('prod-imagem-url').value = '';
+        document.getElementById('product-modal').classList.add('open');
+    }
+
+    function closeProductModal() {
+        document.getElementById('product-modal').classList.remove('open');
+    }
+
+    function editProduct(docId) {
+        const p = allProductsList.find(item => item.id === docId);
+        if (!p) return;
+
+        editingProductDocId = docId;
+        document.getElementById('product-modal-title').textContent = 'Editar Produto';
+        document.getElementById('prod-titulo').value = p.titulo || '';
+        document.getElementById('prod-categoria').value = String(p.categoria || 'daw').toLowerCase();
+        document.getElementById('prod-sistema').value = String(p.sistema || 'windows').toLowerCase();
+        document.getElementById('prod-descricao').value = p.descricao || '';
+        document.getElementById('prod-plugin-url').value = p.pluginUrl || '';
+        document.getElementById('prod-aula-url').value = p.aulaUrl || '';
+        document.getElementById('prod-imagem-url').value = p.imagem || '';
+        document.getElementById('product-modal').classList.add('open');
+    }
+
+    async function saveProductForm(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save-product');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A guardar...';
+
+        try {
+            const titulo = document.getElementById('prod-titulo').value.trim();
+            const categoria = document.getElementById('prod-categoria').value;
+            const sistema = document.getElementById('prod-sistema').value;
+            const descricao = document.getElementById('prod-descricao').value.trim();
+            const pluginUrl = document.getElementById('prod-plugin-url').value.trim();
+            const aulaUrl = document.getElementById('prod-aula-url').value.trim() || '#';
+            const imagem = document.getElementById('prod-imagem-url').value.trim() ||
+                'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80';
+
+            const payload = {
+                titulo,
+                categoria,
+                sistema,
+                descricao: descricao || 'Produto profissional NPLUGINS pronto para instalação.',
+                pluginUrl,
+                aulaUrl,
+                imagem,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (editingProductDocId) {
+                await db.collection('produtos').doc(editingProductDocId).set(payload, { merge: true });
+                showToast('Produto actualizado com sucesso!', 'success');
+            } else {
+                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('produtos').add(payload);
+                showToast('Produto cadastrado com sucesso!', 'success');
+            }
+
+            closeProductModal();
+        } catch (err) {
+            showToast('Erro ao guardar produto: ' + err.message, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Guardar Produto';
+        }
+    }
+
+    function deleteProduct(docId) {
+        Swal.fire({
+            title: 'Eliminar Produto?',
+            text: 'O produto será removido imediatamente da vitrine e da área do cliente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#1f1f2e',
+            confirmButtonText: 'Sim, Eliminar',
+            cancelButtonText: 'Cancelar',
+            background: '#181824',
+            color: '#FFF'
+        }).then(async (res) => {
+            if (res.isConfirmed) {
+                await db.collection('produtos').doc(docId).delete();
+                showToast('Produto eliminado.', 'info');
+            }
+        });
+    }
+
+    // ==========================================
+    // 9. FALAR DIRETAMENTE COM USUÁRIOS (CHAT BIDIRECIONAL)
+    // ==========================================
+    function renderChatSidebar() {
+        const container = document.getElementById('chat-users-list');
+        if (!container) return;
+
+        const query = (document.getElementById('chat-user-search')?.value || '').trim().toLowerCase();
+
+        const combinedMap = new Map();
+        allUsersList.forEach(u => {
+            if (u.role === 'admin' && u.uid === currentAdmin?.uid) return;
+            const thread = chatThreadsMap[u.uid] || {};
+            combinedMap.set(u.uid, {
+                uid: u.uid,
+                name: u.name || thread.userName || 'Assinante',
+                email: u.email || thread.userEmail || '',
+                whatsapp: u.whatsapp || thread.whatsapp || '',
+                lastMessage: thread.lastMessage || 'Clique para enviar mensagem',
+                unread: Number(thread.unreadAdmin || 0),
+                updatedAt: parseAnyDate(thread.updatedAt)
+            });
+        });
+
+        Object.entries(chatThreadsMap).forEach(([uid, data]) => {
+            if (!combinedMap.has(uid)) {
+                combinedMap.set(uid, {
+                    uid,
+                    name: data.userName || 'Cliente',
+                    email: data.userEmail || '',
+                    whatsapp: data.whatsapp || '',
+                    lastMessage: data.lastMessage || 'Conversa iniciada',
+                    unread: Number(data.unreadAdmin || 0),
+                    updatedAt: parseAnyDate(data.updatedAt)
+                });
+            }
+        });
+
+        const list = Array.from(combinedMap.values())
+            .filter(item => {
+                if (!query) return true;
+                return `${item.name} ${item.email}`.toLowerCase().includes(query);
+            })
+            .sort((a, b) => {
+                if (b.unread !== a.unread) return b.unread - a.unread;
+                const ta = a.updatedAt ? a.updatedAt.getTime() : 0;
+                const tb = b.updatedAt ? b.updatedAt.getTime() : 0;
+                return tb - ta;
+            });
+
+        if (list.length === 0) {
+            container.innerHTML = `<p style="padding:1rem; color:var(--text-muted); font-size:0.82rem; text-align:center;">Nenhum usuário encontrado.</p>`;
+            return;
+        }
+
+        container.innerHTML = list.map(u => {
+            const initials = u.name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('') || 'CL';
+            const isActive = u.uid === activeChatUid ? 'active' : '';
+            const unreadPill = (u.unread > 0 && u.uid !== activeChatUid)
+                ? `<span class="badge badge-warning" style="padding:2px 7px; font-size:0.68rem;">${u.unread}</span>`
+                : '';
+
+            return `
+                <div class="chat-user-row ${isActive}" onclick="openDirectChat('${u.uid}')">
+                    <div class="user-avatar" style="width:36px; height:36px; font-size:0.78rem;">${initials}</div>
+                    <div style="overflow:hidden; flex:1;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                            <span style="font-weight:700; font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(u.name)}</span>
+                            ${unreadPill}
+                        </div>
+                        <div style="font-size:0.74rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(u.lastMessage)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openDirectChat(uid) {
+        switchView('chat');
+        activeChatUid = uid;
+
+        if (chatThreadsMap[uid]?.unreadAdmin) {
+            db.collection('chats').doc(uid).set({ unreadAdmin: 0 }, { merge: true }).catch(() => {});
+        }
+
+        renderChatSidebar();
+
+        const userObj = allUsersList.find(u => u.uid === uid) || chatThreadsMap[uid] || {};
+        const name = userObj.name || userObj.userName || 'Assinante';
+        const email = userObj.email || userObj.userEmail || '';
+        const cleanWa = String(userObj.whatsapp || '').replace(/\D/g, '');
+
+        document.getElementById('chat-header-bar').innerHTML = `
+            <div>
+                <strong style="font-size:0.95rem;">${escapeHtml(name)}</strong>
+                ${email ? `<span style="font-size:0.78rem; color:var(--text-muted); margin-left:8px;">${escapeHtml(email)}</span>` : ''}
+            </div>
+            ${cleanWa ? `<a href="https://wa.me/${cleanWa}" target="_blank" class="btn-action btn-success btn-sm"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>` : ''}
+        `;
+
+        const box = document.getElementById('chat-messages-box');
+        if (unsubscribeChatMessages) unsubscribeChatMessages();
+
+        unsubscribeChatMessages = db.collection('chats').doc(uid).collection('messages')
+            .orderBy('timestamp', 'asc')
+            .onSnapshot((snap) => {
+                if (activeChatUid === uid && chatThreadsMap[uid]?.unreadAdmin) {
+                    db.collection('chats').doc(uid).set({ unreadAdmin: 0 }, { merge: true }).catch(() => {});
+                }
+
+                box.innerHTML = '';
+                if (snap.empty) {
+                    box.innerHTML = `<p style="color:var(--text-muted); text-align:center; margin:auto; font-size:0.85rem;">Nenhuma mensagem ainda. Escreva abaixo para falar com ${escapeHtml(name)}.</p>`;
+                    return;
+                }
+
+                snap.forEach((doc) => {
+                    const m = doc.data();
+                    const isAdmin = m.sender === 'admin';
+                    const msgDate = parseAnyDate(m.timestamp);
+                    const timeStr = msgDate ? msgDate.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : '';
+                    const senderLabel = isAdmin ? 'Você (Admin)' : escapeHtml(m.senderName || name);
+
+                    box.innerHTML += `
+                        <div class="msg-bubble ${isAdmin ? 'msg-admin' : 'msg-user'}">
+                            ${escapeHtml(m.text)}
+                            <span class="msg-meta">${senderLabel}${timeStr ? ` • ${timeStr}` : ''}</span>
+                        </div>
+                    `;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+    }
+
+    async function sendAdminChatMessage() {
+        if (!activeChatUid) {
+            showToast('Selecione um usuário primeiro.', 'warning');
+            return;
+        }
+
+        const input = document.getElementById('chat-message-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        input.value = '';
+        const userObj = allUsersList.find(u => u.uid === activeChatUid) || chatThreadsMap[activeChatUid] || {};
+
+        try {
+            const chatRef = db.collection('chats').doc(activeChatUid);
+            await chatRef.set({
+                userName: userObj.name || userObj.userName || 'Assinante',
+                userEmail: userObj.email || userObj.userEmail || '',
+                whatsapp: userObj.whatsapp || '',
+                lastMessage: text,
+                lastSender: 'admin',
+                unreadAdmin: 0,
+                unreadClient: firebase.firestore.FieldValue.increment(1),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            await chatRef.collection('messages').add({
+                sender: 'admin',
+                senderName: currentAdmin?.displayName || 'Administrador',
+                text,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (err) {
+            showToast('Erro ao enviar mensagem: ' + err.message, 'warning');
+        }
+    }
+
+    // ==========================================
+    // 10. EDITAR PERFIL, MUDAR SENHA & LOGOUT
+    // ==========================================
+    async function saveAdminProfile(e) {
+        e.preventDefault();
+        if (!currentAdmin) return;
+
+        const btn = document.getElementById('btn-save-admin-profile');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+
+        try {
+            const name = document.getElementById('admin-prof-name').value.trim();
+            const whatsapp = document.getElementById('admin-prof-whatsapp').value.trim();
+
+            await currentAdmin.updateProfile({ displayName: name });
+            await db.collection('users').doc(currentAdmin.uid).set({
+                name,
+                whatsapp,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            const initials = name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('') || 'AD';
+            document.getElementById('admin-avatar').textContent = initials;
+            document.getElementById('admin-name-display').textContent = name;
+
+            showToast('Perfil administrativo guardado!', 'success');
+        } catch (err) {
+            showToast('Erro ao guardar perfil: ' + err.message, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Alterações';
+        }
+    }
+
+    async function updateAdminPassword(e) {
+        e.preventDefault();
+        if (!currentAdmin) return;
+
+        const currentPass = document.getElementById('admin-pass-current').value;
+        const newPass = document.getElementById('admin-pass-new').value;
+        const repeatPass = document.getElementById('admin-pass-repeat').value;
+
+        if (newPass !== repeatPass) {
+            showToast('A nova senha e a repetição não coincidem.', 'warning');
+            return;
+        }
+
+        const btn = document.getElementById('btn-update-admin-pass');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Actualizando...';
+
+        try {
+            const cred = firebase.auth.EmailAuthProvider.credential(currentAdmin.email, currentPass);
+            await currentAdmin.reauthenticateWithCredential(cred);
+            await currentAdmin.updatePassword(newPass);
+
+            document.getElementById('form-admin-password').reset();
+            showToast('Senha actualizada com sucesso!', 'success');
+        } catch (err) {
+            const msg = (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential')
+                ? 'A senha actual está incorreta.'
+                : err.message;
+            showToast(msg, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Actualizar a Senha';
+        }
+    }
+
+    function logoutAdmin() {
+        auth.signOut().then(() => {
+            window.location.href = 'index.html';
+        });
+    }
+</script>
+</body>
+</html>

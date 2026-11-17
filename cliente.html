@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Cliente | NPLUGINS</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Fontes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Firebase SDK Compat v10.8.0 (Projeto bd-nplugins) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-hover: #6D28D9;
+            --primary-soft: rgba(124, 58, 237, 0.14);
+            --primary-glow: rgba(124, 58, 237, 0.32);
+
+            --success: #10B981;
+            --success-soft: rgba(16, 185, 129, 0.14);
+            --warning: #F59E0B;
+            --warning-soft: rgba(245, 158, 11, 0.14);
+            --danger: #EF4444;
+            --danger-soft: rgba(239, 68, 68, 0.14);
+            --info: #38BDF8;
+
+            --bg-body: #0d0d12;
+            --bg-sidebar: #12121a;
+            --bg-card: #181824;
+            --bg-card-hover: #1f1f2e;
+            --bg-input: #12121a;
+            --border-color: rgba(255, 255, 255, 0.08);
+
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --sidebar-width: 260px;
+            --nav-height: 68px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.22s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button, input, select, textarea { font-family: inherit; }
+
+        /* PRELOADER */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: #09090d;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .loader-brand span { color: var(--primary); }
+        .loader-bar {
+            width: 180px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .loader-progress {
+            width: 65%;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            animation: loadSlide 1s infinite ease-in-out alternate;
+        }
+        @keyframes loadSlide {
+            from { transform: translateX(-20%); }
+            to { transform: translateX(75%); }
+        }
+
+        /* TOAST NOTIFICATIONS */
+        #toast-container {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            min-width: 270px;
+            max-width: 380px;
+            background: #181824;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 13px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+            animation: toastIn 0.25s ease forwards;
+        }
+        @keyframes toastIn {
+            from { transform: translateX(110%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-icon { font-size: 1.15rem; margin-top: 2px; }
+        .toast-success .toast-icon { color: var(--success); }
+        .toast-info .toast-icon { color: var(--info); }
+        .toast-warning .toast-icon { color: var(--warning); }
+        .toast-title { font-weight: 700; font-size: 0.86rem; margin-bottom: 2px; }
+        .toast-msg { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* LAYOUT PRINCIPAL */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* SIDEBAR LIMPA */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            padding: 20px 14px 0 14px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px 18px 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        .brand-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-logo i { color: var(--primary); }
+        .brand-logo span { color: var(--primary); }
+
+        .sidebar-scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+
+        .user-profile-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--primary-soft);
+            border: 1.5px solid var(--primary);
+            color: #FFF;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .menu-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin: 0.8rem 0 0.5rem 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 11px 14px;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 4px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .menu-item i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active {
+            color: var(--text-main);
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.25) 0%, rgba(124, 58, 237, 0.04) 100%);
+            border-left: 3px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-item.active i {
+            color: var(--primary);
+        }
+
+        .unread-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: #FFF;
+            font-size: 0.7rem;
+            font-weight: 800;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 50px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .unread-badge.visible {
+            display: inline-flex;
+        }
+
+        .sidebar-fixed-bottom {
+            padding: 12px 0 18px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* TOP NAVBAR */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            height: var(--nav-height);
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            transition: var(--transition);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #FFF;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-pill-top {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            background: var(--success-soft);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .plan-pill-top.warning {
+            background: var(--warning-soft);
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+
+        .plan-pill-top.expired {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
+        .icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .icon-btn:hover { background: rgba(255, 255, 255, 0.12); }
+
+        .notif-dot {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--danger);
+            border: 2px solid var(--bg-sidebar);
+            display: none;
+        }
+        .notif-dot.visible { display: block; }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--nav-height);
+            padding: 2rem;
+            width: calc(100% - var(--sidebar-width));
+            min-height: calc(100vh - var(--nav-height));
+        }
+
+        .panel-view {
+            display: none;
+            max-width: 1560px;
+            margin: 0 auto;
+        }
+        .panel-view.active {
+            display: block;
+            animation: fadeIn 0.22s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .view-header {
+            margin-bottom: 1.5rem;
+        }
+        .view-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        .view-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ALERTA DE EXPIRAÇÃO DO PLANO (5, 4, 3, 2, 1 DIAS) */
+        .expiry-alert-banner {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            background: var(--warning-soft);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .expiry-alert-banner.visible { display: flex; }
+        .expiry-alert-banner.urgent {
+            background: var(--danger-soft);
+            border-color: rgba(239, 68, 68, 0.45);
+        }
+        .expiry-alert-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .expiry-alert-info i {
+            font-size: 1.35rem;
+            color: var(--warning);
+        }
+        .expiry-alert-banner.urgent .expiry-alert-info i {
+            color: var(--danger);
+        }
+        .expiry-alert-text strong {
+            display: block;
+            font-size: 0.92rem;
+            color: #FFF;
+        }
+        .expiry-alert-text span {
+            font-size: 0.82rem;
+            color: #E4E4E7;
+        }
+
+        /* CARTÃO DO PLANO NA HOME */
+        .subscription-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.6rem;
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sub-plan-details {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .sub-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--primary-soft);
+            color: #C4B5FD;
+            margin-bottom: 8px;
+        }
+
+        .sub-plan-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #FFF;
+            margin-bottom: 4px;
+        }
+
+        .sub-time-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .sub-time-highlight {
+            color: var(--success);
+            font-weight: 700;
+        }
+        .sub-time-highlight.warning { color: var(--warning); }
+        .sub-time-highlight.expired { color: var(--danger); }
+
+        .time-progress-track {
+            width: 100%;
+            max-width: 420px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .time-progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+        .time-progress-fill.warning { background: var(--warning); }
+        .time-progress-fill.expired { background: var(--danger); }
+
+        /* STATS COMPACTOS NA HOME */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* BOTÕES PADRÃO */
+        .btn-action {
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.84rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #FFF;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: #FFF;
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .btn-warning {
+            background: var(--warning);
+            color: #09090d;
+            font-weight: 700;
+        }
+        .btn-warning:hover {
+            filter: brightness(1.08);
+        }
+
+        /* BARRA DE FILTROS DE PRODUTOS */
+        .filter-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.15rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .filter-top {
+            display: grid;
+            grid-template-columns: 1fr 240px auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 11px 15px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .cat-tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cat-tab {
+            padding: 7px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cat-tab:hover {
+            color: #FFF;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .cat-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #FFF;
+        }
+
+        /* GRID DE PRODUTOS */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 1.15rem;
+            width: 100%;
+        }
+
+        @media (max-width: 1440px) {
+            .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        @media (max-width: 1120px) {
+            .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (max-width: 780px) {
+            .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .products-grid { grid-template-columns: 1fr; }
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        .product-card:hover {
+            transform: translateY(-3px);
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .product-thumb-container {
+            position: relative;
+            width: 100%;
+            height: 155px;
+            background: #09090d;
+            overflow: hidden;
+        }
+        .product-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+        .product-card:hover .product-thumb {
+            transform: scale(1.04);
+        }
+
+        .product-os-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(13, 13, 18, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: #FFF;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .product-body {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 8px;
+        }
+
+        .product-cat-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #A78BFA;
+            letter-spacing: 0.4px;
+        }
+
+        .product-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #FFF;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .product-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .btn-card-sm {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* PAGINAÇÃO */
+        .pagination-bar {
+            margin-top: 1.75rem;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .page-numbers {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .page-btn {
+            min-width: 34px;
+            height: 34px;
+            padding: 0 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .page-btn:hover:not(:disabled) {
+            color: #FFF;
+            border-color: var(--primary);
+        }
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #FFF;
+        }
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* CHAT / MENSAGENS COM ADMIN */
+        .chat-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 220px);
+            min-height: 460px;
+            max-height: 740px;
+            max-width: 920px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1rem 1.35rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .chat-admin-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            border: 2px solid var(--bg-card);
+        }
+
+        .chat-messages-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.35rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(9, 9, 13, 0.45);
+        }
+
+        .chat-empty-state {
+            margin: auto;
+            text-align: center;
+            max-width: 340px;
+            color: var(--text-muted);
+        }
+        .chat-empty-state i {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            opacity: 0.85;
+        }
+
+        .msg-row {
+            display: flex;
+            flex-direction: column;
+            max-width: 76%;
+        }
+        .msg-row.client {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+        .msg-row.admin {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .msg-sender-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .msg-row.admin .msg-sender-tag {
+            color: #A78BFA;
+        }
+
+        .msg-bubble {
+            padding: 11px 15px;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+        .msg-row.client .msg-bubble {
+            background: linear-gradient(135deg, var(--primary) 0%, #5B21B6 100%);
+            color: #FFF;
+            border-bottom-right-radius: 4px;
+        }
+        .msg-row.admin .msg-bubble {
+            background: var(--bg-card-hover);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            color: #F4F4F5;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-time {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .chat-input-bar {
+            padding: 0.95rem 1.25rem;
+            background: var(--bg-sidebar);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .chat-textarea {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 11px 14px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+            outline: none;
+            transition: var(--transition);
+        }
+        .chat-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        /* FORMULÁRIOS (PERFIL & MUDAR SENHA) */
+        .form-container-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            max-width: 580px;
+        }
+        .form-label {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+        .form-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        /* MODAL DE ACTUALIZAÇÃO DE PLANO */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            padding: 1rem;
+        }
+        .modal-backdrop.open { display: flex; }
+
+        .modal-box {
+            background: #12121a;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 92vh;
+            overflow-y: auto;
+            padding: 1.75rem;
+        }
+
+        .plans-select-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 1.2rem 0;
+        }
+
+        .plan-option-card {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .plan-option-card:hover {
+            border-color: rgba(124, 58, 237, 0.5);
+        }
+        .plan-option-card.selected {
+            border-color: var(--primary);
+            background: rgba(124, 58, 237, 0.14);
+        }
+
+        .pay-method-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .pay-method-btn {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .pay-method-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: #FFF;
+        }
+
+        .iban-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            margin: 8px 0 12px 0;
+        }
+
+        .upload-box {
+            border: 1.5px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 1.1rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .upload-box:hover {
+            border-color: var(--primary);
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 1024px) {
+            #sidebar {
+                transform: translateX(-100%);
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+            }
+            #sidebar.open { transform: translateX(0); }
+            .top-navbar { left: 0; padding: 0 1.2rem; }
+            .main-content { margin-left: 0; width: 100%; padding: 1.5rem 1rem; }
+            #menuToggle { display: flex !important; }
+            .filter-top { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 680px) {
+            .plans-select-grid,
+            .pay-method-switch { grid-template-columns: 1fr; }
+            .msg-row { max-width: 88%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="loader-brand"><i class="fa-solid fa-sliders"></i> N<span>PLUGINS</span></div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="toast-container"></div>
+
+    <div class="app-container">
+
+        <!-- TOP NAVBAR -->
+        <header class="top-navbar">
+            <div class="nav-left">
+                <button class="icon-btn" id="menuToggle" style="display:none;" onclick="toggleSidebar()" aria-label="Abrir Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="nav-page-title" id="topbar-title">Home</span>
+            </div>
+
+            <div class="nav-actions">
+                <button type="button" class="plan-pill-top" id="topbar-plan-pill" onclick="openUpgradePlanModal()">
+                    <i class="fa-solid fa-clock"></i>
+                    <span id="topbar-days-text">Carregando plano...</span>
+                </button>
+
+                <button type="button" class="icon-btn" title="Mensagens com o Admin" onclick="switchView('mensagens')">
+                    <i class="fa-solid fa-comments" style="color: #A78BFA;"></i>
+                    <span class="notif-dot" id="topbar-msg-dot"></span>
+                </button>
+
+                <a href="https://wa.me/244924034159" target="_blank" class="icon-btn" title="Suporte WhatsApp">
+                    <i class="fa-brands fa-whatsapp" style="color: var(--success);"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
+            <div class="sidebar-brand">
+                <a href="index.html" class="brand-logo">
+                    <i class="fa-solid fa-sliders"></i> N<span>PLUGINS</span>
+                </a>
+                <button class="icon-btn" id="closeSidebarBtn" style="display:none; width:32px; height:32px;" onclick="toggleSidebar(false)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-scroll-content">
+                <div class="user-profile-box">
+                    <div class="user-avatar" id="sidebar-avatar">NP</div>
+                    <div style="overflow:hidden;">
+                        <div style="font-weight:700; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="sidebar-user-name">Assinante</div>
+                        <div style="font-size:0.75rem; color:#A78BFA; font-weight:600;" id="sidebar-user-plan">Plano Ativo</div>
+                    </div>
+                </div>
+
+                <div class="menu-label">Menu Principal</div>
+                <button type="button" class="menu-item active" data-view="home" onclick="switchView('home', this)">
+                    <i class="fa-solid fa-house"></i> Home
+                </button>
+                <button type="button" class="menu-item" data-view="produtos" onclick="switchView('produtos', this)">
+                    <i class="fa-solid fa-boxes-stacked"></i> Produtos Disponíveis
+                </button>
+                <button type="button" class="menu-item" data-view="mensagens" onclick="switchView('mensagens', this)">
+                    <i class="fa-solid fa-comments"></i>
+                    <span>Mensagens</span>
+                    <span class="unread-badge" id="sidebar-unread-badge">0</span>
+                </button>
+
+                <div class="menu-label">Conta & Segurança</div>
+                <button type="button" class="menu-item" data-view="perfil" onclick="switchView('perfil', this)">
+                    <i class="fa-solid fa-user-pen"></i> Editar Perfil
+                </button>
+                <button type="button" class="menu-item" data-view="senha" onclick="switchView('senha', this)">
+                    <i class="fa-solid fa-key"></i> Mudar Senha
+                </button>
+
+                <a href="admin.html" id="sidebar-admin-link" class="menu-item" style="display:none; color:#FBBF24; margin-top:8px;">
+                    <i class="fa-solid fa-shield-halved"></i> Painel Admin
+                </a>
+            </div>
+
+            <div class="sidebar-fixed-bottom">
+                <button type="button" class="menu-item" onclick="logoutUser()" style="color:#F87171; margin-bottom:0;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Terminar a Sessão
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- 1. VIEW: HOME -->
+            <section id="view-home" class="panel-view active">
+                <div class="view-header">
+                    <h2 class="view-title" id="home-greeting">Olá, Assinante!</h2>
+                    <p class="view-subtitle">Acompanhe o tempo restante da sua assinatura e baixe os seus plugins.</p>
+                </div>
+
+                <!-- ALERTA QUANDO FALTAM POUCOS DIAS (5, 4, 3, 2, 1 DIAS OU EXPIRADO) -->
+                <div class="expiry-alert-banner" id="expiry-alert-banner">
+                    <div class="expiry-alert-info">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div class="expiry-alert-text">
+                            <strong id="expiry-alert-title">Atenção: O seu plano está prestes a terminar!</strong>
+                            <span id="expiry-alert-desc">Faltam poucos dias para o fim do seu acesso. Actualize o seu plano agora.</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-action btn-warning" onclick="openUpgradePlanModal()">
+                        <i class="fa-solid fa-arrow-up-right-dots"></i> Actualizar Plano Agora
+                    </button>
+                </div>
+
+                <!-- CARTÃO DO PLANO E TEMPO RESTANTE -->
+                <div class="subscription-card">
+                    <div class="sub-plan-details">
+                        <span class="sub-badge"><i class="fa-solid fa-crown"></i> Assinatura NPLUGINS</span>
+                        <h3 class="sub-plan-name" id="home-plan-name">Acesso 1 Mês</h3>
+
+                        <div class="sub-time-row">
+                            <span>
+                                <i class="fa-regular fa-hourglass-half"></i>
+                                Tempo restante: <strong class="sub-time-highlight" id="home-days-remaining">30 dias restantes</strong>
+                            </span>
+                            <span id="home-expiry-date">Válido até --/--/----</span>
+                        </div>
+
+                        <div class="time-progress-track">
+                            <div class="time-progress-fill" id="home-time-progress" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button type="button" class="btn-action btn-secondary" onclick="openUpgradePlanModal()">
+                            <i class="fa-solid fa-rotate"></i> Actualizar Plano
+                        </button>
+                        <button type="button" class="btn-action btn-primary" onclick="switchView('produtos')">
+                            <i class="fa-solid fa-download"></i> Ver Produtos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3 INDICADORES SIMPLES -->
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-icon" style="background: var(--success-soft); color: var(--success);">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:0.74rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Tempo do Plano</div>
+                            <div style="font-size:1.15rem; font-weight:800;" id="stat-days-label">30 dias</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-icon" style="background: var(--primary-soft); color: #A78BFA;">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:0.74rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Produtos Disponíveis</div>
+                            <div style="font-size:1.15rem; font-weight:800;" id="stat-products-count">0 Produtos</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-icon" style="background: rgba(56, 189, 248, 0.14); color: var(--info);">
+                            <i class="fa-solid fa-circle-play"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:0.74rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Aulas de Instalação</div>
+                            <div style="font-size:1.15rem; font-weight:800;" id="stat-lessons-label">Liberadas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESTAQUES DO CATÁLOGO (APARECE APENAS SE HOUVER PRODUTOS NO ADMIN) -->
+                <div id="home-featured-wrapper" style="display:none;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                        <h3 style="font-family:'Montserrat',sans-serif; font-size:1.05rem; font-weight:700;">Destaques do Catálogo</h3>
+                        <button type="button" onclick="switchView('produtos')" style="background:none; border:none; color:#A78BFA; font-size:0.84rem; font-weight:700; cursor:pointer;">
+                            Ver todos <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="products-grid" id="home-featured-grid"></div>
+                </div>
+            </section>
+
+            <!-- 2. VIEW: PRODUTOS DISPONÍVEIS -->
+            <section id="view-produtos" class="panel-view">
+                <div class="view-header">
+                    <h2 class="view-title"><i class="fa-solid fa-boxes-stacked" style="color:var(--primary);"></i> Produtos Disponíveis</h2>
+                    <p class="view-subtitle">Filtre por nome, categoria ou sistema operacional (Windows ou Mac).</p>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-top">
+                        <input type="text" id="product-search" class="search-input" placeholder="Pesquisar plugin, DAW, livraria..." oninput="applyProductFilters()">
+
+                        <select id="os-select-filter" class="search-input" style="cursor:pointer;" onchange="applyProductFilters()" aria-label="Sistema Operacional">
+                            <option value="all">Todos os Sistemas</option>
+                            <option value="windows">Windows</option>
+                            <option value="mac">Mac</option>
+                        </select>
+
+                        <span style="font-size:0.82rem; color:var(--text-muted); font-weight:600;" id="catalog-count-label">0 produtos</span>
+                    </div>
+
+                    <div class="cat-tabs">
+                        <button type="button" class="cat-tab active" data-cat="all" onclick="setCategoryFilter('all', this)">Todos</button>
+                        <button type="button" class="cat-tab" data-cat="daw" onclick="setCategoryFilter('daw', this)">DAW</button>
+                        <button type="button" class="cat-tab" data-cat="livrarias" onclick="setCategoryFilter('livrarias', this)">Livrarias</button>
+                        <button type="button" class="cat-tab" data-cat="mix e master vst" onclick="setCategoryFilter('mix e master vst', this)">Mix e Master VST</button>
+                        <button type="button" class="cat-tab" data-cat="instrumentos vsti" onclick="setCategoryFilter('instrumentos vsti', this)">Instrumentos VSTi</button>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="catalog-grid"></div>
+
+                <div class="pagination-bar" id="pagination-bar" style="display:none;">
+                    <span style="font-size:0.82rem; color:var(--text-muted);" id="pagination-info">Página 1 de 1</span>
+                    <div class="page-numbers" id="pagination-controls"></div>
+                </div>
+            </section>
+
+            <!-- 3. VIEW: MENSAGENS (CHAT EM TEMPO REAL COM O PAINEL ADMIN) -->
+            <section id="view-mensagens" class="panel-view">
+                <div class="view-header">
+                    <h2 class="view-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Mensagens com o Suporte</h2>
+                    <p class="view-subtitle">Envie dúvidas, pedidos de plugins ou suporte de instalação diretamente para a equipa NPLUGINS.</p>
+                </div>
+
+                <div class="chat-wrapper">
+                    <div class="chat-header">
+                        <div class="chat-admin-info">
+                            <div class="chat-admin-avatar">
+                                <i class="fa-solid fa-headset"></i>
+                                <span class="online-indicator"></span>
+                            </div>
+                            <div>
+                                <div style="font-weight:700; font-size:0.95rem;">Administração NPLUGINS</div>
+                                <div style="font-size:0.75rem; color:var(--success);">Atendimento direto pelo painel</div>
+                            </div>
+                        </div>
+                        <span style="font-size:0.75rem; color:var(--text-muted);" id="chat-status-label">Sincronizado</span>
+                    </div>
+
+                    <div class="chat-messages-box" id="chat-messages-list">
+                        <div class="chat-empty-state">
+                            <i class="fa-regular fa-comment-dots"></i>
+                            <p style="font-size:0.88rem; font-weight:600; color:#FFF; margin-bottom:4px;">Nenhuma mensagem ainda</p>
+                            <p style="font-size:0.8rem;">Escreva abaixo para iniciar uma conversa com o administrador.</p>
+                        </div>
+                    </div>
+
+                    <form class="chat-input-bar" onsubmit="sendChatMessage(event)">
+                        <textarea id="chat-message-input" class="chat-textarea" rows="1" placeholder="Escreva a sua mensagem para o Admin..." onkeydown="handleChatKeydown(event)"></textarea>
+                        <button type="submit" class="btn-action btn-primary" id="btn-send-message" style="height:44px; padding:0 20px;">
+                            <i class="fa-solid fa-paper-plane"></i> Enviar
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 4. VIEW: EDITAR PERFIL -->
+            <section id="view-perfil" class="panel-view">
+                <div class="view-header">
+                    <h2 class="view-title"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Editar Perfil</h2>
+                    <p class="view-subtitle">Atualize os seus dados pessoais de assinante.</p>
+                </div>
+
+                <div class="form-container-card">
+                    <form class="form-stack" onsubmit="saveUserProfile(event)">
+                        <div>
+                            <label class="form-label" for="prof-name"><i class="fa-regular fa-user"></i> Nome Completo</label>
+                            <input type="text" id="prof-name" class="search-input" required placeholder="Seu nome completo">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="prof-email"><i class="fa-regular fa-envelope"></i> E-mail</label>
+                            <input type="email" id="prof-email" class="search-input" disabled style="opacity:0.6; cursor:not-allowed;">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="prof-whatsapp"><i class="fa-brands fa-whatsapp" style="color:var(--success);"></i> WhatsApp</label>
+                            <input type="tel" id="prof-whatsapp" class="search-input" placeholder="+244 9XX XXX XXX">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="prof-os"><i class="fa-solid fa-laptop"></i> Sistema Operacional</label>
+                            <select id="prof-os" class="search-input" style="cursor:pointer;">
+                                <option value="windows">Windows</option>
+                                <option value="mac">Mac (macOS)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-action btn-primary" id="btn-save-profile" style="width:fit-content; padding:11px 24px;">
+                            <i class="fa-solid fa-floppy-disk"></i> Guardar Alterações
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 5. VIEW: MUDAR SENHA -->
+            <section id="view-senha" class="panel-view">
+                <div class="view-header">
+                    <h2 class="view-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> Mudar Senha</h2>
+                    <p class="view-subtitle">Altere a sua senha de acesso com segurança.</p>
+                </div>
+
+                <div class="form-container-card">
+                    <form id="form-change-password" class="form-stack" onsubmit="updateUserPassword(event)">
+                        <div>
+                            <label class="form-label" for="pass-current"><i class="fa-solid fa-lock"></i> Senha Actual</label>
+                            <input type="password" id="pass-current" class="search-input" required placeholder="Digite a sua senha actual">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="pass-new"><i class="fa-solid fa-key"></i> Nova Senha</label>
+                            <input type="password" id="pass-new" class="search-input" required minlength="6" placeholder="Mínimo 6 caracteres">
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="pass-repeat"><i class="fa-solid fa-check-double"></i> Repete Nova Senha</label>
+                            <input type="password" id="pass-repeat" class="search-input" required minlength="6" placeholder="Repita a nova senha">
+                        </div>
+
+                        <button type="submit" class="btn-action btn-primary" id="btn-update-password" style="width:fit-content; padding:11px 24px;">
+                            <i class="fa-solid fa-shield-halved"></i> Actualizar a Senha
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL DE ACTUALIZAÇÃO DE PLANO DENTRO DO PAINEL -->
+    <div class="modal-backdrop" id="upgrade-plan-modal">
+        <div class="modal-box">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+                <div>
+                    <span style="font-size:0.72rem; font-weight:700; color:#A78BFA; text-transform:uppercase;">Renovação ou Upgrade</span>
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.2rem; font-weight:800;">Actualizar Plano NPLUGINS</h3>
+                </div>
+                <button type="button" class="icon-btn" style="width:34px; height:34px;" onclick="closeUpgradePlanModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="plans-select-grid">
+                <div class="plan-option-card" data-plan="semanal" onclick="selectUpgradePlan('semanal')">
+                    <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">7 DIAS</span>
+                    <strong style="font-size:1rem;">Acesso 1 Semana</strong>
+                    <span style="font-size:1.2rem; font-weight:800; color:var(--success);">1.500 Kz</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">Plugins + Suporte (sem aulas)</span>
+                </div>
+
+                <div class="plan-option-card selected" data-plan="mensal" onclick="selectUpgradePlan('mensal')">
+                    <span style="font-size:0.72rem; color:#A78BFA; font-weight:700;">30 DIAS • RECOMENDADO</span>
+                    <strong style="font-size:1rem;">Acesso 1 Mês</strong>
+                    <span style="font-size:1.2rem; font-weight:800; color:var(--success);">2.000 Kz</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">Plugins + Aulas + Suporte</span>
+                </div>
+
+                <div class="plan-option-card" data-plan="vitalicio" onclick="selectUpgradePlan('vitalicio')">
+                    <span style="font-size:0.72rem; color:var(--warning); font-weight:700;">ILIMITADO</span>
+                    <strong style="font-size:1rem;">Acesso Vitalício</strong>
+                    <span style="font-size:1.2rem; font-weight:800; color:var(--success);">5.000 Kz</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">Acesso permanente + Aulas</span>
+                </div>
+            </div>
+
+            <div class="pay-method-switch">
+                <button type="button" class="pay-method-btn active" id="upg-method-bai" onclick="setUpgradePaymentMethod('transfer')">
+                    <i class="fa-solid fa-building-columns"></i> IBAN BAI (Kwanzas)
+                </button>
+                <button type="button" class="pay-method-btn" id="upg-method-wise" onclick="setUpgradePaymentMethod('wise')">
+                    <i class="fa-solid fa-globe"></i> Wise (Euro €)
+                </button>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:14px;">
+                <div id="upg-panel-bai">
+                    <div style="font-size:0.76rem; color:var(--text-muted); font-weight:700;">BANCO BAI — TITULAR: JOSÉ EDUARDO LONEKE</div>
+                    <div class="iban-box">
+                        <span style="font-family:monospace; font-size:0.88rem; color:var(--info); font-weight:700;">AO06 0040 0000 6562 1494 1019 2</span>
+                        <button type="button" class="btn-action btn-secondary" style="padding:5px 10px; font-size:0.75rem;" onclick="copyIban('004000006562149410192', 'IBAN BAI')">
+                            <i class="fa-regular fa-copy"></i> Copiar IBAN
+                        </button>
+                    </div>
+                </div>
+
+                <div id="upg-panel-wise" style="display:none;">
+                    <div style="font-size:0.76rem; color:var(--text-muted); font-weight:700;">WISE (EURO €) — TITULAR: JOSÉ EDUARDO LONEKE • BIC: TRWIBEB1XXX</div>
+                    <div class="iban-box">
+                        <span style="font-family:monospace; font-size:0.88rem; color:var(--success); font-weight:700;">BE83 9675 7696 0915</span>
+                        <button type="button" class="btn-action btn-secondary" style="padding:5px 10px; font-size:0.75rem;" onclick="copyIban('BE83967576960915', 'IBAN Wise')">
+                            <i class="fa-regular fa-copy"></i> Copiar IBAN
+                        </button>
+                    </div>
+                </div>
+
+                <div class="upload-box" onclick="document.getElementById('upgrade-receipt-input').click()">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.4rem; color:var(--primary); margin-bottom:4px;"></i>
+                    <div style="font-size:0.84rem; font-weight:600;" id="upgrade-receipt-status">Clique para anexar o comprovativo de pagamento</div>
+                    <div style="font-size:0.74rem; color:var(--text-muted);" id="upgrade-selected-summary">Plano selecionado: Acesso 1 Mês — 2.000 Kz</div>
+                </div>
+                <input type="file" id="upgrade-receipt-input" accept="image/*" style="display:none;" onchange="handleUpgradeReceiptChange(this)">
+            </div>
+
+            <button type="button" class="btn-action btn-primary" id="btn-confirm-upgrade" style="width:100%; padding:12px;" onclick="submitPlanUpgrade()">
+                <i class="fa-solid fa-bolt"></i> Confirmar e Activar Novo Plano
+            </button>
+        </div>
+    </div>
+
+<script>
+    // ==========================================
+    // 1. CONFIGURAÇÃO DO FIREBASE (PROJETO bd-nplugins)
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
+        authDomain: "bd-nplugins.firebaseapp.com",
+        projectId: "bd-nplugins",
+        storageBucket: "bd-nplugins.firebasestorage.app",
+        messagingSenderId: "946055919532",
+        appId: "1:946055919532:web:a51efb8c7540b12b18ec09",
+        measurementId: "G-G4SNHNND2Q"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+
+    const ADMIN_EMAILS = [
+        "joseeduardoloneke2023@gmail.com",
+        "suporte@lonekenobeat.com",
+        "admin@nplugins.online"
+    ];
+
+    const EXCHANGE_RATE = 500; // 1 EUR = 500 Kz
+
+    // Coleção principal de mensagens (sincronizada com admin.html)
+    const CHAT_COLLECTION = 'mensagens';
+
+    // ==========================================
+    // 2. DADOS DO UTILIZADOR E CATÁLOGO
+    // ==========================================
+    let currentUser = null;
+    let activeViewId = 'home';
+    let userState = {
+        name: 'Assinante NPLUGINS',
+        email: '',
+        whatsapp: '',
+        preferredOS: 'windows',
+        planId: 'mensal',
+        subscriptionPlan: 'Acesso 1 Mês',
+        hasInstallLessons: true,
+        expiresAt: null,
+        totalPlanDays: 30,
+        role: 'client'
+    };
+
+    const PLANS_CONFIG = {
+        semanal: { id: 'semanal', name: 'Acesso 1 Semana', price: 1500, days: 7, hasInstallLessons: false },
+        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 2000, days: 30, hasInstallLessons: true },
+        vitalicio: { id: 'vitalicio', name: 'Acesso Vitalício', price: 5000, days: null, hasInstallLessons: true }
+    };
+
+    let selectedUpgradePlanId = 'mensal';
+    let selectedUpgradeMethod = 'transfer';
+    let upgradeReceiptFile = null;
+
+    // Lista vazia: só mostra o que estiver cadastrado na tabela "produtos" pelo admin.html
+    let allProducts = [];
+    let activeCategory = 'all';
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 20;
+
+    // Armazenamento em memória das mensagens do chat
+    let chatMessagesMap = new Map();
+
+    // ==========================================
+    // 3. UTILITÁRIOS (TOAST, PRELOADER, DATAS, ESCAPE)
+    // ==========================================
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function hidePreloader() {
+        const el = document.getElementById('preloader');
+        if (el) el.classList.add('hidden');
+    }
+
+    function showToast(message, type = 'info', title = '') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        const icons = { success: 'fa-circle-check', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+        const titles = { success: 'Sucesso', info: 'Informação', warning: 'Atenção' };
+
+        toast.innerHTML = `
+            <i class="fa-solid ${icons[type] || 'fa-circle-info'} toast-icon"></i>
+            <div>
+                <div class="toast-title">${escapeHtml(title || titles[type])}</div>
+                <div class="toast-msg">${escapeHtml(message)}</div>
+            </div>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    function parseAnyDate(val) {
+        if (!val) return null;
+        if (typeof val.toDate === 'function') return val.toDate();
+        if (val && typeof val === 'object' && val.seconds !== undefined) return new Date(val.seconds * 1000);
+        const parsed = new Date(val);
+        return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function getSubscriptionStatus() {
+        if (userState.planId === 'vitalicio') {
+            return { isLifetime: true, isExpired: false, daysLeft: 9999, percent: 100, expiryDateStr: 'Acesso Permanente' };
+        }
+
+        const now = new Date();
+        let expDate = parseAnyDate(userState.expiresAt);
+
+        if (!expDate) {
+            const fallbackDays = userState.planId === 'semanal' ? 7 : 30;
+            expDate = new Date(now.getTime() + fallbackDays * 24 * 60 * 60 * 1000);
+        }
+
+        const diffMs = expDate.getTime() - now.getTime();
+        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        const totalDays = userState.planId === 'semanal' ? 7 : 30;
+        const percent = Math.max(0, Math.min(100, Math.round((daysLeft / totalDays) * 100)));
+
+        return {
+            isLifetime: false,
+            isExpired: daysLeft <= 0,
+            daysLeft: Math.max(0, daysLeft),
+            percent,
+            expiryDateStr: expDate.toLocaleDateString('pt-PT')
+        };
+    }
+
+    // ==========================================
+    // 4. AUTENTICAÇÃO E CARREGAMENTO EM TEMPO REAL
+    // ==========================================
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+            hidePreloader();
+            openLoginPrompt();
+            return;
+        }
+        currentUser = user;
+        await listenUserProfile(user);
+        listenProductsCatalog();
+        listenChatMessages(user);
+        hidePreloader();
+    });
+
+    function openLoginPrompt() {
+        Swal.fire({
+            title: 'Entrar na Área do Cliente',
+            html: `
+                <p style="font-size:0.85rem; color:#A1A1AA; margin-bottom:12px;">Use o e-mail e senha da sua assinatura NPLUGINS.</p>
+                <input type="email" id="login-email" class="swal2-input" placeholder="Seu e-mail" style="background:#12121a; color:#fff; border:1px solid rgba(255,255,255,0.12); width:88%;">
+                <input type="password" id="login-pass" class="swal2-input" placeholder="Sua senha" style="background:#12121a; color:#fff; border:1px solid rgba(255,255,255,0.12); width:88%;">
+            `,
+            background: '#181824',
+            color: '#FFFFFF',
+            confirmButtonText: 'Entrar',
+            confirmButtonColor: '#7C3AED',
+            showCancelButton: true,
+            cancelButtonText: 'Ver Planos',
+            allowOutsideClick: false,
+            preConfirm: async () => {
+                const email = document.getElementById('login-email').value.trim();
+                const pass = document.getElementById('login-pass').value;
+                if (!email || !pass) {
+                    Swal.showValidationMessage('Preencha o e-mail e a senha.');
+                    return false;
+                }
+                try {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                    return true;
+                } catch (err) {
+                    Swal.showValidationMessage('E-mail ou senha incorretos.');
+                    return false;
+                }
+            }
+        }).then((res) => {
+            if (res.dismiss === Swal.DismissReason.cancel) {
+                window.location.href = 'index.html#planos';
+            }
+        });
+    }
+
+    function listenUserProfile(user) {
+        return new Promise((resolve) => {
+            db.collection('users').doc(user.uid).onSnapshot((doc) => {
+                const emailLower = (user.email || '').toLowerCase();
+                if (doc.exists) {
+                    const d = doc.data();
+                    const isAdmin = ADMIN_EMAILS.includes(emailLower) || d.role === 'admin';
+                    userState = {
+                        name: d.name || user.displayName || 'Assinante NPLUGINS',
+                        email: d.email || user.email,
+                        whatsapp: d.whatsapp || '',
+                        preferredOS: d.preferredOS || 'windows',
+                        planId: d.planId || 'mensal',
+                        subscriptionPlan: d.subscriptionPlan || 'Acesso 1 Mês',
+                        hasInstallLessons: d.hasInstallLessons !== undefined ? Boolean(d.hasInstallLessons) : (d.planId !== 'semanal'),
+                        expiresAt: d.expiresAt || null,
+                        role: isAdmin ? 'admin' : 'client'
+                    };
+                } else {
+                    userState.email = user.email;
+                    userState.name = user.displayName || user.email.split('@')[0];
+                    userState.role = ADMIN_EMAILS.includes(emailLower) ? 'admin' : 'client';
+                }
+
+                const adminLink = document.getElementById('sidebar-admin-link');
+                if (adminLink) {
+                    adminLink.style.display = userState.role === 'admin' ? 'flex' : 'none';
+                }
+
+                updateDashboardUI();
+                resolve();
+            }, () => {
+                userState.email = user.email;
+                updateDashboardUI();
+                resolve();
+            });
+        });
+    }
+
+    // ==========================================
+    // 5. CATÁLOGO DE PRODUTOS (EXCLUSIVO DA TABELA "produtos" DO ADMIN)
+    // ==========================================
+    function listenProductsCatalog() {
+        db.collection('produtos').onSnapshot((snap) => {
+            const dbItems = [];
+            snap.forEach((doc) => {
+                const d = doc.data();
+                const rawOs = String(d.sistema || d.os || 'both').toLowerCase();
+                let os = 'both';
+                if (rawOs.includes('mac') && !rawOs.includes('win') && rawOs !== 'both') os = 'mac';
+                else if (rawOs.includes('win') && !rawOs.includes('mac') && rawOs !== 'both') os = 'windows';
+
+                dbItems.push({
+                    id: doc.id,
+                    titulo: d.titulo || d.nome || 'Plugin NPLUGINS',
+                    descricao: d.descricao || '',
+                    categoria: String(d.categoria || 'mix e master vst').toLowerCase(),
+                    sistema: os,
+                    imagem: d.imagem || d.capa || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
+                    pluginUrl: d.pluginUrl || d.linkPlugin || d.downloadUrl || d.linkDownload || '#',
+                    aulaUrl: d.aulaUrl || d.linkAula || d.video || d.tutorialUrl || '#'
+                });
+            });
+
+            // Se não tiver nenhum produto cadastrado no admin, allProducts fica [] e nada aparece
+            allProducts = dbItems;
+
+            document.getElementById('stat-products-count').textContent = `${allProducts.length} Produtos`;
+            renderHomeFeatured();
+            renderCatalog();
+        }, (err) => {
+            console.error('Erro ao carregar catálogo:', err);
+            allProducts = [];
+            document.getElementById('stat-products-count').textContent = '0 Produtos';
+            renderHomeFeatured();
+            renderCatalog();
+        });
+    }
+
+    // ==========================================
+    // 6. ATUALIZAÇÃO DA INTERFACE E ALERTA DE DIAS
+    // ==========================================
+    function updateDashboardUI() {
+        const sub = getSubscriptionStatus();
+        const initials = userState.name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('') || 'NP';
+
+        // Sidebar
+        document.getElementById('sidebar-avatar').textContent = initials;
+        document.getElementById('sidebar-user-name').textContent = userState.name;
+        document.getElementById('sidebar-user-plan').textContent = userState.subscriptionPlan;
+
+        // Topbar Pill
+        const topPill = document.getElementById('topbar-plan-pill');
+        const topDaysText = document.getElementById('topbar-days-text');
+        topPill.classList.remove('warning', 'expired');
+
+        if (sub.isLifetime) {
+            topDaysText.textContent = 'Vitalício • Ilimitado';
+        } else if (sub.isExpired) {
+            topPill.classList.add('expired');
+            topDaysText.textContent = 'Plano Expirado • Actualizar';
+        } else if (sub.daysLeft <= 5) {
+            topPill.classList.add('warning');
+            topDaysText.textContent = sub.daysLeft === 1 ? 'Falta 1 dia!' : `Faltam ${sub.daysLeft} dias`;
+        } else {
+            topDaysText.textContent = `${sub.daysLeft} dias restantes`;
+        }
+
+        // Alerta de poucos dias (5, 4, 3, 2, 1 dias ou expirado)
+        const alertBanner = document.getElementById('expiry-alert-banner');
+        const alertTitle = document.getElementById('expiry-alert-title');
+        const alertDesc = document.getElementById('expiry-alert-desc');
+        alertBanner.classList.remove('visible', 'urgent');
+
+        if (!sub.isLifetime) {
+            if (sub.isExpired) {
+                alertBanner.classList.add('visible', 'urgent');
+                alertTitle.textContent = 'O seu plano expirou!';
+                alertDesc.textContent = 'Actualize ou renove a sua assinatura agora para voltar a baixar os plugins e aulas.';
+            } else if (sub.daysLeft <= 5) {
+                alertBanner.classList.add('visible');
+                if (sub.daysLeft <= 2) alertBanner.classList.add('urgent');
+
+                const diaWord = sub.daysLeft === 1 ? 'Falta apenas 1 dia' : `Faltam apenas ${sub.daysLeft} dias`;
+                alertTitle.textContent = `Atenção: ${diaWord} para o fim do seu plano!`;
+                alertDesc.textContent = `A sua assinatura (${userState.subscriptionPlan}) termina em ${sub.expiryDateStr}. Actualize agora para manter o acesso sem interrupções.`;
+            }
+        }
+
+        // Home Card
+        document.getElementById('home-greeting').textContent = `Olá, ${userState.name.split(' ')[0]}!`;
+        document.getElementById('home-plan-name').textContent = userState.subscriptionPlan;
+
+        const daysHighlight = document.getElementById('home-days-remaining');
+        const progressBar = document.getElementById('home-time-progress');
+        daysHighlight.classList.remove('warning', 'expired');
+        progressBar.classList.remove('warning', 'expired');
+
+        if (sub.isLifetime) {
+            daysHighlight.textContent = 'Acesso Vitalício (Ilimitado)';
+            document.getElementById('home-expiry-date').textContent = 'Sem data de expiração';
+            document.getElementById('stat-days-label').textContent = 'Ilimitado';
+            progressBar.style.width = '100%';
+        } else if (sub.isExpired) {
+            daysHighlight.textContent = '0 dias (Expirado)';
+            daysHighlight.classList.add('expired');
+            document.getElementById('home-expiry-date').textContent = `Expirou em ${sub.expiryDateStr}`;
+            document.getElementById('stat-days-label').textContent = 'Expirado';
+            progressBar.style.width = '0%';
+            progressBar.classList.add('expired');
+        } else {
+            const label = sub.daysLeft === 1 ? '1 dia restante' : `${sub.daysLeft} dias restantes`;
+            daysHighlight.textContent = label;
+            document.getElementById('home-expiry-date').textContent = `Válido até ${sub.expiryDateStr}`;
+            document.getElementById('stat-days-label').textContent = label;
+            progressBar.style.width = `${sub.percent}%`;
+
+            if (sub.daysLeft <= 5) {
+                daysHighlight.classList.add('warning');
+                progressBar.classList.add('warning');
+            }
+        }
+
+        document.getElementById('stat-products-count').textContent = `${allProducts.length} Produtos`;
+        document.getElementById('stat-lessons-label').textContent = userState.hasInstallLessons ? 'Liberadas' : 'Bloqueadas (Plano 1 Sem.)';
+
+        // Formulário Perfil
+        document.getElementById('prof-name').value = userState.name;
+        document.getElementById('prof-email').value = userState.email;
+        document.getElementById('prof-whatsapp').value = userState.whatsapp;
+        document.getElementById('prof-os').value = userState.preferredOS || 'windows';
+
+        renderHomeFeatured();
+        renderCatalog();
+    }
+
+    // ==========================================
+    // 7. NAVEGAÇÃO DA SIDEBAR
+    // ==========================================
+    const VIEW_NAMES = {
+        home: 'Home',
+        produtos: 'Produtos Disponíveis',
+        mensagens: 'Mensagens com o Admin',
+        perfil: 'Editar Perfil',
+        senha: 'Mudar Senha'
+    };
+
+    function switchView(viewId, btnEl) {
+        activeViewId = viewId;
+
+        document.querySelectorAll('.menu-item[data-view]').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-view') === viewId);
+        });
+
+        document.querySelectorAll('.panel-view').forEach(sec => {
+            sec.classList.toggle('active', sec.id === `view-${viewId}`);
+        });
+
+        document.getElementById('topbar-title').textContent = VIEW_NAMES[viewId] || 'Painel';
+        toggleSidebar(false);
+
+        if (viewId === 'mensagens') {
+            markAdminMessagesAsRead();
+            scrollChatToBottom();
+        }
+    }
+
+    function toggleSidebar(force) {
+        const sidebar = document.getElementById('sidebar');
+        const closeBtn = document.getElementById('closeSidebarBtn');
+        const shouldOpen = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
+        sidebar.classList.toggle('open', shouldOpen);
+        if (closeBtn) closeBtn.style.display = shouldOpen ? 'flex' : 'none';
+    }
+
+    // ==========================================
+    // 8. PRODUTOS, FILTROS E PAGINAÇÃO
+    // ==========================================
+    function setCategoryFilter(cat, btn) {
+        activeCategory = cat;
+        currentPage = 1;
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderCatalog();
+    }
+
+    function applyProductFilters() {
+        currentPage = 1;
+        renderCatalog();
+    }
+
+    function getFilteredProducts() {
+        const query = (document.getElementById('product-search')?.value || '').trim().toLowerCase();
+        const osFilter = document.getElementById('os-select-filter')?.value || 'all';
+
+        return allProducts.filter(p => {
+            if (osFilter === 'windows' && p.sistema !== 'windows' && p.sistema !== 'both') return false;
+            if (osFilter === 'mac' && p.sistema !== 'mac' && p.sistema !== 'both') return false;
+
+            if (activeCategory !== 'all' && !p.categoria.includes(activeCategory)) return false;
+
+            if (query) {
+                const hay = `${p.titulo} ${p.descricao} ${p.categoria}`.toLowerCase();
+                if (!hay.includes(query)) return false;
+            }
+
+            return true;
+        });
+    }
+
+    function formatCategoryName(cat) {
+        const map = {
+            'daw': 'DAW',
+            'livrarias': 'Livrarias',
+            'mix e master vst': 'Mix e Master VST',
+            'instrumentos vsti': 'Instrumentos VSTi'
+        };
+        return map[cat] || cat;
+    }
+
+    function createProductCardHTML(p) {
+        let osTag = `<span class="product-os-tag"><i class="fa-brands fa-windows" style="color:#60A5FA;"></i> <i class="fa-brands fa-apple"></i> Mac & Win</span>`;
+        if (p.sistema === 'mac') {
+            osTag = `<span class="product-os-tag"><i class="fa-brands fa-apple"></i> Mac</span>`;
+        } else if (p.sistema === 'windows') {
+            osTag = `<span class="product-os-tag"><i class="fa-brands fa-windows" style="color:#60A5FA;"></i> Windows</span>`;
+        }
+
+        const tituloEsc = escapeHtml(p.titulo);
+        const descEsc = escapeHtml(p.descricao);
+        const imgEsc = escapeHtml(p.imagem);
+        const catEsc = escapeHtml(formatCategoryName(p.categoria));
+        const titleJs = JSON.stringify(p.titulo).replace(/"/g, '&quot;');
+        const pluginUrlJs = JSON.stringify(p.pluginUrl || '#').replace(/"/g, '&quot;');
+        const aulaUrlJs = JSON.stringify(p.aulaUrl || '#').replace(/"/g, '&quot;');
+
+        return `
+            <div class="product-card">
+                <div class="product-thumb-container">
+                    <img src="${imgEsc}" alt="${tituloEsc}" class="product-thumb" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'">
+                    ${osTag}
+                </div>
+                <div class="product-body">
+                    <span class="product-cat-label">${catEsc}</span>
+                    <h4 class="product-title" title="${tituloEsc}">${tituloEsc}</h4>
+                    <p class="product-desc">${descEsc}</p>
+
+                    <div class="product-buttons">
+                        <button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
+                            <i class="fa-solid fa-download"></i> Baixar o Plugin
+                        </button>
+                        <button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
+                            <i class="fa-solid ${userState.hasInstallLessons ? 'fa-circle-play' : 'fa-lock'}"></i> Baixar a Aula
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderHomeFeatured() {
+        const wrapper = document.getElementById('home-featured-wrapper');
+        const grid = document.getElementById('home-featured-grid');
+        if (!wrapper || !grid) return;
+
+        // Se não tiver nenhum produto cadastrado no admin, não aparece nada
+        if (allProducts.length === 0) {
+            wrapper.style.display = 'none';
+            grid.innerHTML = '';
+            return;
+        }
+
+        wrapper.style.display = 'block';
+        grid.innerHTML = allProducts.slice(0, 5).map(p => createProductCardHTML(p)).join('');
+    }
+
+    function renderCatalog() {
+        const grid = document.getElementById('catalog-grid');
+        const paginationBar = document.getElementById('pagination-bar');
+        if (!grid) return;
+
+        // Se não tiver nenhum produto cadastrado no admin, não aparece nada
+        if (allProducts.length === 0) {
+            document.getElementById('catalog-count-label').textContent = '0 produtos';
+            grid.innerHTML = '';
+            if (paginationBar) paginationBar.style.display = 'none';
+            return;
+        }
+
+        const filtered = getFilteredProducts();
+        const total = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const end = Math.min(start + ITEMS_PER_PAGE, total);
+        const items = filtered.slice(start, end);
+
+        document.getElementById('catalog-count-label').textContent = total === 0
+            ? '0 produtos'
+            : `${start + 1}–${end} de ${total} produtos`;
+
+        if (total === 0) {
+            grid.innerHTML = '';
+            if (paginationBar) paginationBar.style.display = 'none';
+            return;
+        }
+
+        if (paginationBar) paginationBar.style.display = 'flex';
+        document.getElementById('pagination-info').textContent = `Página ${currentPage} de ${totalPages}`;
+
+        grid.innerHTML = items.map(p => createProductCardHTML(p)).join('');
+
+        let btns = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            btns += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        btns += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
+        document.getElementById('pagination-controls').innerHTML = btns;
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        renderCatalog();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // 9. CHAT EM TEMPO REAL (CLIENTE <-> ADMIN)
+    // ==========================================
+    function listenChatMessages(user) {
+        const uid = user.uid;
+        const emailLower = (user.email || '').toLowerCase();
+
+        const processSnapshot = (colName) => (snap) => {
+            snap.forEach((doc) => {
+                const d = doc.data();
+                const docUid = d.userId || d.uid || d.clientId || '';
+                const docEmail = String(d.userEmail || d.email || d.clientEmail || d.customerEmail || '').toLowerCase();
+
+                if (docUid === uid || (emailLower && docEmail === emailLower)) {
+                    const senderRaw = String(d.sender || d.remetente || d.from || 'client').toLowerCase();
+                    const isAdmin = senderRaw === 'admin' || senderRaw === 'administrador' || d.isAdmin === true;
+
+                    chatMessagesMap.set(`${colName}_${doc.id}`, {
+                        docId: doc.id,
+                        colName,
+                        isAdmin,
+                        text: d.text || d.mensagem || d.message || d.conteudo || '',
+                        read: d.read !== undefined ? Boolean(d.read) : (d.lida !== undefined ? Boolean(d.lida) : true),
+                        createdAt: parseAnyDate(d.createdAt || d.timestamp || d.data) || new Date(0)
+                    });
+                }
+            });
+
+            renderChatMessages();
+            if (activeViewId === 'mensagens') {
+                markAdminMessagesAsRead();
+            }
+        };
+
+        // Escuta a coleção principal "mensagens" e também "messages" (compatibilidade total com admin.html)
+        db.collection(CHAT_COLLECTION).onSnapshot(processSnapshot(CHAT_COLLECTION), (err) => {
+            console.warn('Erro ao ler mensagens:', err);
+        });
+        db.collection('messages').onSnapshot(processSnapshot('messages'), () => {});
+    }
+
+    function renderChatMessages() {
+        const listEl = document.getElementById('chat-messages-list');
+        const badgeEl = document.getElementById('sidebar-unread-badge');
+        const dotEl = document.getElementById('topbar-msg-dot');
+        if (!listEl) return;
+
+        const messages = Array.from(chatMessagesMap.values())
+            .filter(m => m.text && m.text.trim().length > 0)
+            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+        // Contar mensagens não lidas enviadas pelo Admin
+        const unreadAdminCount = messages.filter(m => m.isAdmin && !m.read).length;
+
+        if (badgeEl) {
+            badgeEl.textContent = unreadAdminCount;
+            badgeEl.classList.toggle('visible', unreadAdminCount > 0);
+        }
+        if (dotEl) {
+            dotEl.classList.toggle('visible', unreadAdminCount > 0);
+        }
+
+        if (messages.length === 0) {
+            listEl.innerHTML = `
+                <div class="chat-empty-state">
+                    <i class="fa-regular fa-comment-dots"></i>
+                    <p style="font-size:0.88rem; font-weight:600; color:#FFF; margin-bottom:4px;">Nenhuma mensagem ainda</p>
+                    <p style="font-size:0.8rem;">Escreva abaixo para iniciar uma conversa com o administrador.</p>
+                </div>
+            `;
+            return;
+        }
+
+        listEl.innerHTML = messages.map(m => {
+            const rowClass = m.isAdmin ? 'admin' : 'client';
+            const senderLabel = m.isAdmin
+                ? `<i class="fa-solid fa-shield-halved"></i> Administração NPLUGINS`
+                : `Você`;
+            const timeStr = m.createdAt.getTime() > 0
+                ? m.createdAt.toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+                : 'Agora';
+
+            return `
+                <div class="msg-row ${rowClass}">
+                    <span class="msg-sender-tag">${senderLabel}</span>
+                    <div class="msg-bubble">${escapeHtml(m.text)}</div>
+                    <span class="msg-time">${timeStr}</span>
+                </div>
+            `;
+        }).join('');
+
+        scrollChatToBottom();
+    }
+
+    function scrollChatToBottom() {
+        const listEl = document.getElementById('chat-messages-list');
+        if (listEl) {
+            listEl.scrollTop = listEl.scrollHeight;
+        }
+    }
+
+    async function markAdminMessagesAsRead() {
+        const unreadAdminMsgs = Array.from(chatMessagesMap.values()).filter(m => m.isAdmin && !m.read);
+        if (unreadAdminMsgs.length === 0) return;
+
+        const batch = db.batch();
+        unreadAdminMsgs.forEach(m => {
+            m.read = true;
+            const ref = db.collection(m.colName).doc(m.docId);
+            batch.update(ref, { read: true, lida: true });
+        });
+
+        try {
+            await batch.commit();
+            renderChatMessages();
+        } catch (err) {
+            console.warn('Não foi possível marcar mensagens como lidas:', err);
+        }
+    }
+
+    function handleChatKeydown(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage(e);
+        }
+    }
+
+    async function sendChatMessage(e) {
+        if (e) e.preventDefault();
+        if (!currentUser) return;
+
+        const input = document.getElementById('chat-message-input');
+        const btn = document.getElementById('btn-send-message');
+        const text = (input.value || '').trim();
+        if (!text) return;
+
+        input.disabled = true;
+        btn.disabled = true;
+
+        try {
+            await db.collection(CHAT_COLLECTION).add({
+                userId: currentUser.uid,
+                uid: currentUser.uid,
+                userName: userState.name,
+                clientName: userState.name,
+                userEmail: userState.email,
+                email: userState.email,
+                sender: 'client',
+                remetente: 'cliente',
+                text: text,
+                mensagem: text,
+                read: false,
+                lida: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            input.value = '';
+            scrollChatToBottom();
+        } catch (err) {
+            showToast('Erro ao enviar mensagem: ' + err.message, 'warning');
+        } finally {
+            input.disabled = false;
+            btn.disabled = false;
+            input.focus();
+        }
+    }
+
+    // ==========================================
+    // 10. DOWNLOADS (PLUGIN & AULA)
+    // ==========================================
+    function handleDownloadPlugin(title, url) {
+        const sub = getSubscriptionStatus();
+        if (sub.isExpired) {
+            showToast('O seu plano expirou. Actualize o plano para baixar.', 'warning');
+            openUpgradePlanModal();
+            return;
+        }
+
+        if (url && url !== '#') {
+            window.open(url, '_blank');
+            showToast(`Download iniciado: ${title}`, 'success');
+        } else {
+            showToast(`Link de download de "${title}" em breve disponível.`, 'info');
+        }
+    }
+
+    function handleDownloadLesson(title, url) {
+        const sub = getSubscriptionStatus();
+        if (sub.isExpired) {
+            showToast('O seu plano expirou. Actualize o plano para baixar.', 'warning');
+            openUpgradePlanModal();
+            return;
+        }
+
+        if (!userState.hasInstallLessons) {
+            showToast('As aulas de instalação estão disponíveis nos planos 1 Mês e Vitalício.', 'warning');
+            openUpgradePlanModal();
+            return;
+        }
+
+        if (url && url !== '#') {
+            window.open(url, '_blank');
+            showToast(`A abrir aula de instalação: ${title}`, 'info');
+        } else {
+            showToast(`Aula de instalação de "${title}" em breve disponível.`, 'info');
+        }
+    }
+
+    // ==========================================
+    // 11. ACTUALIZAÇÃO DE PLANO DENTRO DO PAINEL
+    // ==========================================
+    function openUpgradePlanModal() {
+        upgradeReceiptFile = null;
+        document.getElementById('upgrade-receipt-input').value = '';
+        document.getElementById('upgrade-receipt-status').textContent = 'Clique para anexar o comprovativo de pagamento';
+        setUpgradePaymentMethod('transfer');
+        selectUpgradePlan(userState.planId === 'semanal' ? 'mensal' : (userState.planId || 'mensal'));
+        document.getElementById('upgrade-plan-modal').classList.add('open');
+    }
+
+    function closeUpgradePlanModal() {
+        document.getElementById('upgrade-plan-modal').classList.remove('open');
+    }
+
+    function setUpgradePaymentMethod(method) {
+        selectedUpgradeMethod = method;
+        document.getElementById('upg-method-bai').classList.toggle('active', method === 'transfer');
+        document.getElementById('upg-method-wise').classList.toggle('active', method === 'wise');
+        document.getElementById('upg-panel-bai').style.display = method === 'transfer' ? 'block' : 'none';
+        document.getElementById('upg-panel-wise').style.display = method === 'wise' ? 'block' : 'none';
+        updateUpgradeSummaryText();
+    }
+
+    function selectUpgradePlan(planId) {
+        selectedUpgradePlanId = planId;
+        document.querySelectorAll('.plan-option-card').forEach(card => {
+            card.classList.toggle('selected', card.getAttribute('data-plan') === planId);
+        });
+        updateUpgradeSummaryText();
+    }
+
+    function updateUpgradeSummaryText() {
+        const plan = PLANS_CONFIG[selectedUpgradePlanId];
+        const eurStr = (plan.price / EXCHANGE_RATE).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const priceLabel = selectedUpgradeMethod === 'wise'
+            ? `${eurStr} € (Wise)`
+            : `${plan.price.toLocaleString('pt-AO')} Kz`;
+        document.getElementById('upgrade-selected-summary').textContent = `Plano selecionado: ${plan.name} — ${priceLabel}`;
+    }
+
+    function copyIban(iban, label = 'IBAN') {
+        navigator.clipboard.writeText(iban);
+        showToast(`${label} copiado!`, 'success');
+    }
+
+    function handleUpgradeReceiptChange(input) {
+        const file = input.files[0];
+        if (!file) return;
+        upgradeReceiptFile = file;
+        document.getElementById('upgrade-receipt-status').textContent = `Comprovativo anexado: ${file.name}`;
+        showToast('Comprovativo anexado com sucesso!', 'success');
+    }
+
+    function compressImageToDataUrl(file, maxWidth = 1000, quality = 0.72) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const scale = Math.min(1, maxWidth / img.width);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = reject;
+                img.src = ev.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function uploadUpgradeReceiptAsLink(file) {
+        try {
+            const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const ref = storage.ref(`receipts/${currentUser.uid}/${Date.now()}_${cleanName}`);
+            const snap = await ref.put(file);
+            return await snap.ref.getDownloadURL();
+        } catch (uploadErr) {
+            console.warn('Storage fallback:', uploadErr);
+            return await compressImageToDataUrl(file);
+        }
+    }
+
+    async function submitPlanUpgrade() {
+        if (!currentUser) return;
+        if (!upgradeReceiptFile) {
+            showToast('Por favor, anexe o comprovativo da transferência.', 'warning');
+            return;
+        }
+
+        const btn = document.getElementById('btn-confirm-upgrade');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A actualizar plano...';
+
+        try {
+            const plan = PLANS_CONFIG[selectedUpgradePlanId];
+            const methodLabel = selectedUpgradeMethod === 'wise' ? 'Wise (Euro €)' : 'Transferência IBAN (BAI)';
+            const receiptUrl = await uploadUpgradeReceiptAsLink(upgradeReceiptFile);
+
+            let newExpiresAt = null;
+            if (plan.days) {
+                const now = new Date();
+                const currentExp = parseAnyDate(userState.expiresAt);
+                const baseDate = (currentExp && currentExp > now) ? currentExp : now;
+                const targetDate = new Date(baseDate.getTime() + plan.days * 24 * 60 * 60 * 1000);
+                newExpiresAt = firebase.firestore.Timestamp.fromDate(targetDate);
+            }
+
+            await db.collection('users').doc(currentUser.uid).set({
+                planId: plan.id,
+                subscriptionPlan: plan.name,
+                planPriceKz: plan.price,
+                hasInstallLessons: plan.hasInstallLessons,
+                expiresAt: newExpiresAt,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            await db.collection('transactions').add({
+                userId: currentUser.uid,
+                customerName: userState.name,
+                customerEmail: userState.email,
+                customerWhatsapp: userState.whatsapp || '',
+                planId: plan.id,
+                planName: plan.name,
+                amountKz: plan.price,
+                amountEur: Number((plan.price / EXCHANGE_RATE).toFixed(2)),
+                paymentMethod: methodLabel,
+                hasInstallLessons: plan.hasInstallLessons,
+                receiptUrl: receiptUrl,
+                status: 'completed',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            closeUpgradePlanModal();
+            showToast(`Plano actualizado para ${plan.name}!`, 'success');
+        } catch (err) {
+            showToast('Erro ao actualizar plano: ' + err.message, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirmar e Activar Novo Plano';
+        }
+    }
+
+    // ==========================================
+    // 12. EDITAR PERFIL & MUDAR SENHA
+    // ==========================================
+    async function saveUserProfile(e) {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const btn = document.getElementById('btn-save-profile');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+
+        try {
+            const name = document.getElementById('prof-name').value.trim();
+            const whatsapp = document.getElementById('prof-whatsapp').value.trim();
+            const preferredOS = document.getElementById('prof-os').value;
+
+            await currentUser.updateProfile({ displayName: name });
+            await db.collection('users').doc(currentUser.uid).set({
+                name,
+                whatsapp,
+                preferredOS,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            showToast('Perfil guardado com sucesso!', 'success');
+        } catch (err) {
+            showToast('Erro ao guardar perfil: ' + err.message, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Alterações';
+        }
+    }
+
+    async function updateUserPassword(e) {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const passCurrent = document.getElementById('pass-current').value;
+        const passNew = document.getElementById('pass-new').value;
+        const passRepeat = document.getElementById('pass-repeat').value;
+
+        if (passNew !== passRepeat) {
+            showToast('A nova senha e a repetição não coincidem.', 'warning');
+            return;
+        }
+
+        const btn = document.getElementById('btn-update-password');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Actualizando...';
+
+        try {
+            const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, passCurrent);
+            await currentUser.reauthenticateWithCredential(cred);
+            await currentUser.updatePassword(passNew);
+
+            document.getElementById('form-change-password').reset();
+            showToast('Senha actualizada com sucesso!', 'success');
+        } catch (err) {
+            const msg = (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential')
+                ? 'A senha actual está incorreta.'
+                : err.message;
+            showToast(msg, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Actualizar a Senha';
+        }
+    }
+
+    function logoutUser() {
+        auth.signOut().then(() => {
+            window.location.href = 'index.html';
+        });
+    }
+</script>
+</body>
+</html>
