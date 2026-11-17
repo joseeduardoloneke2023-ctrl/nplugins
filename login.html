@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -310,7 +310,7 @@
             <div class="form-group">
                 <label for="loginEmail" class="form-label">E-mail</label>
                 <div class="input-wrapper">
-                    <input type="email" id="loginEmail" class="form-control" placeholder="seu.email@exemplo.com" required>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="seu.email@exemplo.com" autocomplete="email" required>
                     <i class="fa-solid fa-envelope input-icon"></i>
                 </div>
             </div>
@@ -318,7 +318,7 @@
             <div class="form-group">
                 <label for="loginPassword" class="form-label">Senha</label>
                 <div class="input-wrapper">
-                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
                     <i class="fa-solid fa-lock input-icon"></i>
                     <button type="button" class="toggle-password" id="btnTogglePassword" title="Mostrar/Ocultar Senha">
                         <i class="fa-solid fa-eye" id="eyeIcon"></i>
@@ -347,7 +347,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -371,14 +371,23 @@
             "admin@nplugins.online"
         ];
 
+        let isManualLoginInProgress = false;
+
         function showToast(message, type = "error") {
             const container = document.getElementById("toastContainer");
             const toast = document.createElement("div");
             toast.className = `toast-card ${type}`;
-            const icon = type === "success"
-                ? '<i class="fa-solid fa-circle-check"></i>'
-                : '<i class="fa-solid fa-circle-exclamation"></i>';
-            toast.innerHTML = `${icon} <span>${message}</span>`;
+
+            const iconEl = document.createElement("i");
+            iconEl.className = type === "success"
+                ? "fa-solid fa-circle-check"
+                : "fa-solid fa-circle-exclamation";
+
+            const textEl = document.createElement("span");
+            textEl.textContent = message;
+
+            toast.appendChild(iconEl);
+            toast.appendChild(textEl);
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 4500);
         }
@@ -394,7 +403,7 @@
             eyeIcon.className = isPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
         });
 
-        async function handleAuthenticatedUser(user) {
+        async function handleAuthenticatedUser(user, silentRedirect = false) {
             const emailLower = (user.email || "").toLowerCase();
             const isAdminEmail = ADMIN_EMAILS.includes(emailLower);
             const userRef = doc(db, "users", user.uid);
@@ -402,7 +411,10 @@
 
             if (!userSnap.exists() && !isAdminEmail) {
                 await signOut(auth);
-                throw new Error("ACCOUNT_NOT_PROVISIONED");
+                if (!silentRedirect) {
+                    throw new Error("ACCOUNT_NOT_PROVISIONED");
+                }
+                return;
             }
 
             const userData = userSnap.exists() ? userSnap.data() : {};
@@ -415,12 +427,26 @@
                 lastAccessAt: serverTimestamp()
             }, { merge: true });
 
+            if (silentRedirect) {
+                window.location.href = isAdmin ? "admin.html" : "cliente.html";
+                return;
+            }
+
             showToast("Sessão iniciada com sucesso! A redirecionar...", "success");
 
             setTimeout(() => {
                 window.location.href = isAdmin ? "admin.html" : "cliente.html";
             }, 850);
         }
+
+        // Redireciona automaticamente caso o utilizador já esteja autenticado
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !isManualLoginInProgress) {
+                try {
+                    await handleAuthenticatedUser(user, true);
+                } catch (_) {}
+            }
+        });
 
         const loginForm = document.getElementById("loginForm");
         const btnSubmit = document.getElementById("btnLoginSubmit");
@@ -430,13 +456,15 @@
             const email = document.getElementById("loginEmail").value.trim();
             const password = passwordInput.value;
 
+            isManualLoginInProgress = true;
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> A verificar...`;
 
             try {
                 const credential = await signInWithEmailAndPassword(auth, email, password);
-                await handleAuthenticatedUser(credential.user);
+                await handleAuthenticatedUser(credential.user, false);
             } catch (error) {
+                isManualLoginInProgress = false;
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Iniciar Sessão`;
 
