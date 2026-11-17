@@ -682,6 +682,63 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
+        /* GRID DE CARDS DE MÍDIA (DEPOIMENTOS & AULAS DE AJUDA) */
+        .media-admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .media-admin-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        .media-admin-card:hover {
+            border-color: rgba(124, 58, 237, 0.45);
+            transform: translateY(-2px);
+        }
+
+        .media-preview-box {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #09090d;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .media-preview-box img,
+        .media-preview-box iframe,
+        .media-preview-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+            display: block;
+        }
+
+        .media-card-body {
+            padding: 1rem 1.15rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .media-card-footer {
+            padding: 0.85rem 1.15rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.015);
+        }
+
         /* BADGES & BOTÕES */
         .badge {
             display: inline-flex;
@@ -1012,9 +1069,21 @@
                 <button type="button" class="menu-item" data-view="products" onclick="switchView('products', this)">
                     <i class="fa-solid fa-boxes-stacked"></i> Produtos (DAW/VST)
                 </button>
+                <button type="button" class="menu-item" data-view="incomplete" onclick="switchView('incomplete', this)">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Produtos Incompletos
+                    <span class="nav-badge" id="badge-incomplete">0</span>
+                </button>
                 <button type="button" class="menu-item" data-view="chat" onclick="switchView('chat', this)">
                     <i class="fa-solid fa-comments"></i> Falar com Usuários
                     <span class="nav-badge" id="badge-chat">0</span>
+                </button>
+
+                <div class="menu-label">Conteúdo & Suporte</div>
+                <button type="button" class="menu-item" data-view="depoimentos" onclick="switchView('depoimentos', this)">
+                    <i class="fa-solid fa-star"></i> Depoimentos
+                </button>
+                <button type="button" class="menu-item" data-view="aulas_ajuda" onclick="switchView('aulas_ajuda', this)">
+                    <i class="fa-solid fa-circle-play"></i> Aulas de Ajuda
                 </button>
 
                 <div class="menu-label">Conta & Segurança</div>
@@ -1044,6 +1113,9 @@
                 </button>
                 <button type="button" class="mobile-footer-tab" data-mobile-view="products" onclick="switchView('products')" title="Produtos">
                     <i class="fa-solid fa-boxes-stacked"></i>
+                </button>
+                <button type="button" class="mobile-footer-tab" data-mobile-view="incomplete" onclick="switchView('incomplete')" title="Incompletos">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
                 </button>
                 <button type="button" class="mobile-footer-tab" data-mobile-view="chat" onclick="switchView('chat')" title="Chat">
                     <i class="fa-solid fa-comments"></i>
@@ -1273,7 +1345,7 @@
                 <div class="view-header">
                     <div>
                         <h2 class="view-title"><i class="fa-solid fa-boxes-stacked" style="color:var(--primary);"></i> Produtos (DAW, Plugins, Livrarias)</h2>
-                        <p class="view-subtitle">Cadastre e organize os produtos exibidos no index e na área do cliente usando links de imagem.</p>
+                        <p class="view-subtitle">Cadastre e organize os produtos exibidos no index e na área do cliente. Produtos sem link ficam bloqueados no cliente até serem completados.</p>
                     </div>
                     <button type="button" class="btn-action btn-primary" onclick="openProductModal()">
                         <i class="fa-solid fa-plus"></i> Cadastrar Novo Produto
@@ -1299,6 +1371,38 @@
                             </thead>
                             <tbody id="products-tbody">
                                 <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar catálogo...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4B. PRODUTOS INCOMPLETOS (PENDENTES DE LINK DE DOWNLOAD OU AULA) -->
+            <section id="view-incomplete" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);"></i> Produtos Incompletos</h2>
+                        <p class="view-subtitle">Produtos cadastrados apenas para vitrine ou pendentes de link de download / aula de instalação. Assim que preencher os links e guardar, saem automaticamente desta lista.</p>
+                    </div>
+                    <button type="button" class="btn-action btn-primary" onclick="openProductModal()">
+                        <i class="fa-solid fa-plus"></i> Novo Produto
+                    </button>
+                </div>
+
+                <div class="section-card">
+                    <div class="table-responsive">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:64px;">Capa</th>
+                                    <th>Título do Produto</th>
+                                    <th>Categoria / OS</th>
+                                    <th>O Que Falta</th>
+                                    <th style="text-align:right;">Completar Agora</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomplete-products-tbody">
+                                <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">A verificar produtos pendentes...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1338,6 +1442,40 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- 5B. GERENCIAR DEPOIMENTOS (VÍDEOS E IMAGENS) -->
+            <section id="view-depoimentos" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-star" style="color:var(--warning);"></i> Depoimentos de Clientes</h2>
+                        <p class="view-subtitle">Publique vídeos (YouTube/Vimeo/MP4) ou imagens de feedback real que aparecem na área do cliente.</p>
+                    </div>
+                    <button type="button" class="btn-action btn-primary" onclick="openDepoimentoModal()">
+                        <i class="fa-solid fa-plus"></i> Adicionar Depoimento
+                    </button>
+                </div>
+
+                <div class="media-admin-grid" id="depoimentos-admin-grid">
+                    <div style="color:var(--text-muted); padding:2rem;">A carregar depoimentos...</div>
+                </div>
+            </section>
+
+            <!-- 5C. GERENCIAR AULAS DE AJUDA (VÍDEOS) -->
+            <section id="view-aulas_ajuda" class="panel-view">
+                <div class="view-header">
+                    <div>
+                        <h2 class="view-title"><i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Aulas de Ajuda & Tutoriais</h2>
+                        <p class="view-subtitle">Adicione vídeos explicativos de como usar a plataforma, baixar e instalar DAWs e Plugins.</p>
+                    </div>
+                    <button type="button" class="btn-action btn-primary" onclick="openAulaAjudaModal()">
+                        <i class="fa-solid fa-plus"></i> Adicionar Aula de Ajuda
+                    </button>
+                </div>
+
+                <div class="media-admin-grid" id="aulas-ajuda-admin-grid">
+                    <div style="color:var(--text-muted); padding:2rem;">A carregar aulas de ajuda...</div>
                 </div>
             </section>
 
@@ -1437,6 +1575,7 @@
                             <option value="mix e master vst">Mix e Master VST (Plugins)</option>
                             <option value="instrumentos vsti">Instrumentos VSTi (Plugins)</option>
                             <option value="livrarias">Livrarias (Kontakt / Packs)</option>
+                            <option value="mac/win">Mac/Win (Multiplataforma)</option>
                         </select>
                     </div>
 
@@ -1445,7 +1584,7 @@
                         <select id="prod-sistema" class="search-input" style="cursor:pointer;">
                             <option value="windows">Windows</option>
                             <option value="mac">Mac (macOS)</option>
-                            <option value="both">Windows e Mac</option>
+                            <option value="mac/win">Mac/Win (Ambos)</option>
                         </select>
                     </div>
                 </div>
@@ -1476,6 +1615,93 @@
                     <button type="button" class="btn-action btn-secondary" onclick="closeProductModal()">Cancelar</button>
                     <button type="submit" class="btn-action btn-primary" id="btn-save-product">
                         <i class="fa-solid fa-check"></i> Guardar Produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE DEPOIMENTOS (VÍDEO OU IMAGEM) -->
+    <div class="modal-backdrop" id="depoimento-modal">
+        <div class="modal-box" style="max-width:540px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:1.25rem;">
+                <div>
+                    <span style="font-size:0.72rem; font-weight:700; color:var(--warning); text-transform:uppercase;">Prova Social</span>
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.18rem; font-weight:800;" id="depoimento-modal-title">Adicionar Depoimento</h3>
+                </div>
+                <button type="button" class="icon-btn" style="width:34px; height:34px;" onclick="closeDepoimentoModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form class="form-stack" onsubmit="saveDepoimentoForm(event)">
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-label" for="dep-cliente">Nome do Cliente / Produtor</label>
+                        <input type="text" id="dep-cliente" class="search-input" required placeholder="Ex: DJ Mau, Produtor Kizomba">
+                    </div>
+                    <div>
+                        <label class="form-label" for="dep-tipo">Tipo de Mídia</label>
+                        <select id="dep-tipo" class="search-input" style="cursor:pointer;">
+                            <option value="video">Vídeo (YouTube / Link Direto)</option>
+                            <option value="imagem">Imagem / Print (URL Direta)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label" for="dep-url"><i class="fa-solid fa-link" style="color:var(--primary);"></i> Link do Vídeo ou Imagem</label>
+                    <input type="url" id="dep-url" class="search-input" required placeholder="https://www.youtube.com/watch?v=... ou https://i.imgur.com/...">
+                </div>
+
+                <div>
+                    <label class="form-label" for="dep-comentario">Legenda ou Comentário (Opcional)</label>
+                    <textarea id="dep-comentario" class="search-input" rows="2" style="resize:none;" placeholder="Ex: Tudo instalado e a funcionar perfeitamente no FL Studio!"></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:8px; border-top:1px solid var(--border-color);">
+                    <button type="button" class="btn-action btn-secondary" onclick="closeDepoimentoModal()">Cancelar</button>
+                    <button type="submit" class="btn-action btn-primary" id="btn-save-depoimento">
+                        <i class="fa-solid fa-check"></i> Guardar Depoimento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE AULAS DE AJUDA (VÍDEOS) -->
+    <div class="modal-backdrop" id="aula-ajuda-modal">
+        <div class="modal-box" style="max-width:540px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:1.25rem;">
+                <div>
+                    <span style="font-size:0.72rem; font-weight:700; color:var(--info); text-transform:uppercase;">Central de Tutoriais</span>
+                    <h3 style="font-family:'Montserrat',sans-serif; font-size:1.18rem; font-weight:800;" id="aula-ajuda-modal-title">Adicionar Aula de Ajuda</h3>
+                </div>
+                <button type="button" class="icon-btn" style="width:34px; height:34px;" onclick="closeAulaAjudaModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form class="form-stack" onsubmit="saveAulaAjudaForm(event)">
+                <div>
+                    <label class="form-label" for="aula-titulo">Título da Aula</label>
+                    <input type="text" id="aula-titulo" class="search-input" required placeholder="Ex: Como baixar e extrair os plugins sem erro">
+                </div>
+
+                <div>
+                    <label class="form-label" for="aula-video-url"><i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Link do Vídeo (YouTube, Vimeo ou MP4)</label>
+                    <input type="url" id="aula-video-url" class="search-input" required placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...">
+                </div>
+
+                <div>
+                    <label class="form-label" for="aula-descricao">Descrição da Aula (Opcional)</label>
+                    <textarea id="aula-descricao" class="search-input" rows="2" style="resize:none;" placeholder="Explique brevemente o que o cliente vai aprender neste vídeo..."></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:8px; border-top:1px solid var(--border-color);">
+                    <button type="button" class="btn-action btn-secondary" onclick="closeAulaAjudaModal()">Cancelar</button>
+                    <button type="submit" class="btn-action btn-primary" id="btn-save-aula-ajuda">
+                        <i class="fa-solid fa-check"></i> Guardar Aula
                     </button>
                 </div>
             </form>
@@ -1616,10 +1842,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let allUsersList = [];
     let allProductsList = [];
     let allTransactionsList = [];
+    let allDepoimentosList = [];
+    let allAulasAjudaList = [];
     let chatThreadsMap = {};
     let activeChatUid = null;
     let unsubscribeChatMessages = null;
     let editingProductDocId = null;
+    let editingDepoimentoDocId = null;
+    let editingAulaAjudaDocId = null;
     let currentReceiptLink = '';
 
     const PLANS_INFO = {
@@ -1708,6 +1938,36 @@ document.addEventListener('DOMContentLoaded', () => {
             label: daysLeft <= 0 ? 'Expirado' : (daysLeft === 1 ? '1 dia restante' : `${daysLeft} dias restantes`),
             expStr: expDate.toLocaleDateString('pt-PT')
         };
+    }
+
+    function getProductMissingInfo(p) {
+        const missingPlugin = !p.pluginUrl || String(p.pluginUrl).trim() === '' || String(p.pluginUrl).trim() === '#';
+        const missingAula = !p.aulaUrl || String(p.aulaUrl).trim() === '' || String(p.aulaUrl).trim() === '#';
+        return {
+            isIncomplete: missingPlugin || missingAula,
+            missingPlugin,
+            missingAula
+        };
+    }
+
+    function getVideoEmbedHtml(url) {
+        if (!url) return '';
+        const cleanUrl = String(url).trim();
+        const ytMatch = cleanUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (ytMatch && ytMatch[1]) {
+            return `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen loading="lazy"></iframe>`;
+        }
+        const vimeoMatch = cleanUrl.match(/vimeo\.com\/(\d+)/);
+        if (vimeoMatch && vimeoMatch[1]) {
+            return `<iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}" allowfullscreen loading="lazy"></iframe>`;
+        }
+        if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(cleanUrl)) {
+            return `<video src="${escapeHtml(cleanUrl)}" controls preload="metadata"></video>`;
+        }
+        return `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center;">
+            <i class="fa-solid fa-play-circle" style="font-size:2rem;color:var(--primary);"></i>
+            <a href="${escapeHtml(cleanUrl)}" target="_blank" class="btn-action btn-primary btn-sm">Abrir Vídeo Externo</a>
+        </div>`;
     }
 
     // ==========================================
@@ -1825,6 +2085,27 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             allProductsList = list;
             renderProductsTable();
+            renderIncompleteProductsTable();
+        });
+
+        db.collection('depoimentos').onSnapshot((snap) => {
+            const list = [];
+            snap.forEach((doc) => {
+                list.push({ id: doc.id, ...doc.data() });
+            });
+            list.sort((a, b) => (parseAnyDate(b.createdAt) || new Date(0)) - (parseAnyDate(a.createdAt) || new Date(0)));
+            allDepoimentosList = list;
+            renderDepoimentosAdminGrid();
+        });
+
+        db.collection('aulas_ajuda').onSnapshot((snap) => {
+            const list = [];
+            snap.forEach((doc) => {
+                list.push({ id: doc.id, ...doc.data() });
+            });
+            list.sort((a, b) => (parseAnyDate(b.createdAt) || new Date(0)) - (parseAnyDate(a.createdAt) || new Date(0)));
+            allAulasAjudaList = list;
+            renderAulasAjudaAdminGrid();
         });
 
         db.collection('chats').onSnapshot((snap) => {
@@ -2373,7 +2654,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!result.isConfirmed) return;
 
         try {
-            // 1. Apaga mensagens internas do chat do utilizador (subcoleção chats/{uid}/messages)
             const chatRef = db.collection('chats').doc(uid);
             const msgsSnap = await chatRef.collection('messages').get();
             if (!msgsSnap.empty) {
@@ -2383,7 +2663,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             await chatRef.delete().catch(() => {});
 
-            // 2. Apaga o registo principal do utilizador na coleção 'users' (protegido por allow delete: if isAdmin())
             await db.collection('users').doc(uid).delete();
 
             if (activeChatUid === uid) {
@@ -2544,7 +2823,10 @@ document.addEventListener('DOMContentLoaded', () => {
         expiring: 'Assinaturas Quase a Expirar',
         users: 'Usuários & Acessos',
         products: 'Produtos (DAW, Plugins, Livrarias)',
+        incomplete: 'Produtos Incompletos',
         chat: 'Falar Diretamente com Usuário',
+        depoimentos: 'Depoimentos de Clientes',
+        aulas_ajuda: 'Aulas de Ajuda & Tutoriais',
         perfil: 'Editar Perfil',
         senha: 'Mudar Senha'
     };
@@ -2577,8 +2859,26 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 8. CADASTRO E EDIÇÃO DE PRODUTOS (VIA LINK DE IMAGEM)
+    // 8. CADASTRO, EDIÇÃO E LISTA DE PRODUTOS INCOMPLETOS
     // ==========================================
+    function formatCategoryLabel(catRaw) {
+        const catNames = {
+            'daw': 'DAW',
+            'livrarias': 'Livrarias',
+            'mix e master vst': 'Mix e Master VST',
+            'instrumentos vsti': 'Instrumentos VSTi',
+            'mac/win': 'Mac/Win'
+        };
+        return catNames[String(catRaw || '').toLowerCase()] || catRaw || 'Plugin';
+    }
+
+    function formatSystemBadge(sysRaw) {
+        const s = String(sysRaw || 'windows').toLowerCase();
+        if (s === 'mac') return `<span class="badge badge-info"><i class="fa-brands fa-apple"></i> Mac</span>`;
+        if (s === 'mac/win' || s === 'both') return `<span class="badge badge-primary"><i class="fa-solid fa-laptop-code"></i> Mac/Win</span>`;
+        return `<span class="badge badge-info"><i class="fa-brands fa-windows"></i> Windows</span>`;
+    }
+
     window.renderProductsTable = function() {
         const tbody = document.getElementById('products-tbody');
         const query = (document.getElementById('products-search-input')?.value || '').trim().toLowerCase();
@@ -2594,23 +2894,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const catNames = {
-            'daw': 'DAW',
-            'livrarias': 'Livrarias',
-            'mix e master vst': 'Mix e Master VST',
-            'instrumentos vsti': 'Instrumentos VSTi'
-        };
-
         tbody.innerHTML = filtered.map((p) => {
-            const catLabel = catNames[String(p.categoria || '').toLowerCase()] || p.categoria || 'Plugin';
-            const sysRaw = String(p.sistema || 'windows').toLowerCase();
-            const sysBadge = sysRaw === 'mac'
-                ? `<span class="badge badge-info"><i class="fa-brands fa-apple"></i> Mac</span>`
-                : sysRaw === 'both'
-                ? `<span class="badge badge-primary">Win & Mac</span>`
-                : `<span class="badge badge-info"><i class="fa-brands fa-windows"></i> Windows</span>`;
-
+            const catLabel = formatCategoryLabel(p.categoria);
+            const sysBadge = formatSystemBadge(p.sistema);
             const img = p.imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=200&q=70';
+            const missingInfo = getProductMissingInfo(p);
 
             return `
                 <tr>
@@ -2622,8 +2910,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><span class="badge badge-primary">${escapeHtml(catLabel)}</span></td>
                     <td>${sysBadge}</td>
                     <td>
-                        <span class="badge ${p.pluginUrl && p.pluginUrl !== '#' ? 'badge-success' : 'badge-warning'}">Plugin</span>
-                        <span class="badge ${p.aulaUrl && p.aulaUrl !== '#' ? 'badge-success' : 'badge-warning'}">Aula</span>
+                        <span class="badge ${!missingInfo.missingPlugin ? 'badge-success' : 'badge-warning'}">Plugin</span>
+                        <span class="badge ${!missingInfo.missingAula ? 'badge-success' : 'badge-warning'}">Aula</span>
                     </td>
                     <td style="text-align:right;">
                         <div style="display:inline-flex; gap:6px;">
@@ -2634,6 +2922,58 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    window.renderIncompleteProductsTable = function() {
+        const tbody = document.getElementById('incomplete-products-tbody');
+        const badge = document.getElementById('badge-incomplete');
+        if (!tbody) return;
+
+        const incompleteList = allProductsList
+            .map(p => ({ ...p, _missing: getProductMissingInfo(p) }))
+            .filter(p => p._missing.isIncomplete);
+
+        if (badge) {
+            badge.textContent = incompleteList.length;
+            badge.style.display = incompleteList.length > 0 ? 'inline-block' : 'none';
+        }
+
+        if (incompleteList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--success); padding:2rem;"><i class="fa-solid fa-circle-check"></i> Excelente! Todos os produtos cadastrados possuem links completos.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = incompleteList.map((p) => {
+            const img = p.imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=200&q=70';
+            const catLabel = formatCategoryLabel(p.categoria);
+            const missingBadges = [];
+            if (p._missing.missingPlugin) missingBadges.push(`<span class="badge badge-danger"><i class="fa-solid fa-download"></i> Falta Link do Plugin</span>`);
+            if (p._missing.missingAula) missingBadges.push(`<span class="badge badge-warning"><i class="fa-solid fa-circle-play"></i> Falta Link da Aula</span>`);
+
+            return `
+                <tr>
+                    <td><img src="${escapeHtml(img)}" alt="" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);"></td>
+                    <td>
+                        <strong>${escapeHtml(p.titulo || 'Produto')}</strong>
+                        <div style="font-size:0.74rem; color:var(--text-muted);">Bloqueado no cliente ("Ficará disponível a qualquer momento")</div>
+                    </td>
+                    <td>
+                        <span class="badge badge-primary">${escapeHtml(catLabel)}</span>
+                        ${formatSystemBadge(p.sistema)}
+                    </td>
+                    <td>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                            ${missingBadges.join('')}
+                        </div>
+                    </td>
+                    <td style="text-align:right;">
+                        <button type="button" class="btn-action btn-primary btn-sm" onclick="editProduct('${p.id}')">
+                            <i class="fa-solid fa-pen-to-square"></i> Completar Links
+                        </button>
                     </td>
                 </tr>
             `;
@@ -2665,7 +3005,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('product-modal-title').textContent = 'Editar Produto';
         document.getElementById('prod-titulo').value = p.titulo || '';
         document.getElementById('prod-categoria').value = String(p.categoria || 'daw').toLowerCase();
-        document.getElementById('prod-sistema').value = String(p.sistema || 'windows').toLowerCase();
+        const sysVal = String(p.sistema || 'windows').toLowerCase();
+        document.getElementById('prod-sistema').value = sysVal === 'both' ? 'mac/win' : sysVal;
         document.getElementById('prod-descricao').value = p.descricao || '';
         document.getElementById('prod-plugin-url').value = (p.pluginUrl && p.pluginUrl !== '#') ? p.pluginUrl : '';
         document.getElementById('prod-aula-url').value = (p.aulaUrl && p.aulaUrl !== '#') ? p.aulaUrl : '';
@@ -2739,6 +3080,244 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Produto eliminado.', 'info');
             }
         });
+    };
+
+    // ==========================================
+    // 8B. GERENCIAR DEPOIMENTOS (VÍDEOS E IMAGENS)
+    // ==========================================
+    function renderDepoimentosAdminGrid() {
+        const grid = document.getElementById('depoimentos-admin-grid');
+        if (!grid) return;
+
+        if (allDepoimentosList.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:2.5rem; background:var(--bg-card); border-radius:var(--radius-lg); border:1px solid var(--border-color);">
+                Nenhum depoimento publicado ainda. Clique em "Adicionar Depoimento" para publicar vídeos ou imagens.
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = allDepoimentosList.map(dep => {
+            const isVideo = dep.tipo === 'video';
+            const mediaHtml = isVideo
+                ? getVideoEmbedHtml(dep.url)
+                : `<img src="${escapeHtml(dep.url)}" alt="${escapeHtml(dep.cliente || 'Depoimento')}" loading="lazy">`;
+
+            return `
+                <div class="media-admin-card">
+                    <div class="media-preview-box">${mediaHtml}</div>
+                    <div class="media-card-body">
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                            <strong style="font-size:0.95rem;">${escapeHtml(dep.cliente || 'Cliente NPLUGINS')}</strong>
+                            <span class="badge ${isVideo ? 'badge-primary' : 'badge-success'}">
+                                <i class="fa-solid ${isVideo ? 'fa-video' : 'fa-image'}"></i> ${isVideo ? 'Vídeo' : 'Imagem'}
+                            </span>
+                        </div>
+                        ${dep.comentario ? `<p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45;">"${escapeHtml(dep.comentario)}"</p>` : ''}
+                    </div>
+                    <div class="media-card-footer">
+                        <button type="button" class="btn-action btn-secondary btn-sm" onclick="editDepoimento('${dep.id}')">
+                            <i class="fa-solid fa-pen"></i> Editar
+                        </button>
+                        <button type="button" class="btn-action btn-danger btn-sm" onclick="deleteDepoimento('${dep.id}')">
+                            <i class="fa-solid fa-trash"></i> Apagar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.openDepoimentoModal = function() {
+        editingDepoimentoDocId = null;
+        document.getElementById('depoimento-modal-title').textContent = 'Adicionar Depoimento';
+        document.getElementById('dep-cliente').value = '';
+        document.getElementById('dep-tipo').value = 'video';
+        document.getElementById('dep-url').value = '';
+        document.getElementById('dep-comentario').value = '';
+        document.getElementById('depoimento-modal').classList.add('open');
+    };
+
+    window.closeDepoimentoModal = function() {
+        document.getElementById('depoimento-modal').classList.remove('open');
+    };
+
+    window.editDepoimento = function(id) {
+        const dep = allDepoimentosList.find(d => d.id === id);
+        if (!dep) return;
+        editingDepoimentoDocId = id;
+        document.getElementById('depoimento-modal-title').textContent = 'Editar Depoimento';
+        document.getElementById('dep-cliente').value = dep.cliente || '';
+        document.getElementById('dep-tipo').value = dep.tipo || 'video';
+        document.getElementById('dep-url').value = dep.url || '';
+        document.getElementById('dep-comentario').value = dep.comentario || '';
+        document.getElementById('depoimento-modal').classList.add('open');
+    };
+
+    window.saveDepoimentoForm = async function(e) {
+        e.preventDefault();
+        if (!isVerifiedAdmin) return;
+
+        const btn = document.getElementById('btn-save-depoimento');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A guardar...';
+
+        try {
+            const payload = {
+                cliente: document.getElementById('dep-cliente').value.trim(),
+                tipo: document.getElementById('dep-tipo').value,
+                url: document.getElementById('dep-url').value.trim(),
+                comentario: document.getElementById('dep-comentario').value.trim(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (editingDepoimentoDocId) {
+                await db.collection('depoimentos').doc(editingDepoimentoDocId).set(payload, { merge: true });
+                showToast('Depoimento actualizado!', 'success');
+            } else {
+                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('depoimentos').add(payload);
+                showToast('Depoimento publicado com sucesso!', 'success');
+            }
+            closeDepoimentoModal();
+        } catch (err) {
+            showToast('Erro ao guardar depoimento: ' + err.message, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Guardar Depoimento';
+        }
+    };
+
+    window.deleteDepoimento = async function(id) {
+        if (!isVerifiedAdmin) return;
+        const res = await Swal.fire({
+            title: 'Apagar Depoimento?',
+            text: 'Este depoimento deixará de aparecer para os clientes.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#1f1f2e',
+            confirmButtonText: 'Sim, Apagar',
+            cancelButtonText: 'Cancelar',
+            background: '#181824',
+            color: '#FFF'
+        });
+        if (res.isConfirmed) {
+            await db.collection('depoimentos').doc(id).delete();
+            showToast('Depoimento apagado.', 'info');
+        }
+    };
+
+    // ==========================================
+    // 8C. GERENCIAR AULAS DE AJUDA (VÍDEOS)
+    // ==========================================
+    function renderAulasAjudaAdminGrid() {
+        const grid = document.getElementById('aulas-ajuda-admin-grid');
+        if (!grid) return;
+
+        if (allAulasAjudaList.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:2.5rem; background:var(--bg-card); border-radius:var(--radius-lg); border:1px solid var(--border-color);">
+                Nenhuma aula de ajuda cadastrada ainda. Clique em "Adicionar Aula de Ajuda" para inserir vídeos tutoriais.
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = allAulasAjudaList.map(aula => {
+            const mediaHtml = getVideoEmbedHtml(aula.videoUrl);
+            return `
+                <div class="media-admin-card">
+                    <div class="media-preview-box">${mediaHtml}</div>
+                    <div class="media-card-body">
+                        <strong style="font-size:0.95rem;">${escapeHtml(aula.titulo || 'Aula de Ajuda')}</strong>
+                        ${aula.descricao ? `<p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45;">${escapeHtml(aula.descricao)}</p>` : ''}
+                    </div>
+                    <div class="media-card-footer">
+                        <button type="button" class="btn-action btn-secondary btn-sm" onclick="editAulaAjuda('${aula.id}')">
+                            <i class="fa-solid fa-pen"></i> Editar
+                        </button>
+                        <button type="button" class="btn-action btn-danger btn-sm" onclick="deleteAulaAjuda('${aula.id}')">
+                            <i class="fa-solid fa-trash"></i> Apagar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.openAulaAjudaModal = function() {
+        editingAulaAjudaDocId = null;
+        document.getElementById('aula-ajuda-modal-title').textContent = 'Adicionar Aula de Ajuda';
+        document.getElementById('aula-titulo').value = '';
+        document.getElementById('aula-video-url').value = '';
+        document.getElementById('aula-descricao').value = '';
+        document.getElementById('aula-ajuda-modal').classList.add('open');
+    };
+
+    window.closeAulaAjudaModal = function() {
+        document.getElementById('aula-ajuda-modal').classList.remove('open');
+    };
+
+    window.editAulaAjuda = function(id) {
+        const aula = allAulasAjudaList.find(a => a.id === id);
+        if (!aula) return;
+        editingAulaAjudaDocId = id;
+        document.getElementById('aula-ajuda-modal-title').textContent = 'Editar Aula de Ajuda';
+        document.getElementById('aula-titulo').value = aula.titulo || '';
+        document.getElementById('aula-video-url').value = aula.videoUrl || '';
+        document.getElementById('aula-descricao').value = aula.descricao || '';
+        document.getElementById('aula-ajuda-modal').classList.add('open');
+    };
+
+    window.saveAulaAjudaForm = async function(e) {
+        e.preventDefault();
+        if (!isVerifiedAdmin) return;
+
+        const btn = document.getElementById('btn-save-aula-ajuda');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A guardar...';
+
+        try {
+            const payload = {
+                titulo: document.getElementById('aula-titulo').value.trim(),
+                videoUrl: document.getElementById('aula-video-url').value.trim(),
+                descricao: document.getElementById('aula-descricao').value.trim(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (editingAulaAjudaDocId) {
+                await db.collection('aulas_ajuda').doc(editingAulaAjudaDocId).set(payload, { merge: true });
+                showToast('Aula de ajuda actualizada!', 'success');
+            } else {
+                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('aulas_ajuda').add(payload);
+                showToast('Aula de ajuda publicada!', 'success');
+            }
+            closeAulaAjudaModal();
+        } catch (err) {
+            showToast('Erro ao guardar aula: ' + err.message, 'warning');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Guardar Aula';
+        }
+    };
+
+    window.deleteAulaAjuda = async function(id) {
+        if (!isVerifiedAdmin) return;
+        const res = await Swal.fire({
+            title: 'Apagar Aula de Ajuda?',
+            text: 'Este vídeo será removido da central de ajuda do cliente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#1f1f2e',
+            confirmButtonText: 'Sim, Apagar',
+            cancelButtonText: 'Cancelar',
+            background: '#181824',
+            color: '#FFF'
+        });
+        if (res.isConfirmed) {
+            await db.collection('aulas_ajuda').doc(id).delete();
+            showToast('Aula de ajuda apagada.', 'info');
+        }
     };
 
     // ==========================================
