@@ -1303,7 +1303,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label" for="prod-aula-url"><i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Link da Aula (Windows/Ambos)</label>
+                        <label class="form-label" for="prod-aula-url"><i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Link da Aula de Instalação (Opcional)</label>
                         <input type="url" id="prod-aula-url" class="search-input" placeholder="Deixe vazio se ainda não disponível">
                     </div>
                 </div>
@@ -1463,7 +1463,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentReceiptLink = '';
 
     const PLANS_INFO = {
-        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 1000, days: 30, hasInstallLessons: false },
+        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 1000, days: 30, hasInstallLessons: true },
         bimestral: { id: 'bimestral', name: 'Acesso 2 Meses', price: 2000, days: 60, hasInstallLessons: true },
         vitalicio: { id: 'vitalicio', name: 'Acesso Vitalício', price: 5000, days: null, hasInstallLessons: true }
     };
