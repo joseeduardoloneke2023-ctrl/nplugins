@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Completo | NPLUGINS — Plugins VST, DAWs e Livrarias (Mac & Windows)</title>
+    <meta name="description" content="Explore todos os Plugins VST, DAWs e Livrarias disponíveis na NPLUGINS para Mac e Windows. Pesquise e filtre por categoria ou sistema operacional.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-glow: rgba(124, 58, 237, 0.25);
+            --primary-hover: #6D28D9;
+            --accent: #00F0FF;
+            --dark-gray: #12131C;
+            --bg: #0A0B10;
+            --card-bg: #141622;
+            --white: #FFFFFF;
+            --text-secondary: #A0AEC0;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-poppins: 'Poppins', sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.2s ease;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: var(--font-poppins);
+            overflow-x: hidden;
+        }
+
+        body {
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: var(--transition-fast); }
+        img { max-width: 100%; display: block; }
+        input, select, button { font-family: inherit; background: none; border: none; outline: none; }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: rgba(10, 11, 16, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: var(--font-montserrat);
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.15rem;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+        }
+
+        .nav-link {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .nav-link:hover, .nav-link.active { color: var(--white); }
+
+        .btn-vip {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000000 !important;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .btn-vip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(255, 215, 0, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--white);
+        }
+
+        /* HERO TOPO DO CATÁLOGO */
+        .catalog-hero {
+            padding: 130px 0 45px 0;
+            background: radial-gradient(circle at top center, rgba(124, 58, 237, 0.18) 0%, rgba(10, 11, 16, 0) 70%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+        }
+
+        .catalog-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.1rem;
+            border-radius: 50px;
+            background: rgba(124, 58, 237, 0.14);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            color: #C4B5FD;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .catalog-hero h1 {
+            font-family: var(--font-montserrat);
+            font-size: 2.7rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.8px;
+        }
+
+        .catalog-hero h1 span {
+            background: linear-gradient(135deg, var(--accent) 15%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .catalog-hero p {
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        /* BARRA DE FILTROS E PESQUISA (MESMA LÓGICA DO PAINEL CLIENTE) */
+        .catalog-main {
+            padding: 2.5rem 0 5rem 0;
+        }
+
+        .filter-bar {
+            background-color: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.4rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .filter-top {
+            display: grid;
+            grid-template-columns: 1fr 220px auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.85rem 1rem 0.85rem 2.6rem;
+            color: var(--white);
+            font-size: 0.92rem;
+            transition: var(--transition-fast);
+        }
+
+        .os-select {
+            width: 100%;
+            background-color: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            color: var(--white);
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .search-input:focus, .os-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .catalog-count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+            padding: 0 0.4rem;
+        }
+
+        .cat-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .cat-tab {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            padding: 0.55rem 1.15rem;
+            border-radius: 50px;
+            font-size: 0.84rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .cat-tab:hover {
+            border-color: rgba(124, 58, 237, 0.5);
+            color: var(--white);
+        }
+
+        .cat-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+            font-weight: 600;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        /* GRID DE PRODUTOS */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1180px) {
+            .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (max-width: 860px) {
+            .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .filter-top { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 540px) {
+            .products-grid { grid-template-columns: 1fr; }
+        }
+
+        .product-card-premium {
+            background: linear-gradient(145deg, #181a29 0%, #11121d 100%);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+
+        .product-card-premium:hover {
+            transform: translateY(-6px);
+            border-color: var(--primary);
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.65), 0 0 24px var(--primary-glow);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background-color: #090909;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .product-card-premium:hover .card-img-wrapper img {
+            transform: scale(1.06);
+        }
+
+        .card-badge-vip {
+            position: absolute;
+            top: 0.9rem;
+            left: 0.9rem;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .os-badge {
+            position: absolute;
+            bottom: 0.9rem;
+            right: 0.9rem;
+            background: rgba(10, 11, 16, 0.88);
+            backdrop-filter: blur(6px);
+            color: var(--accent);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            padding: 0.28rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .card-details {
+            padding: 1.35rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-details h3 {
+            font-family: var(--font-montserrat);
+            font-size: 1.12rem;
+            font-weight: 700;
+            margin-bottom: 0.45rem;
+            color: var(--white);
+        }
+
+        .card-details p {
+            color: var(--text-secondary);
+            font-size: 0.83rem;
+            font-weight: 300;
+            line-height: 1.45;
+            margin-bottom: 1.1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-plan-tag {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            margin-bottom: 0.95rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.78rem;
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .card-plan-tag span.tutorial-pill {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-size: 0.72rem;
+        }
+
+        .btn-card-subscribe {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #9333EA 100%);
+            color: var(--white);
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            box-shadow: 0 6px 16px var(--primary-glow);
+        }
+
+        .btn-card-subscribe:hover {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000000;
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* PAGINAÇÃO */
+        .pagination-bar {
+            margin-top: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1rem 1.4rem;
+            border-radius: 14px;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 0.6rem;
+            border-radius: 9px;
+            background: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--white);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--accent);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #FFF;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        /* MODAL DE ESCOLHA DE PLANO AO CLICAR EM "ASSINAR O PLANO" */
+        .plan-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 7, 12, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem;
+        }
+
+        .plan-modal-overlay.open {
+            display: flex;
+        }
+
+        .plan-modal-card {
+            background: #141622;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            border-radius: 22px;
+            max-width: 520px;
+            width: 100%;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1.1rem;
+            right: 1.1rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal-close-btn:hover { background: var(--primary); }
+
+        .modal-plan-option {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--white);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-align: left;
+        }
+
+        .modal-plan-option:hover {
+            border-color: var(--primary);
+            background: rgba(124, 58, 237, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .modal-plan-option.vip {
+            border-color: rgba(255, 215, 0, 0.45);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, var(--bg) 100%);
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #06070a;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 2.5rem 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 360px;
+                height: 100vh;
+                background-color: #12131C;
+                flex-direction: column;
+                justify-content: center;
+                gap: 2rem;
+                transition: var(--transition-smooth);
+                z-index: 999;
+            }
+            .nav-menu.open { right: 0; }
+            .catalog-hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo">N<span>PLUGINS</span></a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="catalogo.html" class="nav-link active">Catálogo Completo</a>
+                <a href="index.html#planos" class="nav-link">Planos</a>
+                <a href="index.html#faq" class="nav-link">FAQ</a>
+                <a href="login.html" id="navAuthBtn" class="btn-vip">Login</a>
+            </nav>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="catalog-hero">
+        <div class="container">
+            <div class="catalog-badge">
+                <i class="fa-solid fa-layer-group"></i> Acervo Completo • Sem Precisar de Conta para Explorar
+            </div>
+            <h1>Catálogo <span>NPLUGINS</span></h1>
+            <p>Pesquise e filtre todos os Plugins VST, DAWs e Livrarias disponíveis para Windows, Mac e Mac / Win. Assine qualquer plano para liberar todos os downloads e aulas de instalação.</p>
+        </div>
+    </section>
+
+    <main class="catalog-main">
+        <div class="container">
+            <!-- FILTROS E PESQUISA -->
+            <div class="filter-bar">
+                <div class="filter-top">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="product-search" class="search-input" placeholder="Pesquisar plugin, DAW, livraria..." oninput="applyProductFilters()">
+                    </div>
+
+                    <select id="os-select-filter" class="os-select" onchange="applyProductFilters()" aria-label="Filtrar por Sistema Operacional">
+                        <option value="all">Todos os Sistemas</option>
+                        <option value="windows">Windows</option>
+                        <option value="mac">Mac</option>
+                        <option value="mac/win">Mac / Win</option>
+                    </select>
+
+                    <span class="catalog-count" id="catalog-count-label">Carregando...</span>
+                </div>
+
+                <div class="cat-tabs">
+                    <button type="button" class="cat-tab active" data-cat="all" onclick="setCategoryFilter('all', this)">Todos</button>
+                    <button type="button" class="cat-tab" data-cat="daw" onclick="setCategoryFilter('daw', this)">DAW</button>
+                    <button type="button" class="cat-tab" data-cat="livrarias" onclick="setCategoryFilter('livrarias', this)">Livrarias</button>
+                    <button type="button" class="cat-tab" data-cat="mix e master vst" onclick="setCategoryFilter('mix e master vst', this)">Mix e Master VST</button>
+                    <button type="button" class="cat-tab" data-cat="instrumentos vsti" onclick="setCategoryFilter('instrumentos vsti', this)">Instrumentos VSTi</button>
+                    <button type="button" class="cat-tab" data-cat="mac/win" onclick="setCategoryFilter('mac/win', this)">Mac / Win</button>
+                </div>
+            </div>
+
+            <!-- GRID DE PRODUTOS -->
+            <div class="products-grid" id="catalog-grid">
+                <div style="grid-column:1/-1; text-align:center; padding:3.5rem 1rem; background:var(--card-bg); border:1px solid var(--glass-border); border-radius:18px; color:var(--text-secondary);">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color:var(--primary); margin-bottom:0.8rem;"></i>
+                    <p>A carregar catálogo de plugins...</p>
+                </div>
+            </div>
+
+            <!-- PAGINAÇÃO -->
+            <div class="pagination-bar" id="pagination-bar" style="display:none;">
+                <span style="font-size:0.85rem; color:var(--text-secondary);" id="pagination-info">Página 1 de 1</span>
+                <div class="page-numbers" id="pagination-controls"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL DE ASSINATURA RÁPIDA -->
+    <div class="plan-modal-overlay" id="planModal" onclick="if(event.target === this) fecharModalPlano()">
+        <div class="plan-modal-card">
+            <button type="button" class="modal-close-btn" onclick="fecharModalPlano()" aria-label="Fechar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <span style="color:var(--accent); font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:1px;">
+                <i class="fa-solid fa-crown"></i> Acesso Total ao Catálogo
+            </span>
+            <h3 style="font-family:var(--font-montserrat); font-size:1.45rem; margin:0.4rem 0 0.5rem 0;">Escolha o Seu Plano</h3>
+            <p id="modalPluginSubtitle" style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.4rem;">
+                Todos os planos incluem suporte e aulas de instalação.
+            </p>
+
+            <button type="button" class="modal-plan-option" onclick="irParaCheckout('Acesso 1 Mês', 1000)">
+                <div>
+                    <div style="font-weight:700; font-size:1rem;">Acesso 1 Mês (30 Dias)</div>
+                    <div style="font-size:0.78rem; color:var(--text-secondary);">Catálogo completo + Aulas de Instalação</div>
+                </div>
+                <strong style="color:#FFD700; font-size:1.15rem;">1.000 Kz</strong>
+            </button>
+
+            <button type="button" class="modal-plan-option" onclick="irParaCheckout('Acesso 2 Meses', 2000)">
+                <div>
+                    <div style="font-weight:700; font-size:1rem;">Acesso 2 Meses (60 Dias) <span style="background:var(--primary); font-size:0.68rem; padding:2px 8px; border-radius:20px; margin-left:4px;">Popular</span></div>
+                    <div style="font-size:0.78rem; color:var(--text-secondary);">Catálogo completo + Aulas + Suporte Prioritário</div>
+                </div>
+                <strong style="color:#FFD700; font-size:1.15rem;">2.000 Kz</strong>
+            </button>
+
+            <button type="button" class="modal-plan-option vip" onclick="irParaCheckout('Acesso Vitalício', 5000)">
+                <div>
+                    <div style="font-weight:700; font-size:1rem; color:#FFD700;"><i class="fa-solid fa-crown"></i> Acesso Vitalício</div>
+                    <div style="font-size:0.78rem; color:var(--text-secondary);">Sem mensalidades + Atualizações futuras grátis</div>
+                </div>
+                <strong style="color:#FFD700; font-size:1.15rem;">5.000 Kz</strong>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 NPLUGINS (nplugins.online). Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- SDKs do Firebase (Projeto bd-nplugins) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
+            authDomain: "bd-nplugins.firebaseapp.com",
+            projectId: "bd-nplugins",
+            storageBucket: "bd-nplugins.firebasestorage.app",
+            messagingSenderId: "946055919532",
+            appId: "1:946055919532:web:a51efb8c7540b12b18ec09",
+            measurementId: "G-G4SNHNND2Q"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        const ADMIN_EMAILS = [
+            "joseeduardoloneke2023@gmail.com",
+            "suporte@lonekenobeat.com",
+            "admin@nplugins.online"
+        ];
+
+        let allProducts = [];
+        let activeCategory = 'all';
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 20;
+        let pluginSelecionado = '';
+
+        // Atualiza o botão Login do topo caso o usuário já esteja autenticado
+        auth.onAuthStateChanged(async (user) => {
+            const navBtn = document.getElementById("navAuthBtn");
+            if (!navBtn) return;
+
+            if (user) {
+                const emailLower = (user.email || "").toLowerCase();
+                let isAdmin = ADMIN_EMAILS.includes(emailLower);
+                try {
+                    const snap = await db.collection("users").doc(user.uid).get();
+                    if (snap.exists && snap.data().role === "admin") isAdmin = true;
+                } catch (_) {}
+
+                navBtn.href = isAdmin ? "admin.html" : "cliente.html";
+                navBtn.innerHTML = `<i class="fa-solid fa-crown"></i> ${isAdmin ? "Painel Admin" : "Meu Painel"}`;
+            } else {
+                navBtn.href = "login.html";
+                navBtn.textContent = "Login";
+            }
+        });
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatCategoryName(cat) {
+            const map = {
+                'daw': 'DAW',
+                'livrarias': 'Livrarias',
+                'mix e master vst': 'Mix e Master VST',
+                'instrumentos vsti': 'Instrumentos VSTi',
+                'mac/win': 'Mac / Win'
+            };
+            return map[cat] || cat || 'Plugin VST';
+        }
+
+        function formatOsBadgeHtml(sysRaw) {
+            const key = String(sysRaw || 'both').trim().toLowerCase();
+            if (key === 'windows') {
+                return `<i class="fa-brands fa-windows"></i> Windows`;
+            }
+            if (key === 'mac') {
+                return `<i class="fa-brands fa-apple"></i> macOS`;
+            }
+            return `<i class="fa-brands fa-windows"></i> <i class="fa-brands fa-apple"></i> Mac / Win`;
+        }
+
+        // Carrega todos os produtos cadastrados (mesmo que só tenham título e imagem)
+        function carregarCatalogo() {
+            db.collection("produtos").onSnapshot((snap) => {
+                allProducts = snap.docs
+                    .map(doc => {
+                        const d = doc.data();
+                        const titulo = (d.titulo || d.nome || '').trim();
+                        const imagem = (d.imagem || d.capa || '').trim();
+                        const rawOs = String(d.sistema || d.os || 'both').toLowerCase();
+
+                        let os = 'both';
+                        if (rawOs.includes('mac') && rawOs.includes('win')) os = 'both';
+                        else if (rawOs === 'both' || rawOs === 'ambos') os = 'both';
+                        else if (rawOs.includes('mac')) os = 'mac';
+                        else if (rawOs.includes('win')) os = 'windows';
+
+                        return {
+                            id: doc.id,
+                            titulo: titulo || 'Produto NPLUGINS',
+                            descricao: (d.descricao || '').trim() || 'Ferramenta profissional disponível na assinatura NPLUGINS.',
+                            categoria: String(d.categoria || 'mix e master vst').trim().toLowerCase(),
+                            sistema: os,
+                            imagem: imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'
+                        };
+                    })
+                    .filter(p => p.titulo.length > 0 && p.imagem.length > 0);
+
+                renderCatalog();
+            }, (err) => {
+                console.error("Erro ao carregar catálogo:", err);
+                document.getElementById("catalog-grid").innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; background:var(--card-bg); border:1px solid var(--glass-border); border-radius:18px; color:var(--text-secondary);">
+                        <p>Não foi possível carregar o catálogo agora. Atualize a página.</p>
+                    </div>
+                `;
+            });
+        }
+
+        function setCategoryFilter(cat, btn) {
+            activeCategory = cat;
+            currentPage = 1;
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderCatalog();
+        }
+
+        function applyProductFilters() {
+            currentPage = 1;
+            renderCatalog();
+        }
+
+        function getFilteredProducts() {
+            const query = (document.getElementById('product-search')?.value || '').trim().toLowerCase();
+            const osFilter = document.getElementById('os-select-filter')?.value || 'all';
+
+            return allProducts.filter(p => {
+                if (osFilter === 'windows' && p.sistema !== 'windows' && p.sistema !== 'both') return false;
+                if (osFilter === 'mac' && p.sistema !== 'mac' && p.sistema !== 'both') return false;
+                if (osFilter === 'mac/win' && p.sistema !== 'both') return false;
+
+                if (activeCategory === 'mac/win') {
+                    if (p.sistema !== 'both') return false;
+                } else if (activeCategory !== 'all' && !p.categoria.includes(activeCategory)) {
+                    return false;
+                }
+
+                if (query) {
+                    const hay = `${p.titulo} ${p.descricao} ${p.categoria}`.toLowerCase();
+                    if (!hay.includes(query)) return false;
+                }
+
+                return true;
+            });
+        }
+
+        function createProductCardHTML(prod) {
+            const tituloEsc = escapeHtml(prod.titulo);
+            const tituloJs = JSON.stringify(prod.titulo).replace(/"/g, '&quot;');
+            const descEsc = escapeHtml(prod.descricao);
+            const catEsc = escapeHtml(formatCategoryName(prod.categoria));
+            const imgEsc = escapeHtml(prod.imagem);
+            const idEncoded = encodeURIComponent(prod.id);
+
+            return `
+                <article class="product-card-premium" onclick="window.location.href='index.html?id=${idEncoded}'">
+                    <div class="card-img-wrapper">
+                        <img src="${imgEsc}" alt="${tituloEsc}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'">
+                        <span class="card-badge-vip">${catEsc}</span>
+                        <span class="os-badge">${formatOsBadgeHtml(prod.sistema)}</span>
+                    </div>
+                    <div class="card-details">
+                        <h3>${tituloEsc}</h3>
+                        <p>${descEsc}</p>
+
+                        <div class="card-plan-tag">
+                            <span><i class="fa-solid fa-crown"></i> Desde 1.000 Kz</span>
+                            <span class="tutorial-pill"><i class="fa-solid fa-headset"></i> Suporte Incluso</span>
+                        </div>
+
+                        <button type="button" class="btn-card-subscribe" onclick="event.stopPropagation(); abrirModalPlano(${tituloJs})">
+                            <i class="fa-solid fa-crown"></i> Assinar o Plano
+                        </button>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderCatalog() {
+            const grid = document.getElementById('catalog-grid');
+            const countLabel = document.getElementById('catalog-count-label');
+            const paginationBar = document.getElementById('pagination-bar');
+
+            const filtered = getFilteredProducts();
+            const total = filtered.length;
+            const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = Math.min(start + ITEMS_PER_PAGE, total);
+            const items = filtered.slice(start, end);
+
+            countLabel.textContent = total === 0
+                ? '0 produtos encontrados'
+                : `${start + 1}–${end} de ${total} produtos`;
+
+            if (total === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:3.5rem 1rem; background:var(--card-bg); border:1px solid var(--glass-border); border-radius:18px; color:var(--text-secondary);">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size:2rem; color:var(--primary); margin-bottom:0.8rem;"></i>
+                        <p>Nenhum produto encontrado com esses filtros.</p>
+                    </div>
+                `;
+                paginationBar.style.display = 'none';
+                return;
+            }
+
+            grid.innerHTML = items.map(p => createProductCardHTML(p)).join('');
+
+            if (totalPages > 1) {
+                paginationBar.style.display = 'flex';
+                document.getElementById('pagination-info').textContent = `Página ${currentPage} de ${totalPages}`;
+
+                let btns = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
+                for (let i = 1; i <= totalPages; i++) {
+                    btns += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+                btns += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
+                document.getElementById('pagination-controls').innerHTML = btns;
+            } else {
+                paginationBar.style.display = 'none';
+            }
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderCatalog();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function abrirModalPlano(tituloPlugin) {
+            pluginSelecionado = tituloPlugin || '';
+            const subtitle = document.getElementById('modalPluginSubtitle');
+            subtitle.innerHTML = pluginSelecionado
+                ? `Assine um plano abaixo para liberar <strong>${escapeHtml(pluginSelecionado)}</strong> e todo o catálogo:`
+                : 'Todos os planos incluem suporte e aulas de instalação.';
+            document.getElementById('planModal').classList.add('open');
+        }
+
+        function fecharModalPlano() {
+            document.getElementById('planModal').classList.remove('open');
+        }
+
+        function irParaCheckout(nomePlano, preco) {
+            let planId = 'mensal';
+            if (preco === 2000) planId = 'bimestral';
+            if (preco === 5000) planId = 'vitalicio';
+
+            localStorage.setItem('nplugins_single_plan_cart', JSON.stringify({
+                id: planId,
+                plugin: pluginSelecionado || ''
+            }));
+
+            window.location.href = `checkout.html?planId=${planId}&plan=${encodeURIComponent(nomePlano)}&price=${preco}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const menuToggle = document.getElementById("menuToggle");
+            const navMenu = document.getElementById("navMenu");
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener("click", () => {
+                    navMenu.classList.toggle("open");
+                    const icon = menuToggle.querySelector("i");
+                    if (navMenu.classList.contains("open")) {
+                        icon.classList.replace("fa-bars", "fa-xmark");
+                    } else {
+                        icon.classList.replace("fa-xmark", "fa-bars");
+                    }
+                });
+            }
+
+            carregarCatalogo();
+        });
+    </script>
+</body>
+</html>
