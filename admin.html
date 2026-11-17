@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,12 +16,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 
-    <!-- Firebase SDK Compat v10.8.0 (Plano Gratuito: Auth + Firestore) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDK Compat v10.8.0 (Auth + Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
 
     <style>
         :root {
@@ -722,6 +722,7 @@
             font-size: 0.85rem;
             line-height: 1.45;
             word-break: break-word;
+            white-space: pre-wrap;
         }
         .msg-admin {
             align-self: flex-end;
@@ -737,7 +738,7 @@
         .msg-meta {
             display: block;
             font-size: 0.68rem;
-            opacity: 0.72;
+            opacity: 0.82;
             margin-top: 4px;
         }
 
@@ -903,7 +904,7 @@
                 <div class="view-header">
                     <div>
                         <h2 class="view-title">Dashboard & Controle Geral</h2>
-                        <p class="view-subtitle">Resumo de acessos diários, total de usuários e faturamento por assinatura.</p>
+                        <p class="view-subtitle">Resumo de acessos diários, total de usuários e faturamento por assinatura (Angola • AKZ).</p>
                     </div>
                 </div>
 
@@ -957,20 +958,20 @@
                 <div class="plans-revenue-grid">
                     <div class="plan-rev-card">
                         <div class="plan-rev-top">
-                            <span class="plan-rev-title">Acesso 1 Semana</span>
-                            <span class="badge badge-info">1.500 Kz / un</span>
+                            <span class="plan-rev-title">Acesso 1 Mês</span>
+                            <span class="badge badge-info">1.000 Kz / un</span>
                         </div>
-                        <div class="plan-rev-amount" id="rev-semanal-total">0 Kz</div>
-                        <div class="plan-rev-meta" id="rev-semanal-count">0 assinaturas registradas</div>
+                        <div class="plan-rev-amount" id="rev-mensal-total">0 Kz</div>
+                        <div class="plan-rev-meta" id="rev-mensal-count">0 assinaturas registradas</div>
                     </div>
 
                     <div class="plan-rev-card">
                         <div class="plan-rev-top">
-                            <span class="plan-rev-title">Acesso 1 Mês</span>
+                            <span class="plan-rev-title">Acesso 2 Meses</span>
                             <span class="badge badge-primary">2.000 Kz / un</span>
                         </div>
-                        <div class="plan-rev-amount" id="rev-mensal-total">0 Kz</div>
-                        <div class="plan-rev-meta" id="rev-mensal-count">0 assinaturas registradas</div>
+                        <div class="plan-rev-amount" id="rev-bimestral-total">0 Kz</div>
+                        <div class="plan-rev-meta" id="rev-bimestral-count">0 assinaturas registradas</div>
                     </div>
 
                     <div class="plan-rev-card">
@@ -1015,7 +1016,7 @@
                 <div class="view-header">
                     <div>
                         <h2 class="view-title"><i class="fa-solid fa-receipt" style="color:var(--primary);"></i> Comprovativos & Pedidos</h2>
-                        <p class="view-subtitle">Visualize os comprovativos enviados no checkout/upgrade em formato link e aprove ou recuse pedidos.</p>
+                        <p class="view-subtitle">Visualize os comprovativos (Imagem ou PDF) enviados no checkout/upgrade e aprove ou recuse pedidos.</p>
                     </div>
                     <div style="width:280px; max-width:100%;">
                         <input type="text" id="receipts-search-input" class="search-input" placeholder="Filtrar por nome, e-mail ou plano..." oninput="renderReceiptsTable()">
@@ -1029,7 +1030,7 @@
                                 <tr>
                                     <th>Cliente</th>
                                     <th>Plano / Valor</th>
-                                    <th>Data</th>
+                                    <th>Método / Data</th>
                                     <th>Comprovativo</th>
                                     <th>Status</th>
                                     <th style="text-align:right;">Ações</th>
@@ -1297,13 +1298,13 @@
 
                 <div class="form-grid-2">
                     <div>
-                        <label class="form-label" for="prod-plugin-url"><i class="fa-solid fa-download" style="color:var(--primary);"></i> Link Download do Produto</label>
-                        <input type="url" id="prod-plugin-url" class="search-input" required placeholder="https://drive.google.com/...">
+                        <label class="form-label" for="prod-plugin-url"><i class="fa-solid fa-download" style="color:var(--primary);"></i> Link Download do Produto (Opcional)</label>
+                        <input type="url" id="prod-plugin-url" class="search-input" placeholder="Deixe vazio se ainda não disponível">
                     </div>
 
                     <div>
-                        <label class="form-label" for="prod-aula-url"><i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Link da Aula de Instalação</label>
-                        <input type="url" id="prod-aula-url" class="search-input" placeholder="https://youtu.be/... ou Drive">
+                        <label class="form-label" for="prod-aula-url"><i class="fa-solid fa-circle-play" style="color:var(--info);"></i> Link da Aula (Windows/Ambos)</label>
+                        <input type="url" id="prod-aula-url" class="search-input" placeholder="Deixe vazio se ainda não disponível">
                     </div>
                 </div>
 
@@ -1360,9 +1361,9 @@
                     <div>
                         <label class="form-label" for="new-user-plan">Plano de Acesso</label>
                         <select id="new-user-plan" class="search-input" style="cursor:pointer;">
-                            <option value="semanal">Acesso 1 Semana (1.500 Kz)</option>
-                            <option value="mensal" selected>Acesso 1 Mês (2.000 Kz)</option>
-                            <option value="vitalicio">Acesso Vitalício (5.000 Kz)</option>
+                            <option value="mensal">Acesso 1 Mês (30 dias — 1.000 Kz)</option>
+                            <option value="bimestral" selected>Acesso 2 Meses (60 dias — 2.000 Kz)</option>
+                            <option value="vitalicio">Acesso Vitalício (Ilimitado — 5.000 Kz)</option>
                         </select>
                     </div>
                 </div>
@@ -1382,7 +1383,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVATIVO (LINK / IMAGEM) -->
+    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVATIVO (LINK / IMAGEM / PDF) -->
     <div class="modal-backdrop" id="receipt-modal">
         <div class="modal-box" style="max-width:600px;">
             <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:1rem;">
@@ -1397,8 +1398,13 @@
 
             <div id="receipt-modal-meta" style="font-size:0.84rem; color:var(--text-muted); margin-bottom:1rem; display:flex; flex-wrap:wrap; gap:12px;"></div>
 
-            <div style="background:#09090d; border:1px solid var(--border-color); border-radius:12px; padding:10px; text-align:center; margin-bottom:1.1rem; max-height:60vh; overflow:auto;">
+            <div style="background:#09090d; border:1px solid var(--border-color); border-radius:12px; padding:14px; text-align:center; margin-bottom:1.1rem; max-height:60vh; overflow:auto;">
                 <img id="receipt-modal-img" src="" alt="Comprovativo" style="max-width:100%; border-radius:8px; display:none; margin:0 auto;">
+                <div id="receipt-modal-pdf-box" style="display:none; padding:1.75rem 1rem;">
+                    <i class="fa-solid fa-file-pdf" style="font-size:2.6rem; color:var(--danger); margin-bottom:10px;"></i>
+                    <p style="font-weight:700; font-size:0.95rem; color:#FFF; margin-bottom:4px;" id="receipt-modal-pdf-name">Comprovativo.pdf</p>
+                    <p style="font-size:0.8rem; color:var(--success);"><i class="fa-solid fa-shield-check"></i> Documento PDF lido e aprovado automaticamente via OCR.</p>
+                </div>
                 <p id="receipt-modal-empty" style="color:var(--text-muted); padding:2rem; display:none;">Nenhum anexo de imagem encontrado neste registo.</p>
             </div>
 
@@ -1417,6 +1423,7 @@
     </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 1. CONFIGURAÇÃO DO FIREBASE (PROJETO bd-nplugins)
     // ==========================================
@@ -1456,8 +1463,8 @@
     let currentReceiptLink = '';
 
     const PLANS_INFO = {
-        semanal: { id: 'semanal', name: 'Acesso 1 Semana', price: 1500, days: 7, hasInstallLessons: false },
-        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 2000, days: 30, hasInstallLessons: true },
+        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 1000, days: 30, hasInstallLessons: false },
+        bimestral: { id: 'bimestral', name: 'Acesso 2 Meses', price: 2000, days: 60, hasInstallLessons: true },
         vitalicio: { id: 'vitalicio', name: 'Acesso Vitalício', price: 5000, days: null, hasInstallLessons: true }
     };
 
@@ -1703,8 +1710,8 @@
 
             let totalGeneral = 0;
             const stats = {
-                semanal: { count: 0, total: 0 },
                 mensal: { count: 0, total: 0 },
+                bimestral: { count: 0, total: 0 },
                 vitalicio: { count: 0, total: 0 }
             };
 
@@ -1717,8 +1724,8 @@
                 const titleRaw = String(item.productTitle || item.subscriptionPlan || item.planName || '').toLowerCase();
 
                 let bucket = null;
-                if (planIdRaw === 'semanal' || titleRaw.includes('semana') || amount === 1500) bucket = 'semanal';
-                else if (planIdRaw === 'mensal' || titleRaw.includes('mês') || titleRaw.includes('mes') || amount === 2000) bucket = 'mensal';
+                if (planIdRaw === 'mensal' || titleRaw.includes('1 mês') || titleRaw.includes('1 mes') || amount === 1000) bucket = 'mensal';
+                else if (planIdRaw === 'bimestral' || titleRaw.includes('2 meses') || amount === 2000) bucket = 'bimestral';
                 else if (planIdRaw === 'vitalicio' || titleRaw.includes('vital') || amount === 5000) bucket = 'vitalicio';
 
                 if (bucket) {
@@ -1733,11 +1740,11 @@
 
             document.getElementById('kpi-total-revenue').textContent = `${totalGeneral.toLocaleString('pt-AO')} Kz`;
 
-            document.getElementById('rev-semanal-total').textContent = `${stats.semanal.total.toLocaleString('pt-AO')} Kz`;
-            document.getElementById('rev-semanal-count').textContent = `${stats.semanal.count} assinatura(s) registrada(s)`;
-
             document.getElementById('rev-mensal-total').textContent = `${stats.mensal.total.toLocaleString('pt-AO')} Kz`;
             document.getElementById('rev-mensal-count').textContent = `${stats.mensal.count} assinatura(s) registrada(s)`;
+
+            document.getElementById('rev-bimestral-total').textContent = `${stats.bimestral.total.toLocaleString('pt-AO')} Kz`;
+            document.getElementById('rev-bimestral-count').textContent = `${stats.bimestral.count} assinatura(s) registrada(s)`;
 
             document.getElementById('rev-vitalicio-total').textContent = `${stats.vitalicio.total.toLocaleString('pt-AO')} Kz`;
             document.getElementById('rev-vitalicio-count').textContent = `${stats.vitalicio.count} assinatura(s) registrada(s)`;
@@ -1759,7 +1766,7 @@
     // ==========================================
     // 5B. COMPROVATIVOS & APROVAÇÃO DE PEDIDOS
     // ==========================================
-    function renderReceiptsTable() {
+    window.renderReceiptsTable = function() {
         const tbody = document.getElementById('receipts-tbody');
         if (!tbody) return;
 
@@ -1797,6 +1804,8 @@
             const statusRaw = String(t.status || 'completed').toLowerCase();
             const clientName = t.userName || t.customerName || 'Cliente';
             const clientEmail = t.userEmail || t.customerEmail || '-';
+            const methodShort = t.paymentType === 'reference' ? 'Ref. 10116' : 'IBAN BAI';
+            const isPdf = t.receiptType === 'pdf' || receiptLink.startsWith('pdf_validado_ocr://');
 
             let statusBadge = `<span class="badge badge-success"><i class="fa-solid fa-check"></i> Aprovado</span>`;
             if (statusRaw === 'pending' || statusRaw === 'pendente' || statusRaw === 'awaiting_approval') {
@@ -1815,11 +1824,14 @@
                         <span class="badge badge-primary">${escapeHtml(planLabel)}</span>
                         <div style="font-weight:700; color:var(--success); font-size:0.82rem; margin-top:4px;">${amount.toLocaleString('pt-AO')} Kz</div>
                     </td>
-                    <td style="color:var(--text-muted); font-size:0.8rem;">${dateStr}</td>
+                    <td style="color:var(--text-muted); font-size:0.8rem;">
+                        <div>${escapeHtml(methodShort)}</div>
+                        <div>${dateStr}</div>
+                    </td>
                     <td>
                         ${receiptLink
                             ? `<button type="button" class="btn-action btn-info btn-sm" onclick="viewReceiptModal('${t.id}')">
-                                   <i class="fa-solid fa-link"></i> Ver Comprovativo
+                                   <i class="fa-solid ${isPdf ? 'fa-file-pdf' : 'fa-link'}"></i> ${isPdf ? 'Ver PDF' : 'Ver Comprovativo'}
                                </button>`
                             : `<span style="font-size:0.78rem; color:var(--text-muted);">Sem anexo</span>`
                         }
@@ -1844,9 +1856,9 @@
                 </tr>
             `;
         }).join('');
-    }
+    };
 
-    function viewReceiptModal(txId) {
+    window.viewReceiptModal = function(txId) {
         const item = allTransactionsList.find(t => t.id === txId);
         if (!item) return;
 
@@ -1855,41 +1867,54 @@
         const clientName = item.userName || item.customerName || 'Cliente';
         const clientEmail = item.userEmail || item.customerEmail || '';
         const clientWhatsapp = item.whatsapp || item.customerWhatsapp || '';
+        const methodText = item.paymentMethod || (item.paymentType === 'reference' ? 'Pagamento por Referência (10116)' : 'Transferência IBAN BAI');
 
         document.getElementById('receipt-modal-client').textContent = `${clientName} (${clientEmail})`;
         document.getElementById('receipt-modal-meta').innerHTML = `
             <span><strong>Plano:</strong> ${escapeHtml(item.subscriptionPlan || item.planName || item.productTitle || '-')}</span>
             <span><strong>Valor:</strong> ${amount.toLocaleString('pt-AO')} Kz</span>
+            <span><strong>Método:</strong> ${escapeHtml(methodText)}</span>
+            ${item.ocrVerified ? `<span class="badge badge-success"><i class="fa-solid fa-check-double"></i> OCR Validado</span>` : ''}
             ${clientWhatsapp ? `<span><strong>WhatsApp:</strong> ${escapeHtml(clientWhatsapp)}</span>` : ''}
         `;
 
         const imgEl = document.getElementById('receipt-modal-img');
+        const pdfBox = document.getElementById('receipt-modal-pdf-box');
+        const pdfNameEl = document.getElementById('receipt-modal-pdf-name');
         const emptyEl = document.getElementById('receipt-modal-empty');
         const btnOpen = document.getElementById('btn-open-receipt-tab');
         const btnCopy = document.getElementById('btn-copy-receipt-link');
 
-        if (currentReceiptLink) {
+        imgEl.style.display = 'none';
+        pdfBox.style.display = 'none';
+        emptyEl.style.display = 'none';
+
+        if (currentReceiptLink.startsWith('pdf_validado_ocr://')) {
+            const rawName = decodeURIComponent(currentReceiptLink.replace('pdf_validado_ocr://', '')) || 'Comprovativo.pdf';
+            pdfNameEl.textContent = rawName;
+            pdfBox.style.display = 'block';
+            btnOpen.style.display = 'none';
+            btnCopy.style.display = 'none';
+        } else if (currentReceiptLink) {
             imgEl.src = currentReceiptLink;
             imgEl.style.display = 'block';
-            emptyEl.style.display = 'none';
             btnOpen.style.display = 'inline-flex';
             btnCopy.style.display = 'inline-flex';
         } else {
-            imgEl.style.display = 'none';
             emptyEl.style.display = 'block';
             btnOpen.style.display = 'none';
             btnCopy.style.display = 'none';
         }
 
         document.getElementById('receipt-modal').classList.add('open');
-    }
+    };
 
-    function closeReceiptModal() {
+    window.closeReceiptModal = function() {
         document.getElementById('receipt-modal').classList.remove('open');
-    }
+    };
 
-    function openCurrentReceiptInNewTab() {
-        if (!currentReceiptLink) return;
+    window.openCurrentReceiptInNewTab = function() {
+        if (!currentReceiptLink || currentReceiptLink.startsWith('pdf_validado_ocr://')) return;
         if (currentReceiptLink.startsWith('data:')) {
             try {
                 const parts = currentReceiptLink.split(',');
@@ -1905,9 +1930,9 @@
             } catch (e) {}
         }
         window.open(currentReceiptLink, '_blank');
-    }
+    };
 
-    async function copyCurrentReceiptLink() {
+    window.copyCurrentReceiptLink = async function() {
         if (!currentReceiptLink) return;
         try {
             await navigator.clipboard.writeText(currentReceiptLink);
@@ -1915,9 +1940,9 @@
         } catch (err) {
             showToast('Não foi possível copiar o link.', 'warning');
         }
-    }
+    };
 
-    async function approveTransaction(txId) {
+    window.approveTransaction = async function(txId) {
         const item = allTransactionsList.find(t => t.id === txId);
         if (!item) return;
 
@@ -1948,9 +1973,9 @@
         } catch (err) {
             showToast('Erro ao aprovar pedido: ' + err.message, 'warning');
         }
-    }
+    };
 
-    async function rejectTransaction(txId) {
+    window.rejectTransaction = async function(txId) {
         const item = allTransactionsList.find(t => t.id === txId);
         if (!item) return;
 
@@ -1963,7 +1988,7 @@
         } catch (err) {
             showToast('Erro ao recusar pedido: ' + err.message, 'warning');
         }
-    }
+    };
 
     // ==========================================
     // 6. MÉTRICAS DE ACESSOS HOJE & EXPIRAÇÃO
@@ -2067,7 +2092,7 @@
         }).join('');
     }
 
-    function renderUsersTable() {
+    window.renderUsersTable = function() {
         const tbody = document.getElementById('all-users-tbody');
         const query = (document.getElementById('users-search-input')?.value || '').trim().toLowerCase();
 
@@ -2116,21 +2141,21 @@
                 </tr>
             `;
         }).join('');
-    }
+    };
 
     // ==========================================
     // 6B. CRIAR CONTA DE CLIENTE SEM DESLOGAR ADMIN
     // ==========================================
-    function openCreateUserModal() {
+    window.openCreateUserModal = function() {
         document.getElementById('form-create-user').reset();
         document.getElementById('create-user-modal').classList.add('open');
-    }
+    };
 
-    function closeCreateUserModal() {
+    window.closeCreateUserModal = function() {
         document.getElementById('create-user-modal').classList.remove('open');
-    }
+    };
 
-    async function createUserByAdmin(e) {
+    window.createUserByAdmin = async function(e) {
         e.preventDefault();
         const btn = document.getElementById('btn-create-user');
         btn.disabled = true;
@@ -2142,7 +2167,7 @@
         const password = document.getElementById('new-user-password').value;
         const planKey = document.getElementById('new-user-plan').value;
         const recordSale = document.getElementById('new-user-record-sale').checked;
-        const plan = PLANS_INFO[planKey] || PLANS_INFO.mensal;
+        const plan = PLANS_INFO[planKey] || PLANS_INFO.bimestral;
 
         let secondaryApp = null;
         try {
@@ -2202,9 +2227,9 @@
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-user-check"></i> Criar Conta Agora';
         }
-    }
+    };
 
-    async function promptAssignPlan(uid) {
+    window.promptAssignPlan = async function(uid) {
         const userObj = allUsersList.find(u => u.uid === uid);
         if (!userObj) return;
 
@@ -2212,11 +2237,11 @@
             title: `Alterar Plano de ${userObj.name || 'Cliente'}`,
             input: 'select',
             inputOptions: {
-                semanal: 'Acesso 1 Semana (7 dias — 1.500 Kz)',
-                mensal: 'Acesso 1 Mês (30 dias — 2.000 Kz)',
+                mensal: 'Acesso 1 Mês (30 dias — 1.000 Kz)',
+                bimestral: 'Acesso 2 Meses (60 dias — 2.000 Kz)',
                 vitalicio: 'Acesso Vitalício (Ilimitado — 5.000 Kz)'
             },
-            inputValue: userObj.planId || 'mensal',
+            inputValue: PLANS_INFO[userObj.planId] ? userObj.planId : 'bimestral',
             background: '#181824',
             color: '#FFF',
             confirmButtonText: 'Aplicar Plano',
@@ -2245,7 +2270,7 @@
         } catch (err) {
             showToast('Erro ao actualizar plano: ' + err.message, 'warning');
         }
-    }
+    };
 
     // ==========================================
     // 7. NAVEGAÇÃO DA SIDEBAR
@@ -2261,7 +2286,7 @@
         senha: 'Mudar Senha'
     };
 
-    function switchView(viewId, btnEl) {
+    window.switchView = function(viewId, btnEl) {
         document.querySelectorAll('.menu-item[data-view]').forEach(el => {
             el.classList.toggle('active', el.getAttribute('data-view') === viewId);
         });
@@ -2272,20 +2297,20 @@
 
         document.getElementById('topbar-title').textContent = VIEW_TITLES[viewId] || 'Admin';
         toggleSidebar(false);
-    }
+    };
 
-    function toggleSidebar(force) {
+    window.toggleSidebar = function(force) {
         const sidebar = document.getElementById('sidebar');
         const closeBtn = document.getElementById('closeSidebarBtn');
         const shouldOpen = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
         sidebar.classList.toggle('open', shouldOpen);
         if (closeBtn) closeBtn.style.display = shouldOpen ? 'flex' : 'none';
-    }
+    };
 
     // ==========================================
     // 8. CADASTRO E EDIÇÃO DE PRODUTOS (VIA LINK DE IMAGEM)
     // ==========================================
-    function renderProductsTable() {
+    window.renderProductsTable = function() {
         const tbody = document.getElementById('products-tbody');
         const query = (document.getElementById('products-search-input')?.value || '').trim().toLowerCase();
 
@@ -2344,9 +2369,9 @@
                 </tr>
             `;
         }).join('');
-    }
+    };
 
-    function openProductModal() {
+    window.openProductModal = function() {
         editingProductDocId = null;
         document.getElementById('product-modal-title').textContent = 'Cadastrar Novo Produto';
         document.getElementById('prod-titulo').value = '';
@@ -2357,13 +2382,13 @@
         document.getElementById('prod-aula-url').value = '';
         document.getElementById('prod-imagem-url').value = '';
         document.getElementById('product-modal').classList.add('open');
-    }
+    };
 
-    function closeProductModal() {
+    window.closeProductModal = function() {
         document.getElementById('product-modal').classList.remove('open');
-    }
+    };
 
-    function editProduct(docId) {
+    window.editProduct = function(docId) {
         const p = allProductsList.find(item => item.id === docId);
         if (!p) return;
 
@@ -2373,13 +2398,13 @@
         document.getElementById('prod-categoria').value = String(p.categoria || 'daw').toLowerCase();
         document.getElementById('prod-sistema').value = String(p.sistema || 'windows').toLowerCase();
         document.getElementById('prod-descricao').value = p.descricao || '';
-        document.getElementById('prod-plugin-url').value = p.pluginUrl || '';
-        document.getElementById('prod-aula-url').value = p.aulaUrl || '';
+        document.getElementById('prod-plugin-url').value = (p.pluginUrl && p.pluginUrl !== '#') ? p.pluginUrl : '';
+        document.getElementById('prod-aula-url').value = (p.aulaUrl && p.aulaUrl !== '#') ? p.aulaUrl : '';
         document.getElementById('prod-imagem-url').value = p.imagem || '';
         document.getElementById('product-modal').classList.add('open');
-    }
+    };
 
-    async function saveProductForm(e) {
+    window.saveProductForm = async function(e) {
         e.preventDefault();
         const btn = document.getElementById('btn-save-product');
         btn.disabled = true;
@@ -2390,7 +2415,7 @@
             const categoria = document.getElementById('prod-categoria').value;
             const sistema = document.getElementById('prod-sistema').value;
             const descricao = document.getElementById('prod-descricao').value.trim();
-            const pluginUrl = document.getElementById('prod-plugin-url').value.trim();
+            const pluginUrl = document.getElementById('prod-plugin-url').value.trim() || '#';
             const aulaUrl = document.getElementById('prod-aula-url').value.trim() || '#';
             const imagem = document.getElementById('prod-imagem-url').value.trim() ||
                 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80';
@@ -2422,9 +2447,9 @@
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-check"></i> Guardar Produto';
         }
-    }
+    };
 
-    function deleteProduct(docId) {
+    window.deleteProduct = function(docId) {
         Swal.fire({
             title: 'Eliminar Produto?',
             text: 'O produto será removido imediatamente da vitrine e da área do cliente.',
@@ -2442,12 +2467,12 @@
                 showToast('Produto eliminado.', 'info');
             }
         });
-    }
+    };
 
     // ==========================================
     // 9. FALAR DIRETAMENTE COM USUÁRIOS (CHAT BIDIRECIONAL)
     // ==========================================
-    function renderChatSidebar() {
+    window.renderChatSidebar = function() {
         const container = document.getElementById('chat-users-list');
         if (!container) return;
 
@@ -2519,9 +2544,9 @@
                 </div>
             `;
         }).join('');
-    }
+    };
 
-    function openDirectChat(uid) {
+    window.openDirectChat = function(uid) {
         switchView('chat');
         activeChatUid = uid;
 
@@ -2548,37 +2573,67 @@
         if (unsubscribeChatMessages) unsubscribeChatMessages();
 
         unsubscribeChatMessages = db.collection('chats').doc(uid).collection('messages')
-            .orderBy('timestamp', 'asc')
             .onSnapshot((snap) => {
                 if (activeChatUid === uid && chatThreadsMap[uid]?.unreadAdmin) {
                     db.collection('chats').doc(uid).set({ unreadAdmin: 0 }, { merge: true }).catch(() => {});
                 }
 
+                const msgs = [];
+                const unreadClientRefs = [];
+
+                snap.forEach((doc) => {
+                    const m = doc.data();
+                    if (m.sender === 'client' && m.read !== true) {
+                        unreadClientRefs.push(doc.ref);
+                    }
+                    const dt = parseAnyDate(m.createdAt || m.timestamp) || new Date(0);
+                    msgs.push({ id: doc.id, ...m, _dt: dt });
+                });
+
+                // Marca mensagens do cliente como lidas pelo Admin
+                if (unreadClientRefs.length > 0 && activeChatUid === uid) {
+                    const batch = db.batch();
+                    unreadClientRefs.forEach((ref) => {
+                        batch.update(ref, {
+                            read: true,
+                            readAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    });
+                    batch.commit().catch(() => {});
+                }
+
+                msgs.sort((a, b) => a._dt.getTime() - b._dt.getTime());
+
                 box.innerHTML = '';
-                if (snap.empty) {
+                if (msgs.length === 0) {
                     box.innerHTML = `<p style="color:var(--text-muted); text-align:center; margin:auto; font-size:0.85rem;">Nenhuma mensagem ainda. Escreva abaixo para falar com ${escapeHtml(name)}.</p>`;
                     return;
                 }
 
-                snap.forEach((doc) => {
-                    const m = doc.data();
+                msgs.forEach((m) => {
                     const isAdmin = m.sender === 'admin';
-                    const msgDate = parseAnyDate(m.timestamp);
-                    const timeStr = msgDate ? msgDate.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : '';
+                    const timeStr = m._dt.getTime() > 0
+                        ? m._dt.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
+                        : '';
                     const senderLabel = isAdmin ? 'Você (Admin)' : escapeHtml(m.senderName || name);
+                    const readReceipt = isAdmin
+                        ? (m.read === true
+                            ? ` • <span style="color:#38BDF8; font-weight:700;"><i class="fa-solid fa-check-double"></i> Lida</span>`
+                            : ` • <span style="opacity:0.85;"><i class="fa-solid fa-check"></i> Enviada</span>`)
+                        : '';
 
                     box.innerHTML += `
                         <div class="msg-bubble ${isAdmin ? 'msg-admin' : 'msg-user'}">
                             ${escapeHtml(m.text)}
-                            <span class="msg-meta">${senderLabel}${timeStr ? ` • ${timeStr}` : ''}</span>
+                            <span class="msg-meta">${senderLabel}${timeStr ? ` • ${timeStr}` : ''}${readReceipt}</span>
                         </div>
                     `;
                 });
                 box.scrollTop = box.scrollHeight;
             });
-    }
+    };
 
-    async function sendAdminChatMessage() {
+    window.sendAdminChatMessage = async function() {
         if (!activeChatUid) {
             showToast('Selecione um usuário primeiro.', 'warning');
             return;
@@ -2608,17 +2663,19 @@
                 sender: 'admin',
                 senderName: currentAdmin?.displayName || 'Administrador',
                 text,
+                read: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
         } catch (err) {
             showToast('Erro ao enviar mensagem: ' + err.message, 'warning');
         }
-    }
+    };
 
     // ==========================================
     // 10. EDITAR PERFIL, MUDAR SENHA & LOGOUT
     // ==========================================
-    async function saveAdminProfile(e) {
+    window.saveAdminProfile = async function(e) {
         e.preventDefault();
         if (!currentAdmin) return;
 
@@ -2648,9 +2705,9 @@
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Alterações';
         }
-    }
+    };
 
-    async function updateAdminPassword(e) {
+    window.updateAdminPassword = async function(e) {
         e.preventDefault();
         if (!currentAdmin) return;
 
@@ -2683,13 +2740,14 @@
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Actualizar a Senha';
         }
-    }
+    };
 
-    function logoutAdmin() {
+    window.logoutAdmin = function() {
         auth.signOut().then(() => {
             window.location.href = 'index.html';
         });
-    }
+    };
+});
 </script>
 </body>
 </html>
