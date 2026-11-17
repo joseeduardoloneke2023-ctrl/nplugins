@@ -813,7 +813,7 @@
             color: var(--white);
         }
 
-        .footer-links h7 {
+        .footer-links h4 {
             display: block;
             font-family: var(--font-montserrat);
             font-size: 1rem;
@@ -1137,10 +1137,11 @@
             .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
             .arrow-left { left: 4px; }
             .arrow-right { right: 4px; }
+            .contact-container { padding: 2rem 1.5rem; }
         }
 </style>
 </head>
-<body oncontextmenu="return false;" onkeydown="if(event.keyCode==123 || (event.ctrlKey && event.shiftKey && (event.keyCode==73 || event.keyCode==74)) || (event.ctrlKey && (event.keyCode==85 || event.keyCode==83))) return false;">
+<body>
 
     <header id="header">
         <div class="container nav-container">
@@ -1255,7 +1256,7 @@
                             <li class="included"><i class="fa-solid fa-check"></i> Direito a Suporte via WhatsApp</li>
                             <li class="disabled"><i class="fa-solid fa-xmark"></i> Aula de instalação dos plugins</li>
                         </ul>
-                        <button class="btn btn-secondary pricing-btn" onclick="assinarPlano('Acesso 1 Mês', 1000)">
+                        <button type="button" class="btn btn-secondary pricing-btn" onclick="assinarPlano('Acesso 1 Mês', 1000)">
                             Assinar Agora
                         </button>
                     </div>
@@ -1279,7 +1280,7 @@
                             <li class="included"><i class="fa-solid fa-check"></i> <strong>Direito a Aula de Instalação dos Plugins</strong></li>
                             <li class="included"><i class="fa-solid fa-check"></i> Direito a Suporte prioritário via WhatsApp</li>
                         </ul>
-                        <button class="btn btn-primary pricing-btn" onclick="assinarPlano('Acesso 2 Meses', 2000)">
+                        <button type="button" class="btn btn-primary pricing-btn" onclick="assinarPlano('Acesso 2 Meses', 2000)">
                             Assinar Agora
                         </button>
                     </div>
@@ -1302,7 +1303,7 @@
                             <li class="included"><i class="fa-solid fa-check"></i> <strong>Direito a Aula de Instalação dos Plugins</strong></li>
                             <li class="included"><i class="fa-solid fa-check"></i> Direito a Suporte VIP via WhatsApp</li>
                         </ul>
-                        <button class="btn btn-vip pricing-btn" onclick="assinarPlano('Acesso Vitalício', 5000)">
+                        <button type="button" class="btn btn-vip pricing-btn" onclick="assinarPlano('Acesso Vitalício', 5000)">
                             <i class="fa-solid fa-crown"></i> Garantir Vitalício
                         </button>
                     </div>
@@ -1335,7 +1336,7 @@
 
                 <div class="faq-container">
                     <div class="faq-item reveal">
-                        <button class="faq-trigger">
+                        <button type="button" class="faq-trigger">
                             Como funciona a assinatura e a criação da minha conta na NPLUGINS?
                             <i class="fa-solid fa-chevron-down faq-icon"></i>
                         </button>
@@ -1347,7 +1348,7 @@
                     </div>
 
                     <div class="faq-item reveal">
-                        <button class="faq-trigger">
+                        <button type="button" class="faq-trigger">
                             Quais planos têm direito a suporte e aula de instalação dos plugins?
                             <i class="fa-solid fa-chevron-down faq-icon"></i>
                         </button>
@@ -1359,7 +1360,7 @@
                     </div>
 
                     <div class="faq-item reveal">
-                        <button class="faq-trigger">
+                        <button type="button" class="faq-trigger">
                             Onde vou baixar os Plugins, DAWs e Livrarias após o pagamento?
                             <i class="fa-solid fa-chevron-down faq-icon"></i>
                         </button>
@@ -1371,7 +1372,7 @@
                     </div>
 
                     <div class="faq-item reveal">
-                        <button class="faq-trigger">
+                        <button type="button" class="faq-trigger">
                             Os Plugins, DAWs e Livrarias funcionam em Mac e Windows?
                             <i class="fa-solid fa-chevron-down faq-icon"></i>
                         </button>
@@ -1383,7 +1384,7 @@
                     </div>
 
                     <div class="faq-item reveal">
-                        <button class="faq-trigger">
+                        <button type="button" class="faq-trigger">
                             Como envio o comprovativo de pagamento?
                             <i class="fa-solid fa-chevron-down faq-icon"></i>
                         </button>
@@ -1410,22 +1411,22 @@
                     <form id="contactForm">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>Nome Completo</label>
+                                <label for="name">Nome Completo</label>
                                 <input type="text" id="name" class="form-control" placeholder="Ex: João Silva" required>
                             </div>
                             <div class="form-group">
-                                <label>Telefone / WhatsApp</label>
+                                <label for="phone">Telefone / WhatsApp</label>
                                 <input type="tel" id="phone" class="form-control" placeholder="+244 9xx xxx xxx" required>
                             </div>
                         </div>
 
                         <div class="form-grid" style="grid-template-columns:1fr;">
                             <div class="form-group">
-                                <label>E-mail</label>
+                                <label for="email">E-mail</label>
                                 <input type="email" id="email" class="form-control" placeholder="email@exemplo.com" required>
                             </div>
                             <div class="form-group">
-                                <label>Mensagem</label>
+                                <label for="message">Mensagem</label>
                                 <textarea id="message" class="form-control" rows="6" placeholder="Escreva a sua mensagem..." required></textarea>
                             </div>
                         </div>
@@ -1454,7 +1455,7 @@
                 <p>Contacto: +244 924 034 159</p>
             </div>
             <div class="footer-links">
-                <h7>Navegação</h7>
+                <h4>Navegação</h4>
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="#destaques">Plugins & DAWs</a></li>
@@ -1464,7 +1465,7 @@
                 </ul>
             </div>
             <div class="footer-links">
-                <h7>Planos Disponíveis</h7>
+                <h4>Planos Disponíveis</h4>
                 <ul>
                     <li><a href="#planos">1 Mês — 1.000 Kz</a></li>
                     <li><a href="#planos">2 Meses — 2.000 Kz (+ Aulas)</a></li>
@@ -1473,7 +1474,7 @@
                 </ul>
             </div>
             <div class="footer-links">
-                <h7>Acesso & Suporte</h7>
+                <h4>Acesso & Suporte</h4>
                 <p style="font-size:0.85rem; color:var(--text-secondary); font-weight:300; margin-bottom:1rem;">Ativação imediata após envio do comprovativo de pagamento em Kwanzas (AKZ). Suporte dedicado em todos os planos.</p>
                 <div style="display:flex; gap:0.8rem; font-size:1.5rem; color:rgba(255,255,255,0.3);">
                     <i class="fa-brands fa-windows" title="Windows"></i>
@@ -1524,6 +1525,7 @@
 
     let produtos = [];
     let pluginSelecionado = '';
+    let isDraggingCarousel = false;
 
     // Atualiza o botão Login do topo caso o usuário já esteja autenticado
     auth.onAuthStateChanged(async (user) => {
@@ -1652,10 +1654,7 @@
             plugin: pluginSelecionado || ''
         }));
 
-        showToast(`Adicionando ${nomePlano} ao checkout...`, 'fa-cart-shopping');
-        setTimeout(() => {
-            window.location.href = `checkout.html?planId=${planId}&plan=${encodeURIComponent(nomePlano)}&price=${preco}`;
-        }, 450);
+        window.location.href = `checkout.html?planId=${planId}&plan=${encodeURIComponent(nomePlano)}&price=${preco}`;
     }
 
     function getYouTubeEmbedUrl(url) {
@@ -1718,7 +1717,7 @@
                         <span class="tutorial-pill"><i class="fa-solid fa-headset"></i> Suporte Incluso</span>
                     </div>
 
-                    <button class="btn-card-subscribe" onclick="event.stopPropagation(); selecionarPluginParaPlano(${tituloJs})">
+                    <button type="button" class="btn-card-subscribe" onclick="event.stopPropagation(); selecionarPluginParaPlano(${tituloJs})">
                         <i class="fa-solid fa-crown"></i> Assinar o Plano
                     </button>
                 </div>
@@ -1727,6 +1726,7 @@
     }
 
     function goToProductDetail(id) {
+        if (isDraggingCarousel) return;
         window.location.search = `?id=${encodeURIComponent(id)}`;
     }
 
@@ -1746,6 +1746,21 @@
 
         const listaPlugins = [...produtos].sort((a, b) => (b.vendas || 0) - (a.vendas || 0));
         track.innerHTML = listaPlugins.map(prod => createPluginCardHTML(prod)).join('');
+
+        // Previne clique acidental ao deslizar o carrossel no mobile/touch
+        let touchStartX = 0;
+        track.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            isDraggingCarousel = false;
+        }, { passive: true });
+        track.addEventListener('touchmove', (e) => {
+            if (Math.abs(e.touches[0].clientX - touchStartX) > 10) {
+                isDraggingCarousel = true;
+            }
+        }, { passive: true });
+        track.addEventListener('touchend', () => {
+            setTimeout(() => { isDraggingCarousel = false; }, 120);
+        });
 
         const prevBtn = document.getElementById("featuredPrevBtn");
         const nextBtn = document.getElementById("featuredNextBtn");
@@ -1817,15 +1832,15 @@
                                 <span style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-headset" style="color: var(--accent);"></i> Todos os planos incluem suporte. Planos de 2.000 Kz e 5.000 Kz incluem aula de instalação.</span>
                                 
                                 <div class="detail-plans-box">
-                                    <button class="btn btn-secondary" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso 1 Mês', 1000)">
+                                    <button type="button" class="btn btn-secondary" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso 1 Mês', 1000)">
                                         <span>Acesso 1 Mês (Suporte)</span>
                                         <strong style="color: #FFD700;">1.000 Kz</strong>
                                     </button>
-                                    <button class="btn btn-primary" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso 2 Meses', 2000)">
+                                    <button type="button" class="btn btn-primary" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso 2 Meses', 2000)">
                                         <span>Acesso 2 Meses (+ Aula de Instalação)</span>
                                         <strong style="color: #FFD700;">2.000 Kz</strong>
                                     </button>
-                                    <button class="btn btn-vip" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso Vitalício', 5000)">
+                                    <button type="button" class="btn btn-vip" style="width: 100%; border-radius: 12px; justify-content: space-between;" onclick="assinarPlano('Acesso Vitalício', 5000)">
                                         <span><i class="fa-solid fa-crown"></i> Acesso Vitalício (+ Aula de Instalação)</span>
                                         <strong>5.000 Kz</strong>
                                     </button>
@@ -1980,7 +1995,7 @@
             contactForm.addEventListener("submit", function(e){
                 e.preventDefault();
 
-                showToast('Processando mensagem do formulário...', 'fa-spinner');
+                showToast('Abrindo WhatsApp...', 'fa-brands fa-whatsapp');
 
                 const nome = document.getElementById("name").value;
                 const telefone = document.getElementById("phone").value;
@@ -2007,7 +2022,7 @@ ${mensagem}`;
 
                 setTimeout(() => {
                     window.open(url, "_blank");
-                }, 800);
+                }, 400);
             });
         }
     });
