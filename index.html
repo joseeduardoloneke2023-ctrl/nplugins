@@ -1211,12 +1211,26 @@
             </div>
         </section>
 
-        <!-- CARROSSEL DE PLUGINS, DAWS E LIVRARIAS -->
+        <!-- CARROSSEL DE PLUGINS, DAWS E LIVRARIAS (5 DESTAQUES) -->
         <section id="destaques" class="section-padding" style="position: relative;">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-title">Plugins, DAWs & Livrarias Disponíveis</h2>
-                    <p class="section-subtitle">Navegue pelo nosso acervo. Assine qualquer um dos nossos planos para liberar o download completo no seu painel.</p>
+                    <p class="section-subtitle">Confira alguns dos destaques do nosso acervo. Assine qualquer um dos nossos planos para liberar o download completo no seu painel.</p>
+                </div>
+
+                <div class="featured-slider-container">
+                    <button type="button" class="slider-arrow arrow-left" id="featuredPrevBtn" aria-label="Anterior">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <div class="featured-slider-track" id="featuredSliderTrack">
+                        <!-- Os 5 produtos em destaque são carregados automaticamente aqui -->
+                    </div>
+
+                    <button type="button" class="slider-arrow arrow-right" id="featuredNextBtn" aria-label="Próximo">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
                 
                 <div class="text-center" style="margin-top: 2.5rem;">
@@ -1748,8 +1762,9 @@
             return;
         }
 
-        const listaPlugins = [...produtos].sort((a, b) => (b.vendas || 0) - (a.vendas || 0));
-        track.innerHTML = listaPlugins.map(prod => createPluginCardHTML(prod)).join('');
+const listaPlugins = [...produtos]
+            .sort((a, b) => (b.vendas || 0) - (a.vendas || 0))
+            .slice(0, 5);        track.innerHTML = listaPlugins.map(prod => createPluginCardHTML(prod)).join('');
 
         let touchStartX = 0;
         track.addEventListener('touchstart', (e) => {
