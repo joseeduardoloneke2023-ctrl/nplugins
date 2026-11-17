@@ -1429,6 +1429,124 @@
             .pay-method-switch { grid-template-columns: 1fr; }
             .msg-row { max-width: 88%; }
         }
+
+
+        /* PRODUTO BLOQUEADO (QUANDO FALTA LINK DE DOWNLOAD OU AULA) */
+        .product-card.locked-card {
+            border-color: rgba(245, 158, 11, 0.32);
+        }
+        .product-lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(9, 9, 13, 0.72);
+            backdrop-filter: blur(3px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--warning);
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .product-lock-overlay i {
+            font-size: 1.55rem;
+        }
+        .locked-notice-box {
+            background: var(--warning-soft);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: #FDE68A;
+            font-size: 0.76rem;
+            line-height: 1.4;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+        }
+        .locked-notice-box i {
+            color: var(--warning);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .locked-actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .btn-whatsapp-sm {
+            background: rgba(16, 185, 129, 0.16);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #6EE7B7;
+        }
+        .btn-whatsapp-sm:hover {
+            background: var(--success);
+            color: #09090d;
+        }
+
+        /* GRID DE DEPOIMENTOS E AULAS DE AJUDA */
+        .media-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+        @media (max-width: 1120px) {
+            .media-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 640px) {
+            .media-cards-grid { grid-template-columns: 1fr; }
+        }
+        .media-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        .media-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 58, 237, 0.4);
+        }
+        .media-embed-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #09090d;
+            overflow: hidden;
+        }
+        .media-embed-box iframe,
+        .media-embed-box video,
+        .media-embed-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+        .media-card-body {
+            padding: 1.15rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+        .media-card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #FFF;
+        }
+        .media-card-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -1473,8 +1591,7 @@
             </div>
         </header>
 
-        <!-- SIDEBAR -->
-        <aside id="sidebar">
+       <aside id="sidebar">
             <div class="sidebar-brand">
                 <a href="index.html" class="brand-logo">
                     <i class="fa-solid fa-sliders"></i> N<span>PLUGINS</span>
@@ -1499,6 +1616,12 @@
                 </button>
                 <button type="button" class="menu-item" data-view="produtos" onclick="switchView('produtos', this)">
                     <i class="fa-solid fa-boxes-stacked"></i> Produtos Disponíveis
+                </button>
+                <button type="button" class="menu-item" data-view="aulas-ajuda" onclick="switchView('aulas-ajuda', this)">
+                    <i class="fa-solid fa-graduation-cap"></i> Aulas de Ajuda
+                </button>
+                <button type="button" class="menu-item" data-view="depoimentos" onclick="switchView('depoimentos', this)">
+                    <i class="fa-solid fa-star"></i> Depoimentos
                 </button>
                 <button type="button" class="menu-item" data-view="mensagens" onclick="switchView('mensagens', this)">
                     <i class="fa-solid fa-comments"></i>
@@ -1647,11 +1770,11 @@
                 </div>
             </section>
 
-            <!-- 2. VIEW: PRODUTOS DISPONÍVEIS -->
+<!-- 2. VIEW: PRODUTOS DISPONÍVEIS -->
             <section id="view-produtos" class="panel-view">
                 <div class="view-header">
                     <h2 class="view-title"><i class="fa-solid fa-boxes-stacked" style="color:var(--primary);"></i> Produtos Disponíveis</h2>
-                    <p class="view-subtitle">Filtre por nome, categoria ou sistema operacional (Windows ou Mac).</p>
+                    <p class="view-subtitle">Filtre por nome, categoria ou sistema operacional (Windows, Mac ou Mac / Win).</p>
                 </div>
 
                 <div class="filter-bar">
@@ -1662,6 +1785,7 @@
                             <option value="all">Todos os Sistemas</option>
                             <option value="windows">Windows</option>
                             <option value="mac">Mac</option>
+                            <option value="mac/win">Mac / Win</option>
                         </select>
 
                         <span style="font-size:0.82rem; color:var(--text-muted); font-weight:600;" id="catalog-count-label">0 produtos</span>
@@ -1673,6 +1797,7 @@
                         <button type="button" class="cat-tab" data-cat="livrarias" onclick="setCategoryFilter('livrarias', this)">Livrarias</button>
                         <button type="button" class="cat-tab" data-cat="mix e master vst" onclick="setCategoryFilter('mix e master vst', this)">Mix e Master VST</button>
                         <button type="button" class="cat-tab" data-cat="instrumentos vsti" onclick="setCategoryFilter('instrumentos vsti', this)">Instrumentos VSTi</button>
+                        <button type="button" class="cat-tab" data-cat="mac/win" onclick="setCategoryFilter('mac/win', this)">Mac / Win</button>
                     </div>
                 </div>
 
@@ -1681,6 +1806,36 @@
                 <div class="pagination-bar" id="pagination-bar" style="display:none;">
                     <span style="font-size:0.82rem; color:var(--text-muted);" id="pagination-info">Página 1 de 1</span>
                     <div class="page-numbers" id="pagination-controls"></div>
+                </div>
+            </section>
+
+            <!-- VIEW: AULAS DE AJUDA -->
+            <section id="view-aulas-ajuda" class="panel-view">
+                <div class="view-header">
+                    <h2 class="view-title"><i class="fa-solid fa-graduation-cap" style="color:var(--primary);"></i> Aulas de Ajuda</h2>
+                    <p class="view-subtitle">Aprenda como usar o site, baixar os seus plugins, extrair arquivos e instalar corretamente.</p>
+                </div>
+
+                <div class="media-cards-grid" id="aulas-ajuda-grid">
+                    <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); color:var(--text-muted);">
+                        <i class="fa-solid fa-circle-play" style="font-size:2rem; color:var(--primary); margin-bottom:8px;"></i>
+                        <p>Nenhuma aula de ajuda publicada ainda.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: DEPOIMENTOS -->
+            <section id="view-depoimentos" class="panel-view">
+                <div class="view-header">
+                    <h2 class="view-title"><i class="fa-solid fa-star" style="color:var(--warning);"></i> Depoimentos de Clientes</h2>
+                    <p class="view-subtitle">Veja vídeos e imagens reais de produtores musicais que já usam os plugins da NPLUGINS.</p>
+                </div>
+
+                <div class="media-cards-grid" id="depoimentos-grid">
+                    <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); color:var(--text-muted);">
+                        <i class="fa-solid fa-star" style="font-size:2rem; color:var(--warning); margin-bottom:8px;"></i>
+                        <p>Nenhum depoimento publicado ainda.</p>
+                    </div>
                 </div>
             </section>
 
@@ -2037,6 +2192,21 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function getYouTubeEmbedUrl(url) {
+        if (!url) return '';
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        if (match && match[2].length === 11) {
+            return `https://www.youtube.com/embed/${match[2]}`;
+        }
+        return url;
+    }
+
+    function isValidLink(url) {
+        const clean = String(url || '').trim();
+        return clean.length > 0 && clean !== '#';
+    }
+
     // ==========================================
     // 4. AUTENTICAÇÃO E CARREGAMENTO EM TEMPO REAL
     // ==========================================
@@ -2054,6 +2224,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         await listenUserProfile(user);
         listenProductsCatalog();
+        listenAulasAjuda();
+        listenDepoimentos();
         listenChatMessages(user);
         hidePreloader();
     });
@@ -2138,7 +2310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. CATÁLOGO DE PRODUTOS
+    // 5. CATÁLOGO DE PRODUTOS, AULAS DE AJUDA E DEPOIMENTOS
     // ==========================================
     function listenProductsCatalog() {
         db.collection('produtos').onSnapshot((snap) => {
@@ -2147,8 +2319,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const d = doc.data();
                 const rawOs = String(d.sistema || d.os || 'both').toLowerCase();
                 let os = 'both';
-                if (rawOs.includes('mac') && !rawOs.includes('win') && rawOs !== 'both') os = 'mac';
-                else if (rawOs.includes('win') && !rawOs.includes('mac') && rawOs !== 'both') os = 'windows';
+                if (rawOs.includes('mac') && rawOs.includes('win')) os = 'both';
+                else if (rawOs === 'both' || rawOs === 'ambos') os = 'both';
+                else if (rawOs.includes('mac')) os = 'mac';
+                else if (rawOs.includes('win')) os = 'windows';
+
+                const pluginUrl = d.pluginUrl || d.linkPlugin || d.downloadUrl || d.linkDownload || '';
+                const aulaUrl = d.aulaUrl || d.linkAula || d.video || d.tutorialUrl || '';
+
+                // Verifica se falta o link de download OU o link da aula de instalação
+                const isIncomplete = !isValidLink(pluginUrl) || !isValidLink(aulaUrl);
 
                 dbItems.push({
                     id: doc.id,
@@ -2157,8 +2337,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     categoria: String(d.categoria || 'mix e master vst').toLowerCase(),
                     sistema: os,
                     imagem: d.imagem || d.capa || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
-                    pluginUrl: d.pluginUrl || d.linkPlugin || d.downloadUrl || d.linkDownload || '#',
-                    aulaUrl: d.aulaUrl || d.linkAula || d.video || d.tutorialUrl || '#'
+                    pluginUrl: pluginUrl || '#',
+                    aulaUrl: aulaUrl || '#',
+                    isIncomplete
                 });
             });
 
@@ -2173,6 +2354,99 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('stat-products-count').textContent = '0 Produtos';
             renderHomeFeatured();
             renderCatalog();
+        });
+    }
+
+    function listenAulasAjuda() {
+        const grid = document.getElementById('aulas-ajuda-grid');
+        if (!grid) return;
+
+        db.collection('aulas_ajuda').onSnapshot((snap) => {
+            if (snap.empty) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); color:var(--text-muted);">
+                        <i class="fa-solid fa-circle-play" style="font-size:2rem; color:var(--primary); margin-bottom:8px;"></i>
+                        <p>Nenhuma aula de ajuda publicada ainda.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const items = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            grid.innerHTML = items.map(item => {
+                const titulo = escapeHtml(item.titulo || item.title || 'Aula de Ajuda');
+                const desc = escapeHtml(item.descricao || item.description || '');
+                const videoUrl = item.videoUrl || item.video || item.url || '';
+                const isDirectVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(videoUrl);
+                const embedUrl = escapeHtml(getYouTubeEmbedUrl(videoUrl));
+
+                const mediaHtml = isDirectVideo
+                    ? `<video src="${escapeHtml(videoUrl)}" controls preload="metadata"></video>`
+                    : `<iframe src="${embedUrl}" title="${titulo}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+
+                return `
+                    <article class="media-card">
+                        <div class="media-embed-box">${mediaHtml}</div>
+                        <div class="media-card-body">
+                            <h4 class="media-card-title">${titulo}</h4>
+                            ${desc ? `<p class="media-card-desc">${desc}</p>` : ''}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }, (err) => {
+            console.warn('Erro ao carregar aulas de ajuda:', err);
+        });
+    }
+
+    function listenDepoimentos() {
+        const grid = document.getElementById('depoimentos-grid');
+        if (!grid) return;
+
+        db.collection('depoimentos').onSnapshot((snap) => {
+            if (snap.empty) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); color:var(--text-muted);">
+                        <i class="fa-solid fa-star" style="font-size:2rem; color:var(--warning); margin-bottom:8px;"></i>
+                        <p>Nenhum depoimento publicado ainda.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const items = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            grid.innerHTML = items.map(item => {
+                const nome = escapeHtml(item.titulo || item.nome || item.autor || 'Cliente NPLUGINS');
+                const texto = escapeHtml(item.descricao || item.texto || item.mensagem || '');
+                const tipo = String(item.tipo || item.type || '').toLowerCase();
+                const mediaUrl = item.mediaUrl || item.url || item.video || item.imagem || '';
+                const isVideo = tipo === 'video' || /youtube\.com|youtu\.be|\.(mp4|webm|ogg)/i.test(mediaUrl);
+
+                let mediaHtml = '';
+                if (isVideo && mediaUrl) {
+                    const isDirectVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(mediaUrl);
+                    mediaHtml = isDirectVideo
+                        ? `<video src="${escapeHtml(mediaUrl)}" controls preload="metadata"></video>`
+                        : `<iframe src="${escapeHtml(getYouTubeEmbedUrl(mediaUrl))}" title="${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                } else if (mediaUrl) {
+                    mediaHtml = `<img src="${escapeHtml(mediaUrl)}" alt="${nome}" loading="lazy">`;
+                }
+
+                return `
+                    <article class="media-card">
+                        ${mediaHtml ? `<div class="media-embed-box">${mediaHtml}</div>` : ''}
+                        <div class="media-card-body">
+                            <div style="color:var(--warning); font-size:0.75rem;">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <h4 class="media-card-title">${nome}</h4>
+                            ${texto ? `<p class="media-card-desc">${texto}</p>` : ''}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }, (err) => {
+            console.warn('Erro ao carregar depoimentos:', err);
         });
     }
 
@@ -2274,6 +2548,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const VIEW_NAMES = {
         home: 'Home',
         produtos: 'Produtos Disponíveis',
+        'aulas-ajuda': 'Aulas de Ajuda',
+        depoimentos: 'Depoimentos',
         mensagens: 'Mensagens com o Admin',
         perfil: 'Editar Perfil',
         senha: 'Mudar Senha'
@@ -2314,7 +2590,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 8. PRODUTOS, FILTROS E PAGINAÇÃO
+    // 8. PRODUTOS, FILTROS (INCLUINDO MAC/WIN) E PAGINAÇÃO
     // ==========================================
     window.setCategoryFilter = function(cat, btn) {
         activeCategory = cat;
@@ -2336,8 +2612,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return allProducts.filter(p => {
             if (osFilter === 'windows' && p.sistema !== 'windows' && p.sistema !== 'both') return false;
             if (osFilter === 'mac' && p.sistema !== 'mac' && p.sistema !== 'both') return false;
+            if (osFilter === 'mac/win' && p.sistema !== 'both') return false;
 
-            if (activeCategory !== 'all' && !p.categoria.includes(activeCategory)) return false;
+            if (activeCategory === 'mac/win') {
+                if (p.sistema !== 'both') return false;
+            } else if (activeCategory !== 'all' && !p.categoria.includes(activeCategory)) {
+                return false;
+            }
 
             if (query) {
                 const hay = `${p.titulo} ${p.descricao} ${p.categoria}`.toLowerCase();
@@ -2353,21 +2634,28 @@ document.addEventListener('DOMContentLoaded', () => {
             'daw': 'DAW',
             'livrarias': 'Livrarias',
             'mix e master vst': 'Mix e Master VST',
-            'instrumentos vsti': 'Instrumentos VSTi'
+            'instrumentos vsti': 'Instrumentos VSTi',
+            'mac/win': 'Mac / Win'
         };
         return map[cat] || cat;
     }
 
+    window.requestProductInChat = function(titulo) {
+        switchView('mensagens');
+        const input = document.getElementById('chat-message-input');
+        if (input) {
+            input.value = `Olá! Gostaria de solicitar a liberação do produto "${titulo}" no meu painel.`;
+            input.focus();
+        }
+    };
+
     function createProductCardHTML(p, index = 0) {
-        let osTag = `<span class="product-os-tag"><i class="fa-brands fa-windows" style="color:#60A5FA;"></i> <i class="fa-brands fa-apple"></i> Mac & Win</span>`;
+        let osTag = `<span class="product-os-tag"><i class="fa-brands fa-windows" style="color:#60A5FA;"></i> <i class="fa-brands fa-apple"></i> Mac / Win</span>`;
         if (p.sistema === 'mac') {
             osTag = `<span class="product-os-tag"><i class="fa-brands fa-apple"></i> Mac</span>`;
         } else if (p.sistema === 'windows') {
             osTag = `<span class="product-os-tag"><i class="fa-brands fa-windows" style="color:#60A5FA;"></i> Windows</span>`;
         }
-
-        const hasPlugin = Boolean(p.pluginUrl && p.pluginUrl !== '#');
-        const hasAula = Boolean(p.aulaUrl && p.aulaUrl !== '#');
 
         const tituloEsc = escapeHtml(p.titulo);
         const descEsc = escapeHtml(p.descricao);
@@ -2378,22 +2666,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const aulaUrlJs = JSON.stringify(p.aulaUrl || '#').replace(/"/g, '&quot;');
         const animDelay = `${Math.min(index * 40, 400)}ms`;
 
-        const pluginBtnHtml = hasPlugin
-            ? `<button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
-                   <i class="fa-solid fa-download"></i> Baixar o Plugin
-               </button>`
-            : `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.65;" onclick="handleDownloadPlugin(${titleJs}, '#')">
-                   <i class="fa-solid fa-clock"></i> Ainda não disponível
-               </button>`;
+        // SE FALTAR O LINK DE DOWNLOAD OU O LINK DA AULA DE INSTALAÇÃO -> BLOQUEIA NO PAINEL DO CLIENTE
+        if (p.isIncomplete) {
+            const waText = encodeURIComponent(`Olá! Sou assinante da NPLUGINS (${userState.email}) e gostaria de pedir a liberação do produto "${p.titulo}".`);
+            const waLink = `https://wa.me/244924034159?text=${waText}`;
 
-        const aulaBtnHtml = hasAula
-            ? `<button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
-                   <i class="fa-solid fa-circle-play"></i> Baixar a Aula
-               </button>`
-            : `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.65;" onclick="handleDownloadLesson(${titleJs}, '#')">
-                   <i class="fa-solid fa-clock"></i> Aula não disponível
-               </button>`;
+            return `
+                <div class="product-card locked-card" style="animation-delay: ${animDelay};">
+                    <div class="product-thumb-container">
+                        <img src="${imgEsc}" alt="${tituloEsc}" class="product-thumb" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'">
+                        ${osTag}
+                        <div class="product-lock-overlay">
+                            <i class="fa-solid fa-lock"></i>
+                            <span>Em Atualização</span>
+                        </div>
+                    </div>
+                    <div class="product-body">
+                        <span class="product-cat-label">${catEsc}</span>
+                        <h4 class="product-title" title="${tituloEsc}">${tituloEsc}</h4>
 
+                        <div class="locked-notice-box">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>Ficará disponível a qualquer momento. Peça prioridade ao suporte:</span>
+                        </div>
+
+                        <div class="product-buttons" style="margin-top:auto;">
+                            <div class="locked-actions-row">
+                                <button type="button" class="btn-action btn-primary btn-card-sm" onclick="requestProductInChat(${titleJs})">
+                                    <i class="fa-solid fa-comments"></i> Chat Admin
+                                </button>
+                                <a href="${waLink}" target="_blank" class="btn-action btn-whatsapp-sm btn-card-sm">
+                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // PRODUTO COMPLETO (COM LINK DO PLUGIN E LINK DA AULA) -> LIBERADO PARA DOWNLOAD
         return `
             <div class="product-card" style="animation-delay: ${animDelay};">
                 <div class="product-thumb-container">
@@ -2406,8 +2718,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="product-desc">${descEsc}</p>
 
                     <div class="product-buttons">
-                        ${pluginBtnHtml}
-                        ${aulaBtnHtml}
+                        <button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
+                            <i class="fa-solid fa-download"></i> Baixar o Plugin
+                        </button>
+                        <button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
+                            <i class="fa-solid fa-circle-play"></i> Baixar a Aula
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3041,4 +3357,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
