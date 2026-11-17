@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Área do Cliente | NPLUGINS</title>
     <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://nplugins.online/cliente.html">
 
     <!-- Fontes Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,13 +16,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+
+    <!-- OCR (Tesseract.js) & Leitor PDF (PDF.js) para Renovação -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
 
     <!-- Firebase SDK Compat v10.8.0 (Projeto bd-nplugins) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js" defer></script>
 
     <style>
         :root {
@@ -1509,7 +1514,7 @@
         <div class="modal-box">
             <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
                 <div>
-                    <span style="font-size:0.72rem; font-weight:700; color:#A78BFA; text-transform:uppercase;">Renovação ou Upgrade</span>
+                    <span style="font-size:0.72rem; font-weight:700; color:#A78BFA; text-transform:uppercase;">Renovação ou Upgrade (Angola • AKZ)</span>
                     <h3 style="font-family:'Montserrat',sans-serif; font-size:1.2rem; font-weight:800;">Actualizar Plano NPLUGINS</h3>
                 </div>
                 <button type="button" class="icon-btn" style="width:34px; height:34px;" onclick="closeUpgradePlanModal()">
@@ -1518,16 +1523,16 @@
             </div>
 
             <div class="plans-select-grid">
-                <div class="plan-option-card" data-plan="semanal" onclick="selectUpgradePlan('semanal')">
-                    <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">7 DIAS</span>
-                    <strong style="font-size:1rem;">Acesso 1 Semana</strong>
-                    <span style="font-size:1.2rem; font-weight:800; color:var(--success);">1.500 Kz</span>
+                <div class="plan-option-card" data-plan="mensal" onclick="selectUpgradePlan('mensal')">
+                    <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">30 DIAS</span>
+                    <strong style="font-size:1rem;">Acesso 1 Mês</strong>
+                    <span style="font-size:1.2rem; font-weight:800; color:var(--success);">1.000 Kz</span>
                     <span style="font-size:0.75rem; color:var(--text-muted);">Plugins + Suporte (sem aulas)</span>
                 </div>
 
-                <div class="plan-option-card selected" data-plan="mensal" onclick="selectUpgradePlan('mensal')">
-                    <span style="font-size:0.72rem; color:#A78BFA; font-weight:700;">30 DIAS • RECOMENDADO</span>
-                    <strong style="font-size:1rem;">Acesso 1 Mês</strong>
+                <div class="plan-option-card selected" data-plan="bimestral" onclick="selectUpgradePlan('bimestral')">
+                    <span style="font-size:0.72rem; color:#A78BFA; font-weight:700;">60 DIAS • RECOMENDADO</span>
+                    <strong style="font-size:1rem;">Acesso 2 Meses</strong>
                     <span style="font-size:1.2rem; font-weight:800; color:var(--success);">2.000 Kz</span>
                     <span style="font-size:0.75rem; color:var(--text-muted);">Plugins + Aulas + Suporte</span>
                 </div>
@@ -1542,10 +1547,10 @@
 
             <div class="pay-method-switch">
                 <button type="button" class="pay-method-btn active" id="upg-method-bai" onclick="setUpgradePaymentMethod('transfer')">
-                    <i class="fa-solid fa-building-columns"></i> IBAN BAI (Kwanzas)
+                    <i class="fa-solid fa-building-columns"></i> Transferência IBAN (BAI)
                 </button>
-                <button type="button" class="pay-method-btn" id="upg-method-wise" onclick="setUpgradePaymentMethod('wise')">
-                    <i class="fa-solid fa-globe"></i> Wise (Euro €)
+                <button type="button" class="pay-method-btn" id="upg-method-ref" onclick="setUpgradePaymentMethod('reference')">
+                    <i class="fa-solid fa-barcode"></i> Pagamento por Referência
                 </button>
             </div>
 
@@ -1560,31 +1565,38 @@
                     </div>
                 </div>
 
-                <div id="upg-panel-wise" style="display:none;">
-                    <div style="font-size:0.76rem; color:var(--text-muted); font-weight:700;">WISE (EURO €) — TITULAR: JOSÉ EDUARDO LONEKE • BIC: TRWIBEB1XXX</div>
-                    <div class="iban-box">
-                        <span style="font-family:monospace; font-size:0.88rem; color:var(--success); font-weight:700;">BE83 9675 7696 0915</span>
-                        <button type="button" class="btn-action btn-secondary" style="padding:5px 10px; font-size:0.75rem;" onclick="copyIban('BE83967576960915', 'IBAN Wise')">
-                            <i class="fa-regular fa-copy"></i> Copiar IBAN
+                <div id="upg-panel-ref" style="display:none;">
+                    <div style="font-size:0.76rem; color:var(--text-muted); font-weight:700;">MULTICAIXA EXPRESS / ATM — PAGAMENTO POR REFERÊNCIA</div>
+                    <div class="iban-box" style="margin-bottom:6px;">
+                        <span style="font-family:monospace; font-size:0.88rem; color:var(--info); font-weight:700;">Entidade: 10116</span>
+                        <button type="button" class="btn-action btn-secondary" style="padding:5px 10px; font-size:0.75rem;" onclick="copyIban('10116', 'Entidade 10116')">
+                            <i class="fa-regular fa-copy"></i> Copiar Entidade
+                        </button>
+                    </div>
+                    <div class="iban-box" style="margin-top:0;">
+                        <span style="font-family:monospace; font-size:0.88rem; color:var(--success); font-weight:700;">Referência: 936 380 720</span>
+                        <button type="button" class="btn-action btn-secondary" style="padding:5px 10px; font-size:0.75rem;" onclick="copyIban('936380720', 'Referência')">
+                            <i class="fa-regular fa-copy"></i> Copiar Referência
                         </button>
                     </div>
                 </div>
 
                 <div class="upload-box" onclick="document.getElementById('upgrade-receipt-input').click()">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.4rem; color:var(--primary); margin-bottom:4px;"></i>
-                    <div style="font-size:0.84rem; font-weight:600;" id="upgrade-receipt-status">Clique para anexar o comprovativo de pagamento</div>
-                    <div style="font-size:0.74rem; color:var(--text-muted);" id="upgrade-selected-summary">Plano selecionado: Acesso 1 Mês — 2.000 Kz</div>
+                    <div style="font-size:0.84rem; font-weight:600;" id="upgrade-receipt-status">Clique para anexar o comprovativo (Imagem ou PDF)</div>
+                    <div style="font-size:0.74rem; color:var(--text-muted);" id="upgrade-selected-summary">Plano selecionado: Acesso 2 Meses — 2.000 Kz</div>
                 </div>
-                <input type="file" id="upgrade-receipt-input" accept="image/*" style="display:none;" onchange="handleUpgradeReceiptChange(this)">
+                <input type="file" id="upgrade-receipt-input" accept="image/*,application/pdf,.pdf" style="display:none;" onchange="handleUpgradeReceiptChange(this)">
             </div>
 
             <button type="button" class="btn-action btn-primary" id="btn-confirm-upgrade" style="width:100%; padding:12px;" onclick="submitPlanUpgrade()">
-                <i class="fa-solid fa-bolt"></i> Confirmar e Activar Novo Plano
+                <i class="fa-solid fa-bolt"></i> Validar Comprovativo & Activar Plano
             </button>
         </div>
     </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 1. CONFIGURAÇÃO DO FIREBASE (PROJETO bd-nplugins)
     // ==========================================
@@ -1605,16 +1617,27 @@
     const auth = firebase.auth();
     const storage = firebase.storage();
 
+    if (storage && typeof storage.setMaxUploadRetryTime === 'function') {
+        storage.setMaxUploadRetryTime(4000);
+        storage.setMaxOperationRetryTime(4000);
+    }
+
+    if (window.pdfjsLib) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
     const ADMIN_EMAILS = [
         "joseeduardoloneke2023@gmail.com",
         "suporte@lonekenobeat.com",
         "admin@nplugins.online"
     ];
 
-    const EXCHANGE_RATE = 500; // 1 EUR = 500 Kz
-
-    // Coleção principal de mensagens (sincronizada com admin.html)
-    const CHAT_COLLECTION = 'mensagens';
+    const PAYMENT_RULES = {
+        beneficiaryName: 'JOSE EDUARDO LONEKE',
+        ibanDigits: '004000006562149410192',
+        entity: '10116',
+        referenceDigits: '936380720'
+    };
 
     // ==========================================
     // 2. DADOS DO UTILIZADOR E CATÁLOGO
@@ -1628,29 +1651,26 @@
         preferredOS: 'windows',
         planId: 'mensal',
         subscriptionPlan: 'Acesso 1 Mês',
-        hasInstallLessons: true,
+        hasInstallLessons: false,
         expiresAt: null,
-        totalPlanDays: 30,
         role: 'client'
     };
 
     const PLANS_CONFIG = {
-        semanal: { id: 'semanal', name: 'Acesso 1 Semana', price: 1500, days: 7, hasInstallLessons: false },
-        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 2000, days: 30, hasInstallLessons: true },
+        mensal: { id: 'mensal', name: 'Acesso 1 Mês', price: 1000, days: 30, hasInstallLessons: false },
+        bimestral: { id: 'bimestral', name: 'Acesso 2 Meses', price: 2000, days: 60, hasInstallLessons: true },
         vitalicio: { id: 'vitalicio', name: 'Acesso Vitalício', price: 5000, days: null, hasInstallLessons: true }
     };
 
-    let selectedUpgradePlanId = 'mensal';
+    let selectedUpgradePlanId = 'bimestral';
     let selectedUpgradeMethod = 'transfer';
     let upgradeReceiptFile = null;
 
-    // Lista vazia: só mostra o que estiver cadastrado na tabela "produtos" pelo admin.html
     let allProducts = [];
     let activeCategory = 'all';
     let currentPage = 1;
     const ITEMS_PER_PAGE = 20;
 
-    // Armazenamento em memória das mensagens do chat
     let chatMessagesMap = new Map();
 
     // ==========================================
@@ -1698,6 +1718,12 @@
         return isNaN(parsed.getTime()) ? null : parsed;
     }
 
+    function getPlanTotalDays(planId) {
+        if (planId === 'bimestral') return 60;
+        if (planId === 'semanal') return 7;
+        return 30;
+    }
+
     function getSubscriptionStatus() {
         if (userState.planId === 'vitalicio') {
             return { isLifetime: true, isExpired: false, daysLeft: 9999, percent: 100, expiryDateStr: 'Acesso Permanente' };
@@ -1705,15 +1731,14 @@
 
         const now = new Date();
         let expDate = parseAnyDate(userState.expiresAt);
+        const totalDays = getPlanTotalDays(userState.planId);
 
         if (!expDate) {
-            const fallbackDays = userState.planId === 'semanal' ? 7 : 30;
-            expDate = new Date(now.getTime() + fallbackDays * 24 * 60 * 60 * 1000);
+            expDate = new Date(now.getTime() + totalDays * 24 * 60 * 60 * 1000);
         }
 
         const diffMs = expDate.getTime() - now.getTime();
         const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-        const totalDays = userState.planId === 'semanal' ? 7 : 30;
         const percent = Math.max(0, Math.min(100, Math.round((daysLeft / totalDays) * 100)));
 
         return {
@@ -1735,6 +1760,12 @@
             return;
         }
         currentUser = user;
+
+        // Regista o acesso diário para o Dashboard Administrativo
+        db.collection('users').doc(user.uid).set({
+            lastAccessAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(() => {});
+
         await listenUserProfile(user);
         listenProductsCatalog();
         listenChatMessages(user);
@@ -1785,14 +1816,17 @@
                 if (doc.exists) {
                     const d = doc.data();
                     const isAdmin = ADMIN_EMAILS.includes(emailLower) || d.role === 'admin';
+                    const planId = d.planId || 'mensal';
                     userState = {
                         name: d.name || user.displayName || 'Assinante NPLUGINS',
                         email: d.email || user.email,
                         whatsapp: d.whatsapp || '',
                         preferredOS: d.preferredOS || 'windows',
-                        planId: d.planId || 'mensal',
+                        planId: planId,
                         subscriptionPlan: d.subscriptionPlan || 'Acesso 1 Mês',
-                        hasInstallLessons: d.hasInstallLessons !== undefined ? Boolean(d.hasInstallLessons) : (d.planId !== 'semanal'),
+                        hasInstallLessons: d.hasInstallLessons !== undefined
+                            ? Boolean(d.hasInstallLessons)
+                            : (planId === 'bimestral' || planId === 'vitalicio'),
                         expiresAt: d.expiresAt || null,
                         role: isAdmin ? 'admin' : 'client'
                     };
@@ -1818,7 +1852,7 @@
     }
 
     // ==========================================
-    // 5. CATÁLOGO DE PRODUTOS (EXCLUSIVO DA TABELA "produtos" DO ADMIN)
+    // 5. CATÁLOGO DE PRODUTOS
     // ==========================================
     function listenProductsCatalog() {
         db.collection('produtos').onSnapshot((snap) => {
@@ -1842,7 +1876,6 @@
                 });
             });
 
-            // Se não tiver nenhum produto cadastrado no admin, allProducts fica [] e nada aparece
             allProducts = dbItems;
 
             document.getElementById('stat-products-count').textContent = `${allProducts.length} Produtos`;
@@ -1864,12 +1897,10 @@
         const sub = getSubscriptionStatus();
         const initials = userState.name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('') || 'NP';
 
-        // Sidebar
         document.getElementById('sidebar-avatar').textContent = initials;
         document.getElementById('sidebar-user-name').textContent = userState.name;
         document.getElementById('sidebar-user-plan').textContent = userState.subscriptionPlan;
 
-        // Topbar Pill
         const topPill = document.getElementById('topbar-plan-pill');
         const topDaysText = document.getElementById('topbar-days-text');
         topPill.classList.remove('warning', 'expired');
@@ -1886,7 +1917,6 @@
             topDaysText.textContent = `${sub.daysLeft} dias restantes`;
         }
 
-        // Alerta de poucos dias (5, 4, 3, 2, 1 dias ou expirado)
         const alertBanner = document.getElementById('expiry-alert-banner');
         const alertTitle = document.getElementById('expiry-alert-title');
         const alertDesc = document.getElementById('expiry-alert-desc');
@@ -1907,7 +1937,6 @@
             }
         }
 
-        // Home Card
         document.getElementById('home-greeting').textContent = `Olá, ${userState.name.split(' ')[0]}!`;
         document.getElementById('home-plan-name').textContent = userState.subscriptionPlan;
 
@@ -1942,9 +1971,8 @@
         }
 
         document.getElementById('stat-products-count').textContent = `${allProducts.length} Produtos`;
-        document.getElementById('stat-lessons-label').textContent = userState.hasInstallLessons ? 'Liberadas' : 'Bloqueadas (Plano 1 Sem.)';
+        document.getElementById('stat-lessons-label').textContent = userState.hasInstallLessons ? 'Liberadas' : 'Bloqueadas (Plano 1 Mês)';
 
-        // Formulário Perfil
         document.getElementById('prof-name').value = userState.name;
         document.getElementById('prof-email').value = userState.email;
         document.getElementById('prof-whatsapp').value = userState.whatsapp;
@@ -1965,7 +1993,7 @@
         senha: 'Mudar Senha'
     };
 
-    function switchView(viewId, btnEl) {
+    window.switchView = function(viewId, btnEl) {
         activeViewId = viewId;
 
         document.querySelectorAll('.menu-item[data-view]').forEach(el => {
@@ -1983,31 +2011,31 @@
             markAdminMessagesAsRead();
             scrollChatToBottom();
         }
-    }
+    };
 
-    function toggleSidebar(force) {
+    window.toggleSidebar = function(force) {
         const sidebar = document.getElementById('sidebar');
         const closeBtn = document.getElementById('closeSidebarBtn');
         const shouldOpen = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
         sidebar.classList.toggle('open', shouldOpen);
         if (closeBtn) closeBtn.style.display = shouldOpen ? 'flex' : 'none';
-    }
+    };
 
     // ==========================================
     // 8. PRODUTOS, FILTROS E PAGINAÇÃO
     // ==========================================
-    function setCategoryFilter(cat, btn) {
+    window.setCategoryFilter = function(cat, btn) {
         activeCategory = cat;
         currentPage = 1;
         document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
         if (btn) btn.classList.add('active');
         renderCatalog();
-    }
+    };
 
-    function applyProductFilters() {
+    window.applyProductFilters = function() {
         currentPage = 1;
         renderCatalog();
-    }
+    };
 
     function getFilteredProducts() {
         const query = (document.getElementById('product-search')?.value || '').trim().toLowerCase();
@@ -2046,6 +2074,9 @@
             osTag = `<span class="product-os-tag"><i class="fa-brands fa-windows" style="color:#60A5FA;"></i> Windows</span>`;
         }
 
+        const hasPlugin = Boolean(p.pluginUrl && p.pluginUrl !== '#');
+        const hasAula = Boolean(p.aulaUrl && p.aulaUrl !== '#');
+
         const tituloEsc = escapeHtml(p.titulo);
         const descEsc = escapeHtml(p.descricao);
         const imgEsc = escapeHtml(p.imagem);
@@ -2053,6 +2084,26 @@
         const titleJs = JSON.stringify(p.titulo).replace(/"/g, '&quot;');
         const pluginUrlJs = JSON.stringify(p.pluginUrl || '#').replace(/"/g, '&quot;');
         const aulaUrlJs = JSON.stringify(p.aulaUrl || '#').replace(/"/g, '&quot;');
+
+        const pluginBtnHtml = hasPlugin
+            ? `<button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
+                   <i class="fa-solid fa-download"></i> Baixar o Plugin
+               </button>`
+            : `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.65;" onclick="handleDownloadPlugin(${titleJs}, '#')">
+                   <i class="fa-solid fa-clock"></i> Ainda não disponível
+               </button>`;
+
+        const aulaBtnHtml = !userState.hasInstallLessons
+            ? `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.75;" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
+                   <i class="fa-solid fa-lock"></i> Baixar a Aula
+               </button>`
+            : (hasAula
+                ? `<button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
+                       <i class="fa-solid fa-circle-play"></i> Baixar a Aula
+                   </button>`
+                : `<button type="button" class="btn-action btn-secondary btn-card-sm" style="opacity:0.65;" onclick="handleDownloadLesson(${titleJs}, '#')">
+                       <i class="fa-solid fa-clock"></i> Aula não disponível
+                   </button>`);
 
         return `
             <div class="product-card">
@@ -2066,12 +2117,8 @@
                     <p class="product-desc">${descEsc}</p>
 
                     <div class="product-buttons">
-                        <button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
-                            <i class="fa-solid fa-download"></i> Baixar o Plugin
-                        </button>
-                        <button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
-                            <i class="fa-solid ${userState.hasInstallLessons ? 'fa-circle-play' : 'fa-lock'}"></i> Baixar a Aula
-                        </button>
+                        ${pluginBtnHtml}
+                        ${aulaBtnHtml}
                     </div>
                 </div>
             </div>
@@ -2083,7 +2130,6 @@
         const grid = document.getElementById('home-featured-grid');
         if (!wrapper || !grid) return;
 
-        // Se não tiver nenhum produto cadastrado no admin, não aparece nada
         if (allProducts.length === 0) {
             wrapper.style.display = 'none';
             grid.innerHTML = '';
@@ -2099,7 +2145,6 @@
         const paginationBar = document.getElementById('pagination-bar');
         if (!grid) return;
 
-        // Se não tiver nenhum produto cadastrado no admin, não aparece nada
         if (allProducts.length === 0) {
             document.getElementById('catalog-count-label').textContent = '0 produtos';
             grid.innerHTML = '';
@@ -2139,51 +2184,62 @@
         document.getElementById('pagination-controls').innerHTML = btns;
     }
 
-    function changePage(page) {
+    window.changePage = function(page) {
         currentPage = page;
         renderCatalog();
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    };
 
     // ==========================================
-    // 9. CHAT EM TEMPO REAL (CLIENTE <-> ADMIN)
+    // 9. CHAT SINCRONIZADO EM TEMPO REAL (chats/{uid}/messages)
     // ==========================================
     function listenChatMessages(user) {
         const uid = user.uid;
-        const emailLower = (user.email || '').toLowerCase();
 
-        const processSnapshot = (colName) => (snap) => {
-            snap.forEach((doc) => {
-                const d = doc.data();
-                const docUid = d.userId || d.uid || d.clientId || '';
-                const docEmail = String(d.userEmail || d.email || d.clientEmail || d.customerEmail || '').toLowerCase();
+        // 1. Subcoleção oficial sincronizada com admin.html: chats/{uid}/messages
+        db.collection('chats').doc(uid).collection('messages')
+            .onSnapshot((snap) => {
+                snap.forEach((doc) => {
+                    const d = doc.data();
+                    const senderRaw = String(d.sender || d.remetente || 'client').toLowerCase();
+                    const isAdmin = senderRaw === 'admin' || d.isAdmin === true;
 
-                if (docUid === uid || (emailLower && docEmail === emailLower)) {
-                    const senderRaw = String(d.sender || d.remetente || d.from || 'client').toLowerCase();
-                    const isAdmin = senderRaw === 'admin' || senderRaw === 'administrador' || d.isAdmin === true;
-
-                    chatMessagesMap.set(`${colName}_${doc.id}`, {
+                    chatMessagesMap.set(`chats_${doc.id}`, {
                         docId: doc.id,
-                        colName,
+                        colType: 'chats',
                         isAdmin,
-                        text: d.text || d.mensagem || d.message || d.conteudo || '',
-                        read: d.read !== undefined ? Boolean(d.read) : (d.lida !== undefined ? Boolean(d.lida) : true),
-                        createdAt: parseAnyDate(d.createdAt || d.timestamp || d.data) || new Date(0)
+                        text: d.text || d.mensagem || d.message || '',
+                        read: d.read !== undefined ? Boolean(d.read) : false,
+                        createdAt: parseAnyDate(d.createdAt || d.timestamp) || new Date(0)
                     });
+                });
+
+                renderChatMessages();
+                if (activeViewId === 'mensagens') {
+                    markAdminMessagesAsRead();
                 }
+            }, (err) => {
+                console.warn('Erro ao ouvir chats/{uid}/messages:', err);
             });
 
-            renderChatMessages();
-            if (activeViewId === 'mensagens') {
-                markAdminMessagesAsRead();
-            }
-        };
+        // 2. Fallback para histórico antigo na coleção "mensagens" (se existir)
+        db.collection('mensagens').where('userId', '==', uid).onSnapshot((snap) => {
+            snap.forEach((doc) => {
+                const d = doc.data();
+                const senderRaw = String(d.sender || d.remetente || 'client').toLowerCase();
+                const isAdmin = senderRaw === 'admin' || d.isAdmin === true;
 
-        // Escuta a coleção principal "mensagens" e também "messages" (compatibilidade total com admin.html)
-        db.collection(CHAT_COLLECTION).onSnapshot(processSnapshot(CHAT_COLLECTION), (err) => {
-            console.warn('Erro ao ler mensagens:', err);
-        });
-        db.collection('messages').onSnapshot(processSnapshot('messages'), () => {});
+                chatMessagesMap.set(`legacy_${doc.id}`, {
+                    docId: doc.id,
+                    colType: 'legacy',
+                    isAdmin,
+                    text: d.text || d.mensagem || '',
+                    read: d.read !== undefined ? Boolean(d.read) : true,
+                    createdAt: parseAnyDate(d.createdAt || d.timestamp) || new Date(0)
+                });
+            });
+            renderChatMessages();
+        }, () => {});
     }
 
     function renderChatMessages() {
@@ -2196,7 +2252,6 @@
             .filter(m => m.text && m.text.trim().length > 0)
             .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-        // Contar mensagens não lidas enviadas pelo Admin
         const unreadAdminCount = messages.filter(m => m.isAdmin && !m.read).length;
 
         if (badgeEl) {
@@ -2227,11 +2282,17 @@
                 ? m.createdAt.toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
                 : 'Agora';
 
+            const readReceipt = !m.isAdmin
+                ? (m.read === true
+                    ? ` • <span style="color:#38BDF8; font-weight:700;"><i class="fa-solid fa-check-double"></i> Lida</span>`
+                    : ` • <span><i class="fa-solid fa-check"></i> Enviada</span>`)
+                : '';
+
             return `
                 <div class="msg-row ${rowClass}">
                     <span class="msg-sender-tag">${senderLabel}</span>
                     <div class="msg-bubble">${escapeHtml(m.text)}</div>
-                    <span class="msg-time">${timeStr}</span>
+                    <span class="msg-time">${timeStr}${readReceipt}</span>
                 </div>
             `;
         }).join('');
@@ -2247,32 +2308,42 @@
     }
 
     async function markAdminMessagesAsRead() {
+        if (!currentUser) return;
         const unreadAdminMsgs = Array.from(chatMessagesMap.values()).filter(m => m.isAdmin && !m.read);
         if (unreadAdminMsgs.length === 0) return;
 
         const batch = db.batch();
         unreadAdminMsgs.forEach(m => {
             m.read = true;
-            const ref = db.collection(m.colName).doc(m.docId);
-            batch.update(ref, { read: true, lida: true });
+            if (m.colType === 'chats') {
+                const ref = db.collection('chats').doc(currentUser.uid).collection('messages').doc(m.docId);
+                batch.update(ref, {
+                    read: true,
+                    readAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } else {
+                const ref = db.collection('mensagens').doc(m.docId);
+                batch.update(ref, { read: true, lida: true });
+            }
         });
 
         try {
             await batch.commit();
+            await db.collection('chats').doc(currentUser.uid).set({ unreadClient: 0 }, { merge: true });
             renderChatMessages();
         } catch (err) {
             console.warn('Não foi possível marcar mensagens como lidas:', err);
         }
     }
 
-    function handleChatKeydown(e) {
+    window.handleChatKeydown = function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendChatMessage(e);
         }
-    }
+    };
 
-    async function sendChatMessage(e) {
+    window.sendChatMessage = async function(e) {
         if (e) e.preventDefault();
         if (!currentUser) return;
 
@@ -2285,21 +2356,30 @@
         btn.disabled = true;
 
         try {
-            await db.collection(CHAT_COLLECTION).add({
-                userId: currentUser.uid,
-                uid: currentUser.uid,
-                userName: userState.name,
-                clientName: userState.name,
-                userEmail: userState.email,
-                email: userState.email,
+            const chatDocRef = db.collection('chats').doc(currentUser.uid);
+
+            // Grava na subcoleção exatamente como o admin.html escuta
+            await chatDocRef.collection('messages').add({
                 sender: 'client',
-                remetente: 'cliente',
+                senderName: userState.name,
                 text: text,
-                mensagem: text,
                 read: false,
-                lida: false,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
+
+            // Atualiza documento resumo da conversa para a lista lateral do admin.html
+            await chatDocRef.set({
+                userId: currentUser.uid,
+                userName: userState.name,
+                userEmail: userState.email,
+                whatsapp: userState.whatsapp || '',
+                lastMessage: text,
+                lastSender: 'client',
+                unreadClient: 0,
+                unreadAdmin: firebase.firestore.FieldValue.increment(1),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
 
             input.value = '';
             scrollChatToBottom();
@@ -2310,12 +2390,12 @@
             btn.disabled = false;
             input.focus();
         }
-    }
+    };
 
     // ==========================================
     // 10. DOWNLOADS (PLUGIN & AULA)
     // ==========================================
-    function handleDownloadPlugin(title, url) {
+    window.handleDownloadPlugin = function(title, url) {
         const sub = getSubscriptionStatus();
         if (sub.isExpired) {
             showToast('O seu plano expirou. Actualize o plano para baixar.', 'warning');
@@ -2327,11 +2407,11 @@
             window.open(url, '_blank');
             showToast(`Download iniciado: ${title}`, 'success');
         } else {
-            showToast(`Link de download de "${title}" em breve disponível.`, 'info');
+            showToast(`O download de "${title}" ainda não está disponível.`, 'info');
         }
-    }
+    };
 
-    function handleDownloadLesson(title, url) {
+    window.handleDownloadLesson = function(title, url) {
         const sub = getSubscriptionStatus();
         if (sub.isExpired) {
             showToast('O seu plano expirou. Actualize o plano para baixar.', 'warning');
@@ -2340,7 +2420,7 @@
         }
 
         if (!userState.hasInstallLessons) {
-            showToast('As aulas de instalação estão disponíveis nos planos 1 Mês e Vitalício.', 'warning');
+            showToast('As aulas de instalação estão disponíveis nos planos 2 Meses e Vitalício.', 'warning');
             openUpgradePlanModal();
             return;
         }
@@ -2349,66 +2429,140 @@
             window.open(url, '_blank');
             showToast(`A abrir aula de instalação: ${title}`, 'info');
         } else {
-            showToast(`Aula de instalação de "${title}" em breve disponível.`, 'info');
+            showToast(`A aula de instalação de "${title}" ainda não está disponível.`, 'info');
         }
-    }
+    };
 
     // ==========================================
-    // 11. ACTUALIZAÇÃO DE PLANO DENTRO DO PAINEL
+    // 11. ACTUALIZAÇÃO DE PLANO DENTRO DO PAINEL (COM OCR)
     // ==========================================
-    function openUpgradePlanModal() {
+    window.openUpgradePlanModal = function() {
         upgradeReceiptFile = null;
         document.getElementById('upgrade-receipt-input').value = '';
-        document.getElementById('upgrade-receipt-status').textContent = 'Clique para anexar o comprovativo de pagamento';
+        document.getElementById('upgrade-receipt-status').textContent = 'Clique para anexar o comprovativo (Imagem ou PDF)';
         setUpgradePaymentMethod('transfer');
-        selectUpgradePlan(userState.planId === 'semanal' ? 'mensal' : (userState.planId || 'mensal'));
+        selectUpgradePlan(userState.planId === 'mensal' ? 'bimestral' : (userState.planId || 'bimestral'));
         document.getElementById('upgrade-plan-modal').classList.add('open');
-    }
+    };
 
-    function closeUpgradePlanModal() {
+    window.closeUpgradePlanModal = function() {
         document.getElementById('upgrade-plan-modal').classList.remove('open');
-    }
+    };
 
-    function setUpgradePaymentMethod(method) {
-        selectedUpgradeMethod = method;
-        document.getElementById('upg-method-bai').classList.toggle('active', method === 'transfer');
-        document.getElementById('upg-method-wise').classList.toggle('active', method === 'wise');
-        document.getElementById('upg-panel-bai').style.display = method === 'transfer' ? 'block' : 'none';
-        document.getElementById('upg-panel-wise').style.display = method === 'wise' ? 'block' : 'none';
+    window.setUpgradePaymentMethod = function(method) {
+        selectedUpgradeMethod = method === 'reference' ? 'reference' : 'transfer';
+        document.getElementById('upg-method-bai').classList.toggle('active', selectedUpgradeMethod === 'transfer');
+        document.getElementById('upg-method-ref').classList.toggle('active', selectedUpgradeMethod === 'reference');
+        document.getElementById('upg-panel-bai').style.display = selectedUpgradeMethod === 'transfer' ? 'block' : 'none';
+        document.getElementById('upg-panel-ref').style.display = selectedUpgradeMethod === 'reference' ? 'block' : 'none';
         updateUpgradeSummaryText();
-    }
+    };
 
-    function selectUpgradePlan(planId) {
-        selectedUpgradePlanId = planId;
+    window.selectUpgradePlan = function(planId) {
+        selectedUpgradePlanId = PLANS_CONFIG[planId] ? planId : 'bimestral';
         document.querySelectorAll('.plan-option-card').forEach(card => {
-            card.classList.toggle('selected', card.getAttribute('data-plan') === planId);
+            card.classList.toggle('selected', card.getAttribute('data-plan') === selectedUpgradePlanId);
         });
         updateUpgradeSummaryText();
-    }
+    };
 
     function updateUpgradeSummaryText() {
         const plan = PLANS_CONFIG[selectedUpgradePlanId];
-        const eurStr = (plan.price / EXCHANGE_RATE).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const priceLabel = selectedUpgradeMethod === 'wise'
-            ? `${eurStr} € (Wise)`
-            : `${plan.price.toLocaleString('pt-AO')} Kz`;
-        document.getElementById('upgrade-selected-summary').textContent = `Plano selecionado: ${plan.name} — ${priceLabel}`;
+        document.getElementById('upgrade-selected-summary').textContent = `Plano selecionado: ${plan.name} — ${plan.price.toLocaleString('pt-AO')} Kz`;
     }
 
-    function copyIban(iban, label = 'IBAN') {
-        navigator.clipboard.writeText(iban);
+    window.copyIban = function(value, label = 'Dado') {
+        navigator.clipboard.writeText(value);
         showToast(`${label} copiado!`, 'success');
+    };
+
+    function isPdfFile(file) {
+        return file && (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
     }
 
-    function handleUpgradeReceiptChange(input) {
+    window.handleUpgradeReceiptChange = function(input) {
         const file = input.files[0];
         if (!file) return;
         upgradeReceiptFile = file;
         document.getElementById('upgrade-receipt-status').textContent = `Comprovativo anexado: ${file.name}`;
         showToast('Comprovativo anexado com sucesso!', 'success');
+    };
+
+    function normalizeText(str) {
+        return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
     }
 
-    function compressImageToDataUrl(file, maxWidth = 1000, quality = 0.72) {
+    async function extractReceiptText(file, onProgress) {
+        if (isPdfFile(file)) {
+            if (!window.pdfjsLib) throw new Error('Leitor PDF ainda carregando.');
+            const buffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+            let text = '';
+            for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                text += ' ' + content.items.map(it => it.str).join(' ');
+            }
+            if (text.replace(/\s+/g, '').length < 25 && window.Tesseract) {
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 2.0 });
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                const res = await Tesseract.recognize(canvas, 'por+eng');
+                text += ' ' + (res?.data?.text || '');
+            }
+            return text;
+        }
+
+        if (!window.Tesseract) throw new Error('Motor OCR ainda carregando.');
+        const res = await Tesseract.recognize(file, 'por+eng', {
+            logger: (m) => {
+                if (m.status === 'recognizing text' && onProgress) {
+                    onProgress(`Lendo comprovativo... ${Math.round((m.progress || 0) * 100)}%`);
+                }
+            }
+        });
+        return res?.data?.text || '';
+    }
+
+    async function validateUpgradeReceiptOcr(file, plan, method, onProgress) {
+        const rawText = await extractReceiptText(file, onProgress);
+        const normalizedFull = normalizeText(rawText).replace(/\s+/g, ' ');
+        const digitsOnly = normalizedFull.replace(/[^0-9]/g, '');
+        const alnumCompact = normalizedFull.replace(/[^A-Z0-9]/g, '');
+
+        const thousands = Math.floor(plan.price / 1000);
+        const remainder = String(plan.price % 1000).padStart(3, '0');
+        const amountPattern = new RegExp(
+            `(?:^|[^0-9])(${plan.price}|${thousands}[\\s.,]${remainder})(?:[.,]00)?(?:\\s*(?:KZ|AKZ|KWANZAS))?(?:[^0-9]|$)`,
+            'i'
+        );
+        const amountValid = amountPattern.test(normalizedFull);
+        const missing = [];
+
+        if (method === 'transfer') {
+            const hasName = normalizedFull.includes('JOSE EDUARDO LONEKE') ||
+                (normalizedFull.includes('JOSE') && normalizedFull.includes('EDUARDO') && normalizedFull.includes('LONEKE'));
+            const hasIban = digitsOnly.includes(PAYMENT_RULES.ibanDigits) || alnumCompact.includes('AO06' + PAYMENT_RULES.ibanDigits);
+
+            if (!hasName) missing.push('Nome do titular (José Eduardo Loneke)');
+            if (!hasIban) missing.push('IBAN AO06 0040 0000 6562 1494 1019 2');
+            if (!amountValid) missing.push(`Valor de ${plan.price.toLocaleString('pt-AO')} Kz`);
+            return { valid: hasName && hasIban && amountValid, missing };
+        } else {
+            const hasEntity = digitsOnly.includes(PAYMENT_RULES.entity);
+            const hasRef = digitsOnly.includes(PAYMENT_RULES.referenceDigits);
+
+            if (!hasEntity) missing.push('Entidade 10116');
+            if (!hasRef) missing.push('Referência 936 380 720');
+            if (!amountValid) missing.push(`Valor de ${plan.price.toLocaleString('pt-AO')} Kz`);
+            return { valid: hasEntity && hasRef && amountValid, missing };
+        }
+    }
+
+    function compressImageToDataUrl(file, maxWidth = 900, quality = 0.68) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = (ev) => {
@@ -2431,31 +2585,54 @@
     }
 
     async function uploadUpgradeReceiptAsLink(file) {
-        try {
+        const uploadTask = (async () => {
             const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
             const ref = storage.ref(`receipts/${currentUser.uid}/${Date.now()}_${cleanName}`);
             const snap = await ref.put(file);
             return await snap.ref.getDownloadURL();
-        } catch (uploadErr) {
-            console.warn('Storage fallback:', uploadErr);
+        })();
+
+        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000));
+
+        try {
+            return await Promise.race([uploadTask, timeout]);
+        } catch (_) {
+            if (isPdfFile(file)) {
+                return `pdf_validado_ocr://${encodeURIComponent(file.name)}`;
+            }
             return await compressImageToDataUrl(file);
         }
     }
 
-    async function submitPlanUpgrade() {
+    window.submitPlanUpgrade = async function() {
         if (!currentUser) return;
         if (!upgradeReceiptFile) {
-            showToast('Por favor, anexe o comprovativo da transferência.', 'warning');
+            showToast('Por favor, anexe o comprovativo de pagamento (Imagem ou PDF).', 'warning');
             return;
         }
 
         const btn = document.getElementById('btn-confirm-upgrade');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A actualizar plano...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lendo comprovativo (OCR)...';
 
         try {
             const plan = PLANS_CONFIG[selectedUpgradePlanId];
-            const methodLabel = selectedUpgradeMethod === 'wise' ? 'Wise (Euro €)' : 'Transferência IBAN (BAI)';
+            const methodLabel = selectedUpgradeMethod === 'reference'
+                ? 'Pagamento por Referência (Ent. 10116)'
+                : 'Transferência Bancária (IBAN BAI)';
+
+            const ocrCheck = await validateUpgradeReceiptOcr(
+                upgradeReceiptFile,
+                plan,
+                selectedUpgradeMethod,
+                (msg) => { btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${msg}`; }
+            );
+
+            if (!ocrCheck.valid) {
+                throw new Error('Não foi possível confirmar no comprovativo: ' + ocrCheck.missing.join(', '));
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A activar plano...';
             const receiptUrl = await uploadUpgradeReceiptAsLink(upgradeReceiptFile);
 
             let newExpiresAt = null;
@@ -2484,8 +2661,10 @@
                 planId: plan.id,
                 planName: plan.name,
                 amountKz: plan.price,
-                amountEur: Number((plan.price / EXCHANGE_RATE).toFixed(2)),
                 paymentMethod: methodLabel,
+                paymentType: selectedUpgradeMethod,
+                ocrVerified: true,
+                receiptType: isPdfFile(upgradeReceiptFile) ? 'pdf' : 'image',
                 hasInstallLessons: plan.hasInstallLessons,
                 receiptUrl: receiptUrl,
                 status: 'completed',
@@ -2495,17 +2674,17 @@
             closeUpgradePlanModal();
             showToast(`Plano actualizado para ${plan.name}!`, 'success');
         } catch (err) {
-            showToast('Erro ao actualizar plano: ' + err.message, 'warning');
+            showToast(err.message, 'warning');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirmar e Activar Novo Plano';
+            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Validar Comprovativo & Activar Plano';
         }
-    }
+    };
 
     // ==========================================
     // 12. EDITAR PERFIL & MUDAR SENHA
     // ==========================================
-    async function saveUserProfile(e) {
+    window.saveUserProfile = async function(e) {
         e.preventDefault();
         if (!currentUser) return;
 
@@ -2533,9 +2712,9 @@
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Alterações';
         }
-    }
+    };
 
-    async function updateUserPassword(e) {
+    window.updateUserPassword = async function(e) {
         e.preventDefault();
         if (!currentUser) return;
 
@@ -2568,13 +2747,14 @@
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Actualizar a Senha';
         }
-    }
+    };
 
-    function logoutUser() {
+    window.logoutUser = function() {
         auth.signOut().then(() => {
             window.location.href = 'index.html';
         });
-    }
+    };
+});
 </script>
 </body>
 </html>
