@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -257,7 +257,7 @@
             <div class="form-group">
                 <label for="recoveryEmail" class="form-label">E-mail Cadastrado</label>
                 <div class="input-wrapper">
-                    <input type="email" id="recoveryEmail" class="form-control" placeholder="seu.email@exemplo.com" required>
+                    <input type="email" id="recoveryEmail" class="form-control" placeholder="seu.email@exemplo.com" autocomplete="email" required>
                     <i class="fa-solid fa-envelope input-icon"></i>
                 </div>
             </div>
@@ -290,16 +290,44 @@
         const auth = getAuth(app);
         auth.languageCode = 'pt';
 
+        let cooldownTimer = null;
+
         function showToast(message, type = "error") {
             const container = document.getElementById("toastContainer");
             const toast = document.createElement("div");
             toast.className = `toast-card ${type}`;
-            const icon = type === "success"
-                ? '<i class="fa-solid fa-circle-check"></i>'
-                : '<i class="fa-solid fa-circle-exclamation"></i>';
-            toast.innerHTML = `${icon} <span>${message}</span>`;
+
+            const iconEl = document.createElement("i");
+            iconEl.className = type === "success"
+                ? "fa-solid fa-circle-check"
+                : "fa-solid fa-circle-exclamation";
+
+            const textEl = document.createElement("span");
+            textEl.textContent = message;
+
+            toast.appendChild(iconEl);
+            toast.appendChild(textEl);
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4500);
+            setTimeout(() => toast.remove(), 4800);
+        }
+
+        function startResendCooldown(btn) {
+            let seconds = 30;
+            if (cooldownTimer) clearInterval(cooldownTimer);
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> Enviado (aguarde ${seconds}s)`;
+
+            cooldownTimer = setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(cooldownTimer);
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Reenviar Link`;
+                } else {
+                    btn.innerHTML = `<i class="fa-solid fa-check"></i> Enviado (aguarde ${seconds}s)`;
+                }
+            }, 1000);
         }
 
         const recoveryForm = document.getElementById("recoveryForm");
@@ -318,15 +346,13 @@
                     handleCodeInApp: false
                 });
                 showToast(`Enviamos um link de recuperação para ${email}! Verifique também o Spam.`, "success");
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> Reenviar Link`;
+                startResendCooldown(btnSubmit);
             } catch (error) {
                 if (error.code === 'auth/unauthorized-continue-uri') {
                     try {
                         await sendPasswordResetEmail(auth, email);
                         showToast(`Enviamos um link de recuperação para ${email}! Verifique também o Spam.`, "success");
-                        btnSubmit.disabled = false;
-                        btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> Reenviar Link`;
+                        startResendCooldown(btnSubmit);
                         return;
                     } catch (_) {}
                 }
@@ -338,6 +364,8 @@
                     showToast("Nenhuma conta encontrada com este e-mail.");
                 } else if (error.code === 'auth/invalid-email') {
                     showToast("Introduza um endereço de e-mail válido.");
+                } else if (error.code === 'auth/too-many-requests') {
+                    showToast("Muitos pedidos seguidos. Aguarde alguns minutos e tente novamente.");
                 } else {
                     showToast("Não foi possível enviar o e-mail. Tente novamente.");
                 }
