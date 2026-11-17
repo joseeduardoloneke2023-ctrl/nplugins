@@ -2,7 +2,7 @@
 <html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Painel Administrativo | NPLUGINS</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://nplugins.online/admin.html">
@@ -49,16 +49,19 @@
             --text-muted: #A1A1AA;
             --sidebar-width: 265px;
             --nav-height: 68px;
+            --mobile-footer-height: 64px;
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
-            --transition: all 0.22s ease;
+            --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+            --transition: all 0.26s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -73,6 +76,17 @@
         a { text-decoration: none; color: inherit; }
         button, input, select, textarea { font-family: inherit; }
 
+        /* ANIMAÇÕES */
+        @keyframes viewSlideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes modalZoomIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
         /* PRELOADER */
         #preloader {
             position: fixed;
@@ -84,7 +98,7 @@
             align-items: center;
             justify-content: center;
             gap: 1rem;
-            transition: opacity 0.25s ease, visibility 0.25s ease;
+            transition: opacity 0.3s var(--ease-smooth), visibility 0.3s var(--ease-smooth);
         }
         #preloader.hidden {
             opacity: 0;
@@ -143,7 +157,7 @@
             align-items: flex-start;
             gap: 12px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
-            animation: toastIn 0.25s ease forwards;
+            animation: toastIn 0.28s var(--ease-smooth) forwards;
         }
         @keyframes toastIn {
             from { transform: translateX(110%); opacity: 0; }
@@ -155,6 +169,22 @@
         .toast-warning .toast-icon { color: var(--warning); }
         .toast-title { font-weight: 700; font-size: 0.86rem; margin-bottom: 2px; }
         .toast-msg { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* BACKDROP SIDEBAR MOBILE */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 950;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.28s var(--ease-smooth), visibility 0.28s var(--ease-smooth);
+        }
+        .sidebar-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
 
         /* LAYOUT */
         .app-container {
@@ -171,12 +201,12 @@
             position: fixed;
             top: 0;
             left: 0;
-            height: 100vh;
+            height: 100dvh;
             z-index: 1000;
             padding: 20px 14px 0 14px;
             display: flex;
             flex-direction: column;
-            transition: var(--transition);
+            transition: transform 0.32s var(--ease-smooth), box-shadow 0.32s var(--ease-smooth);
         }
 
         .sidebar-brand {
@@ -269,6 +299,7 @@
         .menu-item:hover {
             color: var(--text-main);
             background: rgba(255, 255, 255, 0.05);
+            transform: translateX(3px);
         }
 
         .menu-item.active {
@@ -294,8 +325,90 @@
         }
 
         .sidebar-fixed-bottom {
-            padding: 12px 0 18px 0;
+            padding: 12px 0 calc(18px + env(safe-area-inset-bottom)) 0;
             border-top: 1px solid var(--border-color);
+            background: var(--bg-sidebar);
+        }
+
+        .btn-logout-sidebar {
+            color: #F87171 !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            border: 1px solid rgba(239, 68, 68, 0.25) !important;
+            font-weight: 600 !important;
+            margin-bottom: 0 !important;
+        }
+        .btn-logout-sidebar:hover {
+            background: rgba(239, 68, 68, 0.18) !important;
+            color: #FCA5A5 !important;
+        }
+
+        /* RODAPÉ FIXO NO TELEMÓVEL (MOBILE) */
+        .mobile-fixed-footer {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 940;
+            background: rgba(18, 18, 26, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid var(--border-color);
+            padding: 10px 16px calc(10px + env(safe-area-inset-bottom)) 16px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.55);
+        }
+
+        .mobile-footer-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mobile-footer-tab {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .mobile-footer-tab.active {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            color: #FFF;
+        }
+
+        .btn-mobile-logout-fixed {
+            flex: 1;
+            max-width: 215px;
+            height: 40px;
+            padding: 0 14px;
+            border-radius: 10px;
+            background: var(--danger-soft);
+            border: 1px solid rgba(239, 68, 68, 0.38);
+            color: #FCA5A5;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-mobile-logout-fixed:hover,
+        .btn-mobile-logout-fixed:active {
+            background: var(--danger);
+            color: #FFF;
         }
 
         /* TOP NAVBAR */
@@ -305,7 +418,8 @@
             right: 0;
             left: var(--sidebar-width);
             height: var(--nav-height);
-            background: var(--bg-sidebar);
+            background: rgba(18, 18, 26, 0.92);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             z-index: 900;
             display: flex;
@@ -379,11 +493,7 @@
         }
         .panel-view.active {
             display: block;
-            animation: fadeIn 0.22s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            animation: viewSlideUp 0.3s var(--ease-smooth) forwards;
         }
 
         .view-header {
@@ -425,6 +535,11 @@
             display: flex;
             align-items: center;
             gap: 14px;
+            transition: var(--transition);
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.16);
         }
 
         .kpi-icon {
@@ -470,6 +585,11 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            transition: var(--transition);
+        }
+        .plan-rev-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.16);
         }
 
         .plan-rev-top {
@@ -591,6 +711,9 @@
             cursor: pointer;
             transition: var(--transition);
             border: none;
+        }
+        .btn-action:active:not(:disabled) {
+            transform: scale(0.96);
         }
         .btn-sm {
             padding: 6px 11px;
@@ -773,6 +896,7 @@
             max-height: 92vh;
             overflow-y: auto;
             padding: 1.75rem;
+            animation: modalZoomIn 0.28s var(--ease-smooth) forwards;
         }
 
         .form-grid-2 {
@@ -790,15 +914,25 @@
         @media (max-width: 1024px) {
             #sidebar {
                 transform: translateX(-100%);
-                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.85);
             }
             #sidebar.open { transform: translateX(0); }
             .top-navbar { left: 0; padding: 0 1.2rem; }
-            .main-content { margin-left: 0; width: 100%; padding: 1.5rem 1rem; }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem 1rem calc(var(--mobile-footer-height) + 28px + env(safe-area-inset-bottom)) 1rem;
+            }
             #menuToggle { display: flex !important; }
+            .mobile-fixed-footer { display: flex; }
             .chat-layout { grid-template-columns: 1fr; height: auto; }
             .chat-sidebar { max-height: 240px; }
             .chat-messages-area { min-height: 300px; }
+            #toast-container {
+                bottom: calc(var(--mobile-footer-height) + 18px + env(safe-area-inset-bottom));
+                right: 14px;
+                left: 14px;
+            }
         }
 
         @media (max-width: 640px) {
@@ -817,6 +951,9 @@
 
     <!-- TOASTS -->
     <div id="toast-container"></div>
+
+    <!-- BACKDROP MENU MOBILE -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 
     <div class="app-container">
 
@@ -890,11 +1027,33 @@
             </div>
 
             <div class="sidebar-fixed-bottom">
-                <button type="button" class="menu-item" onclick="logoutAdmin()" style="color:#F87171; margin-bottom:0;">
+                <button type="button" class="menu-item btn-logout-sidebar" onclick="logoutAdmin()">
                     <i class="fa-solid fa-right-from-bracket"></i> Terminar a Sessão
                 </button>
             </div>
         </aside>
+
+        <!-- RODAPÉ FIXO NO TELEMÓVEL (MOBILE) -->
+        <footer class="mobile-fixed-footer" aria-label="Rodapé Administrativo">
+            <div class="mobile-footer-nav">
+                <button type="button" class="mobile-footer-tab active" data-mobile-view="dashboard" onclick="switchView('dashboard')" title="Dashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                </button>
+                <button type="button" class="mobile-footer-tab" data-mobile-view="users" onclick="switchView('users')" title="Usuários">
+                    <i class="fa-solid fa-users"></i>
+                </button>
+                <button type="button" class="mobile-footer-tab" data-mobile-view="products" onclick="switchView('products')" title="Produtos">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </button>
+                <button type="button" class="mobile-footer-tab" data-mobile-view="chat" onclick="switchView('chat')" title="Chat">
+                    <i class="fa-solid fa-comments"></i>
+                </button>
+            </div>
+
+            <button type="button" class="btn-mobile-logout-fixed" onclick="logoutAdmin()">
+                <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+            </button>
+        </footer>
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
@@ -1078,7 +1237,7 @@
                 <div class="view-header">
                     <div>
                         <h2 class="view-title"><i class="fa-solid fa-users" style="color:var(--primary);"></i> Usuários & Acessos</h2>
-                        <p class="view-subtitle">Crie contas de clientes, pesquise assinantes, ajuste planos ou inicie conversa direta.</p>
+                        <p class="view-subtitle">Crie contas de clientes, pesquise assinantes, ajuste planos, elimine cadastros ou inicie conversa direta.</p>
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
                         <input type="text" id="users-search-input" class="search-input" style="width:260px; max-width:100%;" placeholder="Pesquisar nome ou e-mail..." oninput="renderUsersTable()">
@@ -1453,6 +1612,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. ESTADO GLOBAL DO PAINEL ADMIN
     // ==========================================
     let currentAdmin = null;
+    let isVerifiedAdmin = false;
     let allUsersList = [];
     let allProductsList = [];
     let allTransactionsList = [];
@@ -1520,6 +1680,12 @@ document.addEventListener('DOMContentLoaded', () => {
                d1.getDate() === d2.getDate();
     }
 
+    function isUserAdminAccount(userObj) {
+        if (!userObj) return false;
+        const emailLower = String(userObj.email || '').toLowerCase();
+        return userObj.role === 'admin' || ADMIN_EMAILS.includes(emailLower);
+    }
+
     function getUserPlanStatus(userObj) {
         const planId = (userObj.planId || 'mensal').toLowerCase();
         if (planId === 'vitalicio') {
@@ -1549,6 +1715,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     auth.onAuthStateChanged(async (user) => {
         if (!user) {
+            isVerifiedAdmin = false;
             hidePreloader();
             openAdminLoginPrompt();
             return;
@@ -1565,11 +1732,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {}
 
         if (!isAdmin) {
+            isVerifiedAdmin = false;
             window.location.href = 'cliente.html';
             return;
         }
 
         currentAdmin = user;
+        isVerifiedAdmin = true;
         document.getElementById('today-date-label').textContent = new Date().toLocaleDateString('pt-PT');
 
         await loadAdminProfile(user);
@@ -1943,6 +2112,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.approveTransaction = async function(txId) {
+        if (!isVerifiedAdmin) {
+            showToast('Apenas administradores podem realizar esta ação.', 'warning');
+            return;
+        }
         const item = allTransactionsList.find(t => t.id === txId);
         if (!item) return;
 
@@ -1976,6 +2149,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.rejectTransaction = async function(txId) {
+        if (!isVerifiedAdmin) {
+            showToast('Apenas administradores podem realizar esta ação.', 'warning');
+            return;
+        }
         const item = allTransactionsList.find(t => t.id === txId);
         if (!item) return;
 
@@ -2112,14 +2289,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const lastDate = parseAnyDate(u.lastAccessAt || u.updatedAt || u.createdAt);
             const lastStr = lastDate ? lastDate.toLocaleDateString('pt-PT') : '-';
             const cleanWa = String(u.whatsapp || '').replace(/\D/g, '');
+            const isTargetAdmin = isUserAdminAccount(u);
 
             let statusBadge = `<span class="badge badge-success">${st.label}</span>`;
             if (st.isExpired) statusBadge = `<span class="badge badge-danger">${st.label}</span>`;
             else if (!st.isLifetime && st.daysLeft !== null && st.daysLeft <= 5) statusBadge = `<span class="badge badge-warning">${st.label}</span>`;
 
+            const adminTag = isTargetAdmin
+                ? ` <span class="badge badge-warning" style="font-size:0.65rem; padding:2px 7px;"><i class="fa-solid fa-shield-halved"></i> Admin</span>`
+                : '';
+
+            const deleteBtnHtml = (isVerifiedAdmin && !isTargetAdmin && u.uid !== currentAdmin?.uid)
+                ? `<button type="button" class="btn-action btn-danger btn-sm" onclick="deleteUserByAdmin('${u.uid}')" title="Apagar Usuário Cadastrado">
+                       <i class="fa-solid fa-trash"></i>
+                   </button>`
+                : '';
+
             return `
                 <tr>
-                    <td><strong>${escapeHtml(u.name || 'Assinante')}</strong></td>
+                    <td><strong>${escapeHtml(u.name || 'Assinante')}</strong>${adminTag}</td>
                     <td>
                         <div style="font-size:0.82rem;">${escapeHtml(u.email || '-')}</div>
                         ${u.whatsapp ? `<div style="font-size:0.74rem; color:var(--success);"><i class="fa-brands fa-whatsapp"></i> ${escapeHtml(u.whatsapp)}</div>` : ''}
@@ -2136,11 +2324,80 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button type="button" class="btn-action btn-secondary btn-sm" onclick="promptAssignPlan('${u.uid}')" title="Alterar Plano">
                                 <i class="fa-solid fa-crown"></i>
                             </button>
+                            ${deleteBtnHtml}
                         </div>
                     </td>
                 </tr>
             `;
         }).join('');
+    };
+
+    // ==========================================
+    // 6C. APAGAR USUÁRIO CADASTRADO (EXCLUSIVO ADMIN)
+    // ==========================================
+    window.deleteUserByAdmin = async function(uid) {
+        if (!isVerifiedAdmin || !currentAdmin) {
+            showToast('Acesso negado: apenas o administrador pode apagar usuários.', 'warning');
+            return;
+        }
+
+        const userObj = allUsersList.find(u => u.uid === uid);
+        if (!userObj) return;
+
+        if (isUserAdminAccount(userObj) || uid === currentAdmin.uid) {
+            showToast('Não é permitido apagar uma conta de administrador.', 'warning');
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: 'Apagar Usuário Cadastrado?',
+            html: `
+                <p style="font-size:0.9rem; color:#E4E4E7; margin-bottom:8px;">
+                    Tem a certeza que deseja eliminar permanentemente <strong>${escapeHtml(userObj.name || 'Assinante')}</strong>
+                    (${escapeHtml(userObj.email || uid)})?
+                </p>
+                <p style="font-size:0.8rem; color:#F87171;">
+                    O acesso e os dados deste usuário na base de dados serão removidos imediatamente.
+                </p>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#1f1f2e',
+            confirmButtonText: '<i class="fa-solid fa-trash"></i> Sim, Apagar Usuário',
+            cancelButtonText: 'Cancelar',
+            background: '#181824',
+            color: '#FFF'
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            // 1. Apaga mensagens internas do chat do utilizador (subcoleção chats/{uid}/messages)
+            const chatRef = db.collection('chats').doc(uid);
+            const msgsSnap = await chatRef.collection('messages').get();
+            if (!msgsSnap.empty) {
+                const batch = db.batch();
+                msgsSnap.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+            }
+            await chatRef.delete().catch(() => {});
+
+            // 2. Apaga o registo principal do utilizador na coleção 'users' (protegido por allow delete: if isAdmin())
+            await db.collection('users').doc(uid).delete();
+
+            if (activeChatUid === uid) {
+                activeChatUid = null;
+                if (unsubscribeChatMessages) unsubscribeChatMessages();
+                document.getElementById('chat-header-bar').innerHTML = `<span style="color:var(--text-muted); font-size:0.88rem;">Selecione um usuário à esquerda para iniciar a conversa</span>`;
+                document.getElementById('chat-messages-box').innerHTML = `<p style="color:var(--text-muted); text-align:center; margin:auto; font-size:0.88rem;">Nenhuma conversa selecionada.</p>`;
+            }
+
+            showToast(`Usuário "${userObj.name || userObj.email}" apagado com sucesso!`, 'success');
+        } catch (err) {
+            console.error('Erro ao apagar usuário:', err);
+            showToast('Erro ao apagar usuário: ' + err.message, 'warning');
+        }
     };
 
     // ==========================================
@@ -2157,6 +2414,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.createUserByAdmin = async function(e) {
         e.preventDefault();
+        if (!isVerifiedAdmin) {
+            showToast('Apenas administradores podem criar contas.', 'warning');
+            return;
+        }
+
         const btn = document.getElementById('btn-create-user');
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A criar conta...';
@@ -2230,6 +2492,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.promptAssignPlan = async function(uid) {
+        if (!isVerifiedAdmin) return;
         const userObj = allUsersList.find(u => u.uid === uid);
         if (!userObj) return;
 
@@ -2273,7 +2536,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 7. NAVEGAÇÃO DA SIDEBAR
+    // 7. NAVEGAÇÃO DA SIDEBAR E RODAPÉ MOBILE
     // ==========================================
     const VIEW_TITLES = {
         dashboard: 'Dashboard & Receita',
@@ -2291,6 +2554,10 @@ document.addEventListener('DOMContentLoaded', () => {
             el.classList.toggle('active', el.getAttribute('data-view') === viewId);
         });
 
+        document.querySelectorAll('.mobile-footer-tab[data-mobile-view]').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-mobile-view') === viewId);
+        });
+
         document.querySelectorAll('.panel-view').forEach(sec => {
             sec.classList.toggle('active', sec.id === `view-${viewId}`);
         });
@@ -2302,8 +2569,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleSidebar = function(force) {
         const sidebar = document.getElementById('sidebar');
         const closeBtn = document.getElementById('closeSidebarBtn');
+        const overlay = document.getElementById('sidebarOverlay');
         const shouldOpen = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
         sidebar.classList.toggle('open', shouldOpen);
+        if (overlay) overlay.classList.toggle('visible', shouldOpen);
         if (closeBtn) closeBtn.style.display = shouldOpen ? 'flex' : 'none';
     };
 
@@ -2406,6 +2675,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.saveProductForm = async function(e) {
         e.preventDefault();
+        if (!isVerifiedAdmin) return;
+
         const btn = document.getElementById('btn-save-product');
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A guardar...';
@@ -2450,6 +2721,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.deleteProduct = function(docId) {
+        if (!isVerifiedAdmin) return;
         Swal.fire({
             title: 'Eliminar Produto?',
             text: 'O produto será removido imediatamente da vitrine e da área do cliente.',
@@ -2590,7 +2862,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     msgs.push({ id: doc.id, ...m, _dt: dt });
                 });
 
-                // Marca mensagens do cliente como lidas pelo Admin
                 if (unreadClientRefs.length > 0 && activeChatUid === uid) {
                     const batch = db.batch();
                     unreadClientRefs.forEach((ref) => {
