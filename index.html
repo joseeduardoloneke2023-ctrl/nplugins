@@ -1219,12 +1219,10 @@
                     <p class="section-subtitle">Navegue pelo nosso acervo. Assine qualquer um dos nossos planos para liberar o download completo no seu painel.</p>
                 </div>
                 
-                <div class="featured-slider-container">
-                    <button class="slider-arrow arrow-left" id="featuredPrevBtn" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
-                    <div class="featured-slider-track" id="featuredSliderTrack">
-                        <!-- Cards carregados automaticamente do Firebase bd-nplugins -->
-                    </div>
-                    <button class="slider-arrow arrow-right" id="featuredNextBtn" aria-label="Próximo"><i class="fa-solid fa-chevron-right"></i></button>
+                <div class="text-center" style="margin-top: 2.5rem;">
+                    <a href="catalogo.html" class="btn btn-primary" style="padding: 1rem 2.4rem; font-weight: 600;">
+                        <i class="fa-solid fa-boxes-stacked"></i> Ver Todos os Produtos no Catálogo Completo
+                    </a>
                 </div>
             </div>
         </section>
@@ -1586,19 +1584,25 @@
     async function carregarProdutosDoFirebase() {
         try {
             const snapshot = await db.collection("produtos").get();
-            produtos = snapshot.docs.map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    titulo: data.titulo || 'Produto NPLUGINS',
-                    descricao: data.descricao || 'Produto profissional NPLUGINS pronto para instalação.',
-                    categoria: formatCategoriaLabel(data.categoria),
-                    sistema: data.sistema || 'both',
-                    imagem: data.imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
-                    vendas: Number(data.vendas) || 0,
-                    video: data.video || ''
-                };
-            });
+            produtos = snapshot.docs
+                .map(doc => {
+                    const data = doc.data();
+                    const titulo = (data.titulo || data.nome || '').trim();
+                    const imagem = (data.imagem || data.capa || '').trim();
+
+                    return {
+                        id: doc.id,
+                        titulo: titulo || 'Produto NPLUGINS',
+                        descricao: (data.descricao || '').trim() || 'Ferramenta profissional disponível na assinatura NPLUGINS.',
+                        categoria: formatCategoriaLabel(data.categoria),
+                        sistema: data.sistema || data.os || 'both',
+                        imagem: imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
+                        vendas: Number(data.vendas) || 0,
+                        video: data.video || ''
+                    };
+                })
+                // Garante que aparece no index mesmo que só tenha título e imagem preenchidos
+                .filter(p => p.titulo.length > 0 && p.imagem.length > 0);
 
             iniciarPagina();
         } catch (error) {
@@ -1704,7 +1708,7 @@
         return `
             <article class="product-card-premium reveal active" onclick="goToProductDetail(${idJs})">
                 <div class="card-img-wrapper">
-                    <img src="${imgEsc}" alt="${tituloEsc}" loading="lazy">
+                    <img src="${imgEsc}" alt="${tituloEsc}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'">
                     <span class="card-badge-vip">${catEsc}</span>
                     <span class="os-badge">${formatOsBadgeHtml(prod.sistema)}</span>
                 </div>
@@ -1747,7 +1751,6 @@
         const listaPlugins = [...produtos].sort((a, b) => (b.vendas || 0) - (a.vendas || 0));
         track.innerHTML = listaPlugins.map(prod => createPluginCardHTML(prod)).join('');
 
-        // Previne clique acidental ao deslizar o carrossel no mobile/touch
         let touchStartX = 0;
         track.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
@@ -1807,7 +1810,8 @@
 
         pluginSelecionado = prod.titulo;
         const sugestoes = produtos.filter(p => String(p.id) !== String(prod.id)).slice(0, 6);
-        const sysLabel = String(prod.sistema).toLowerCase() === 'windows' ? 'Windows' : (String(prod.sistema).toLowerCase() === 'mac' ? 'macOS' : 'Mac & Windows');
+        const sysKey = String(prod.sistema).toLowerCase();
+        const sysLabel = sysKey === 'windows' ? 'Windows' : (sysKey === 'mac' ? 'macOS' : 'Mac & Windows');
 
         main.innerHTML = `
             <section class="section-padding" style="padding-top: 120px;">
