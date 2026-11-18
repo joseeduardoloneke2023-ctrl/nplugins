@@ -76,7 +76,6 @@
         a { text-decoration: none; color: inherit; }
         button, input, select, textarea { font-family: inherit; }
 
-        /* ANIMAÇÕES */
         @keyframes viewSlideUp {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
@@ -98,7 +97,7 @@
             align-items: center;
             justify-content: center;
             gap: 1rem;
-            transition: opacity 0.3s var(--ease-smooth), visibility 0.3s var(--ease-smooth);
+            transition: opacity 0.25s var(--ease-smooth), visibility 0.25s var(--ease-smooth);
         }
         #preloader.hidden {
             opacity: 0;
@@ -127,7 +126,7 @@
             height: 100%;
             background: var(--primary);
             border-radius: 10px;
-            animation: loadSlide 1s infinite ease-in-out alternate;
+            animation: loadSlide 0.85s infinite ease-in-out alternate;
         }
         @keyframes loadSlide {
             from { transform: translateX(-20%); }
@@ -493,7 +492,7 @@
         }
         .panel-view.active {
             display: block;
-            animation: viewSlideUp 0.3s var(--ease-smooth) forwards;
+            animation: viewSlideUp 0.25s var(--ease-smooth) forwards;
         }
 
         .view-header {
@@ -1024,7 +1023,7 @@
             </div>
 
             <div class="nav-actions">
-                <span class="status-pill"><i class="fa-solid fa-circle" style="font-size:0.55rem;"></i> nplugins.online</span>
+                <span class="status-pill" id="sync-status-pill"><i class="fa-solid fa-circle" style="font-size:0.55rem;"></i> nplugins.online</span>
                 <a href="cliente.html" target="_blank" class="btn-action btn-secondary btn-sm" title="Ver Área do Cliente">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Loja/Cliente
                 </a>
@@ -1235,7 +1234,7 @@
                                 </tr>
                             </thead>
                             <tbody id="today-access-tbody">
-                                <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar acessos de hoje...</td></tr>
+                                <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">A sincronizar acessos de hoje...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1250,7 +1249,7 @@
                         <p class="view-subtitle">Visualize os comprovativos (Imagem ou PDF) enviados no checkout/upgrade e aprove ou recuse pedidos.</p>
                     </div>
                     <div style="width:280px; max-width:100%;">
-                        <input type="text" id="receipts-search-input" class="search-input" placeholder="Filtrar por nome, e-mail ou plano..." oninput="renderReceiptsTable()">
+                        <input type="text" id="receipts-search-input" class="search-input" placeholder="Filtrar por nome, e-mail ou plano..." oninput="debouncedReceiptsSearch()">
                     </div>
                 </div>
 
@@ -1268,7 +1267,7 @@
                                 </tr>
                             </thead>
                             <tbody id="receipts-tbody">
-                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar comprovativos...</td></tr>
+                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A sincronizar comprovativos...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1312,7 +1311,7 @@
                         <p class="view-subtitle">Crie contas de clientes, pesquise assinantes, ajuste planos, elimine cadastros ou inicie conversa direta.</p>
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-                        <input type="text" id="users-search-input" class="search-input" style="width:260px; max-width:100%;" placeholder="Pesquisar nome ou e-mail..." oninput="renderUsersTable()">
+                        <input type="text" id="users-search-input" class="search-input" style="width:260px; max-width:100%;" placeholder="Pesquisar nome ou e-mail..." oninput="debouncedUsersSearch()">
                         <button type="button" class="btn-action btn-primary" onclick="openCreateUserModal()">
                             <i class="fa-solid fa-user-plus"></i> Criar Conta de Cliente
                         </button>
@@ -1333,7 +1332,7 @@
                                 </tr>
                             </thead>
                             <tbody id="all-users-tbody">
-                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar usuários...</td></tr>
+                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A sincronizar usuários...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1353,7 +1352,7 @@
                 </div>
 
                 <div style="margin-bottom:1.1rem; max-width:380px;">
-                    <input type="text" id="products-search-input" class="search-input" placeholder="Filtrar produtos por nome, categoria ou OS..." oninput="renderProductsTable()">
+                    <input type="text" id="products-search-input" class="search-input" placeholder="Filtrar produtos por nome, categoria ou OS..." oninput="debouncedProductsSearch()">
                 </div>
 
                 <div class="section-card">
@@ -1370,14 +1369,14 @@
                                 </tr>
                             </thead>
                             <tbody id="products-tbody">
-                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A carregar catálogo...</td></tr>
+                                <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">A sincronizar catálogo...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- 4B. PRODUTOS INCOMPLETOS (PENDENTES DE LINK DE DOWNLOAD OU AULA) -->
+<!-- 4B. PRODUTOS INCOMPLETOS (PENDENTES DE LINK DE DOWNLOAD OU AULA) -->
             <section id="view-incomplete" class="panel-view">
                 <div class="view-header">
                     <div>
@@ -1387,6 +1386,10 @@
                     <button type="button" class="btn-action btn-primary" onclick="openProductModal()">
                         <i class="fa-solid fa-plus"></i> Novo Produto
                     </button>
+                </div>
+
+                <div style="margin-bottom:1.1rem; max-width:380px;">
+                    <input type="text" id="incomplete-search-input" class="search-input" placeholder="Pesquisar produto incompleto por nome..." oninput="debouncedIncompleteSearch()">
                 </div>
 
                 <div class="section-card">
@@ -1408,6 +1411,7 @@
                     </div>
                 </div>
             </section>
+
 
             <!-- 5. FALAR DIRETAMENTE COM USUÁRIOS (CHAT) -->
             <section id="view-chat" class="panel-view">
@@ -1458,7 +1462,7 @@
                 </div>
 
                 <div class="media-admin-grid" id="depoimentos-admin-grid">
-                    <div style="color:var(--text-muted); padding:2rem;">A carregar depoimentos...</div>
+                    <div style="color:var(--text-muted); padding:2rem;">A sincronizar depoimentos...</div>
                 </div>
             </section>
 
@@ -1475,7 +1479,7 @@
                 </div>
 
                 <div class="media-admin-grid" id="aulas-ajuda-admin-grid">
-                    <div style="color:var(--text-muted); padding:2rem;">A carregar aulas de ajuda...</div>
+                    <div style="color:var(--text-muted); padding:2rem;">A sincronizar aulas de ajuda...</div>
                 </div>
             </section>
 
@@ -1810,7 +1814,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. CONFIGURAÇÃO DO FIREBASE (PROJETO bd-nplugins)
+    // 1. CONFIGURAÇÃO DO FIREBASE + CACHE LOCAL OFFLINE (ABERTURA INSTANTÂNEA)
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
@@ -1828,6 +1832,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const db = firebase.firestore();
     const auth = firebase.auth();
 
+    // Ativa persistência local em disco para carregar dados instantaneamente (0ms)
+    try {
+        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+    } catch (_) {}
+
     const ADMIN_EMAILS = [
         'joseeduardoloneke2023@gmail.com',
         'suporte@lonekenobeat.com',
@@ -1839,6 +1849,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     let currentAdmin = null;
     let isVerifiedAdmin = false;
+    let listenersStarted = false;
     let allUsersList = [];
     let allProductsList = [];
     let allTransactionsList = [];
@@ -1864,6 +1875,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function hidePreloader() {
         const el = document.getElementById('preloader');
         if (el) el.classList.add('hidden');
+    }
+
+    // Garantia de segurança: nunca deixar o preloader preso por mais de 2.5s
+    setTimeout(hidePreloader, 2500);
+
+    function debounce(fn, wait = 180) {
+        let timer = null;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), wait);
+        };
     }
 
     function showToast(message, type = 'info', title = '') {
@@ -1971,7 +1993,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 4. AUTENTICAÇÃO E VERIFICAÇÃO DE ADMIN
+    // 4. AUTENTICAÇÃO E ABERTURA NÃO-BLOQUEANTE
     // ==========================================
     auth.onAuthStateChanged(async (user) => {
         if (!user) {
@@ -1984,12 +2006,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailLower = (user.email || '').toLowerCase();
         let isAdmin = ADMIN_EMAILS.includes(emailLower);
 
-        try {
-            const doc = await db.collection('users').doc(user.uid).get();
-            if (doc.exists && doc.data().role === 'admin') {
-                isAdmin = true;
-            }
-        } catch (err) {}
+        if (!isAdmin) {
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists && doc.data().role === 'admin') {
+                    isAdmin = true;
+                }
+            } catch (err) {}
+        }
 
         if (!isAdmin) {
             isVerifiedAdmin = false;
@@ -2001,9 +2025,13 @@ document.addEventListener('DOMContentLoaded', () => {
         isVerifiedAdmin = true;
         document.getElementById('today-date-label').textContent = new Date().toLocaleDateString('pt-PT');
 
-        await loadAdminProfile(user);
-        startRealtimeListeners();
+        // Libera a tela imediatamente e executa perfil + listeners em paralelo
         hidePreloader();
+        loadAdminProfile(user);
+        if (!listenersStarted) {
+            listenersStarted = true;
+            startRealtimeListeners();
+        }
     });
 
     function openAdminLoginPrompt() {
@@ -2041,30 +2069,34 @@ document.addEventListener('DOMContentLoaded', () => {
         let name = user.displayName || 'José Eduardo Loneke';
         let whatsapp = '+244 924 034 159';
 
+        const applyUI = () => {
+            const initials = name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('') || 'AD';
+            document.getElementById('admin-avatar').textContent = initials;
+            document.getElementById('admin-name-display').textContent = name;
+            document.getElementById('admin-email-display').textContent = user.email;
+            document.getElementById('admin-prof-name').value = name;
+            document.getElementById('admin-prof-email').value = user.email;
+            document.getElementById('admin-prof-whatsapp').value = whatsapp;
+        };
+
+        applyUI();
+
         try {
             const doc = await db.collection('users').doc(user.uid).get();
             if (doc.exists) {
                 const d = doc.data();
                 if (d.name) name = d.name;
                 if (d.whatsapp) whatsapp = d.whatsapp;
+                applyUI();
             }
         } catch (err) {}
-
-        const initials = name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('') || 'AD';
-        document.getElementById('admin-avatar').textContent = initials;
-        document.getElementById('admin-name-display').textContent = name;
-        document.getElementById('admin-email-display').textContent = user.email;
-
-        document.getElementById('admin-prof-name').value = name;
-        document.getElementById('admin-prof-email').value = user.email;
-        document.getElementById('admin-prof-whatsapp').value = whatsapp;
     }
 
     // ==========================================
-    // 5. LISTENERS EM TEMPO REAL
+    // 5. LISTENERS EM TEMPO REAL (COM METADATA CACHE/SERVER)
     // ==========================================
     function startRealtimeListeners() {
-        db.collection('users').onSnapshot((snap) => {
+        db.collection('users').onSnapshot({ includeMetadataChanges: true }, (snap) => {
             const list = [];
             snap.forEach((doc) => {
                 list.push({ uid: doc.id, ...doc.data() });
@@ -2078,7 +2110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         listenSubscriptionRevenueAndReceipts();
 
-        db.collection('produtos').onSnapshot((snap) => {
+        db.collection('produtos').onSnapshot({ includeMetadataChanges: true }, (snap) => {
             const list = [];
             snap.forEach((doc) => {
                 list.push({ id: doc.id, ...doc.data() });
@@ -2088,7 +2120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderIncompleteProductsTable();
         });
 
-        db.collection('depoimentos').onSnapshot((snap) => {
+        db.collection('depoimentos').onSnapshot({ includeMetadataChanges: true }, (snap) => {
             const list = [];
             snap.forEach((doc) => {
                 list.push({ id: doc.id, ...doc.data() });
@@ -2098,7 +2130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderDepoimentosAdminGrid();
         });
 
-        db.collection('aulas_ajuda').onSnapshot((snap) => {
+        db.collection('aulas_ajuda').onSnapshot({ includeMetadataChanges: true }, (snap) => {
             const list = [];
             snap.forEach((doc) => {
                 list.push({ id: doc.id, ...doc.data() });
@@ -2108,7 +2140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAulasAjudaAdminGrid();
         });
 
-        db.collection('chats').onSnapshot((snap) => {
+        db.collection('chats').onSnapshot({ includeMetadataChanges: true }, (snap) => {
             const map = {};
             let totalUnread = 0;
             snap.forEach((doc) => {
@@ -2200,13 +2232,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('rev-vitalicio-count').textContent = `${stats.vitalicio.count} assinatura(s) registrada(s)`;
         };
 
-        db.collection('orders').onSnapshot((snap) => {
+        db.collection('orders').limit(80).onSnapshot({ includeMetadataChanges: true }, (snap) => {
             ordersDocs = {};
             snap.forEach((d) => { ordersDocs[d.id] = d.data(); });
             recalc();
         });
 
-        db.collection('transactions').onSnapshot((snap) => {
+        db.collection('transactions').limit(80).onSnapshot({ includeMetadataChanges: true }, (snap) => {
             txDocs = {};
             snap.forEach((d) => { txDocs[d.id] = d.data(); });
             recalc();
@@ -2307,6 +2339,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
     };
+
+    window.debouncedReceiptsSearch = debounce(window.renderReceiptsTable, 180);
 
     window.viewReceiptModal = function(txId) {
         const item = allTransactionsList.find(t => t.id === txId);
@@ -2613,6 +2647,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     };
 
+    window.debouncedUsersSearch = debounce(window.renderUsersTable, 180);
+
     // ==========================================
     // 6C. APAGAR USUÁRIO CADASTRADO (EXCLUSIVO ADMIN)
     // ==========================================
@@ -2902,7 +2938,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <tr>
-                    <td><img src="${escapeHtml(img)}" alt="" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);"></td>
+                    <td><img src="${escapeHtml(img)}" alt="" loading="lazy" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);"></td>
                     <td>
                         <strong>${escapeHtml(p.titulo || 'Produto')}</strong>
                         <div style="font-size:0.75rem; color:var(--text-muted); max-width:340px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.descricao || '')}</div>
@@ -2928,26 +2964,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     };
 
+    window.debouncedProductsSearch = debounce(window.renderProductsTable, 180);
+
     window.renderIncompleteProductsTable = function() {
         const tbody = document.getElementById('incomplete-products-tbody');
         const badge = document.getElementById('badge-incomplete');
         if (!tbody) return;
 
-        const incompleteList = allProductsList
+        const query = (document.getElementById('incomplete-search-input')?.value || '').trim().toLowerCase();
+
+        const allIncomplete = allProductsList
             .map(p => ({ ...p, _missing: getProductMissingInfo(p) }))
             .filter(p => p._missing.isIncomplete);
 
         if (badge) {
-            badge.textContent = incompleteList.length;
-            badge.style.display = incompleteList.length > 0 ? 'inline-block' : 'none';
+            badge.textContent = allIncomplete.length;
+            badge.style.display = allIncomplete.length > 0 ? 'inline-block' : 'none';
         }
 
-        if (incompleteList.length === 0) {
+        if (allIncomplete.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--success); padding:2rem;"><i class="fa-solid fa-circle-check"></i> Excelente! Todos os produtos cadastrados possuem links completos.</td></tr>`;
             return;
         }
 
-        tbody.innerHTML = incompleteList.map((p) => {
+        const filtered = allIncomplete.filter((p) => {
+            if (!query) return true;
+            const hay = `${p.titulo || ''} ${p.categoria || ''} ${p.sistema || ''}`.toLowerCase();
+            return hay.includes(query);
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum produto incompleto encontrado com "${escapeHtml(query)}".</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map((p) => {
             const img = p.imagem || 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=200&q=70';
             const catLabel = formatCategoryLabel(p.categoria);
             const missingBadges = [];
@@ -2956,7 +3007,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <tr>
-                    <td><img src="${escapeHtml(img)}" alt="" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);"></td>
+                    <td><img src="${escapeHtml(img)}" alt="" loading="lazy" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);"></td>
                     <td>
                         <strong>${escapeHtml(p.titulo || 'Produto')}</strong>
                         <div style="font-size:0.74rem; color:var(--text-muted);">Bloqueado no cliente ("Ficará disponível a qualquer momento")</div>
@@ -2972,13 +3023,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                     <td style="text-align:right;">
                         <button type="button" class="btn-action btn-primary btn-sm" onclick="editProduct('${p.id}')">
-                            <i class="fa-solid fa-pen-to-square"></i> Completar Links
+                            <i class="fa-solid fa-pen-to-square"></i> Editar / Actualizar
                         </button>
                     </td>
                 </tr>
             `;
         }).join('');
     };
+
+    window.debouncedIncompleteSearch = debounce(window.renderIncompleteProductsTable, 180);
+
+
+  
+    
+
+
+
 
     window.openProductModal = function() {
         editingProductDocId = null;
@@ -2989,10 +3049,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('prod-descricao').value = '';
         document.getElementById('prod-plugin-url').value = '';
         document.getElementById('prod-aula-url').value = '';
-        document.getElementById('prod-imagem-url').value = '';
+        document.getElementById('prod-imagem-url').value = 'http://nplugins.online/';
         document.getElementById('product-modal').classList.add('open');
     };
-
     window.closeProductModal = function() {
         document.getElementById('product-modal').classList.remove('open');
     };
