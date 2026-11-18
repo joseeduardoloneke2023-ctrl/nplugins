@@ -1546,6 +1546,24 @@
         }
 
 
+        /* BOTÃO BLOQUEADO QUANDO NÃO HÁ LINK */
+.btn-card-locked {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #FCD34D;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: not-allowed;
+    opacity: 0.9;
+    user-select: none;
+}
 
     </style>
 </head>
@@ -2675,43 +2693,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const aulaUrlJs = JSON.stringify(p.aulaUrl || '#').replace(/"/g, '&quot;');
         const animDelay = `${Math.min(index * 40, 400)}ms`;
 
-        if (p.isIncomplete) {
-            const waText = encodeURIComponent(`Olá! Sou assinante da NPLUGINS (${userState.email}) e gostaria de pedir a liberação do produto "${p.titulo}".`);
-            const waLink = `https://wa.me/244924034159?text=${waText}`;
+        const hasPluginLink = isValidLink(p.pluginUrl);
+        const hasAulaLink = isValidLink(p.aulaUrl);
 
-            return `
-                <div class="product-card locked-card" style="animation-delay: ${animDelay};">
-                    <div class="product-thumb-container">
-                        <img src="${imgEsc}" alt="${tituloEsc}" class="product-thumb" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'">
-                        ${osTag}
-                        <div class="product-lock-overlay">
-                            <i class="fa-solid fa-lock"></i>
-                            <span>Em Atualização</span>
-                        </div>
-                    </div>
-                    <div class="product-body">
-                        <span class="product-cat-label">${catEsc}</span>
-                        <h4 class="product-title" title="${tituloEsc}">${tituloEsc}</h4>
+        const pluginButtonHtml = hasPluginLink
+            ? `<button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
+                   <i class="fa-solid fa-download"></i> Baixar o Plugin
+               </button>`
+            : `<button type="button" class="btn-card-locked" disabled title="Ficará disponível dentro de algumas horas">
+                   <i class="fa-solid fa-clock"></i> Ficará disponível dentro de algumas horas
+               </button>`;
 
-                        <div class="locked-notice-box">
-                            <i class="fa-solid fa-clock"></i>
-                            <span>Ficará disponível a qualquer momento. Peça prioridade ao suporte:</span>
-                        </div>
-
-                        <div class="product-buttons" style="margin-top:auto;">
-                            <div class="locked-actions-row">
-                                <button type="button" class="btn-action btn-primary btn-card-sm" onclick="requestProductInChat(${titleJs})">
-                                    <i class="fa-solid fa-comments"></i> Chat Admin
-                                </button>
-                                <a href="${waLink}" target="_blank" class="btn-action btn-whatsapp-sm btn-card-sm">
-                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+        const aulaButtonHtml = hasAulaLink
+            ? `<button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
+                   <i class="fa-solid fa-circle-play"></i> Baixar a Aula
+               </button>`
+            : `<button type="button" class="btn-card-locked" disabled title="Ficará disponível dentro de algumas horas">
+                   <i class="fa-solid fa-clock"></i> Ficará disponível dentro de algumas horas
+               </button>`;
 
         return `
             <div class="product-card" style="animation-delay: ${animDelay};">
@@ -2725,17 +2724,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="product-desc">${descEsc}</p>
 
                     <div class="product-buttons">
-                        <button type="button" class="btn-action btn-primary btn-card-sm" onclick="handleDownloadPlugin(${titleJs}, ${pluginUrlJs})">
-                            <i class="fa-solid fa-download"></i> Baixar o Plugin
-                        </button>
-                        <button type="button" class="btn-action btn-secondary btn-card-sm" onclick="handleDownloadLesson(${titleJs}, ${aulaUrlJs})">
-                            <i class="fa-solid fa-circle-play"></i> Baixar a Aula
-                        </button>
+                        ${pluginButtonHtml}
+                        ${aulaButtonHtml}
                     </div>
                 </div>
             </div>
         `;
     }
+
 
     function renderHomeFeatured() {
         const wrapper = document.getElementById('home-featured-wrapper');
@@ -3004,10 +3000,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ==========================================
-    // 10. DOWNLOADS (PLUGIN & AULA)
-    // ==========================================
-    window.handleDownloadPlugin = function(title, url) {
+window.handleDownloadPlugin = function(title, url) {
         const sub = getSubscriptionStatus();
         if (sub.isExpired) {
             showToast('O seu plano expirou. Actualize o plano para baixar.', 'warning');
@@ -3015,11 +3008,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (url && url !== '#') {
+        if (isValidLink(url)) {
             window.open(url, '_blank');
             showToast(`Download iniciado: ${title}`, 'success');
         } else {
-            showToast(`O download de "${title}" ainda não está disponível.`, 'info');
+            showToast('Ficará disponível dentro de algumas horas.', 'info');
         }
     };
 
@@ -3031,14 +3024,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (url && url !== '#') {
+        if (isValidLink(url)) {
             window.open(url, '_blank');
             showToast(`A abrir aula de instalação: ${title}`, 'info');
         } else {
-            showToast(`A aula de instalação de "${title}" ainda não está disponível.`, 'info');
+            showToast('Ficará disponível dentro de algumas horas.', 'info');
         }
     };
-
     // ==========================================
     // 11. ACTUALIZAÇÃO DE PLANO DENTRO DO PAINEL (COM OCR)
     // ==========================================
