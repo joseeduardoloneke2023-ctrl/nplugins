@@ -2207,6 +2207,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return clean.length > 0 && clean !== '#';
     }
 
+    async function computeFileHash(file) {
+        try {
+            const buffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        } catch (_) {
+            return `${file.name}_${file.size}_${file.lastModified}`;
+        }
+    }
+
     // ==========================================
     // 4. AUTENTICAÇÃO E CARREGAMENTO EM TEMPO REAL
     // ==========================================
@@ -2326,8 +2337,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const pluginUrl = d.pluginUrl || d.linkPlugin || d.downloadUrl || d.linkDownload || '';
                 const aulaUrl = d.aulaUrl || d.linkAula || d.video || d.tutorialUrl || '';
-
-                // Verifica se falta o link de download OU o link da aula de instalação
                 const isIncomplete = !isValidLink(pluginUrl) || !isValidLink(aulaUrl);
 
                 dbItems.push({
@@ -2666,7 +2675,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const aulaUrlJs = JSON.stringify(p.aulaUrl || '#').replace(/"/g, '&quot;');
         const animDelay = `${Math.min(index * 40, 400)}ms`;
 
-        // SE FALTAR O LINK DE DOWNLOAD OU O LINK DA AULA DE INSTALAÇÃO -> BLOQUEIA NO PAINEL DO CLIENTE
         if (p.isIncomplete) {
             const waText = encodeURIComponent(`Olá! Sou assinante da NPLUGINS (${userState.email}) e gostaria de pedir a liberação do produto "${p.titulo}".`);
             const waLink = `https://wa.me/244924034159?text=${waText}`;
@@ -2705,7 +2713,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // PRODUTO COMPLETO (COM LINK DO PLUGIN E LINK DA AULA) -> LIBERADO PARA DOWNLOAD
         return `
             <div class="product-card" style="animation-delay: ${animDelay};">
                 <div class="product-thumb-container">
@@ -3070,9 +3077,42 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('upgrade-selected-summary').textContent = `Plano selecionado: ${plan.name} — ${plan.price.toLocaleString('pt-AO')} Kz`;
     }
 
-    window.copyIban = function(value, label = 'Dado') {
-        navigator.clipboard.writeText(value);
-        showToast(`${label} copiado!`, 'success');
+    function fallbackCopyMobile(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+        document.body.removeChild(textArea);
+        return ok;
+    }
+
+    window.copyIban = async function(value, label = 'Dado') {
+        const cleanVal = String(value || '').trim();
+        let copied = false;
+        if (navigator.clipboard && window.isSecureContext) {
+            try {
+                await navigator.clipboard.writeText(cleanVal);
+                copied = true;
+            } catch (_) {
+                copied = fallbackCopyMobile(cleanVal);
+            }
+        } else {
+            copied = fallbackCopyMobile(cleanVal);
+        }
+
+        if (copied) {
+            showToast(`${label} copiado!`, 'success');
+        } else {
+            showToast(`Copie manualmente: ${cleanVal}`, 'info', label);
+        }
     };
 
     function isPdfFile(file) {
@@ -3089,6 +3129,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function normalizeText(str) {
         return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    }
+
+    function preprocessImageForOcr(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const targetWidth = Math.max(img.width, 1200);
+                    const scale = Math.min(2.5, targetWidth / img.width);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.filter = 'grayscale(100%) contrast(135%)';
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas);
+                };
+                img.onerror = reject;
+                img.src = ev.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
     }
 
     async function extractReceiptText(file, onProgress) {
@@ -3116,7 +3182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!window.Tesseract) throw new Error('Motor OCR ainda carregando.');
-        const res = await Tesseract.recognize(file, 'por+eng', {
+        const canvas = await preprocessImageForOcr(file);
+        const res = await Tesseract.recognize(canvas, 'por+eng', {
             logger: (m) => {
                 if (m.status === 'recognizing text' && onProgress) {
                     onProgress(`Lendo comprovativo... ${Math.round((m.progress || 0) * 100)}%`);
@@ -3144,7 +3211,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (method === 'transfer') {
             const hasName = normalizedFull.includes('JOSE EDUARDO LONEKE') ||
                 (normalizedFull.includes('JOSE') && normalizedFull.includes('EDUARDO') && normalizedFull.includes('LONEKE'));
-            const hasIban = digitsOnly.includes(PAYMENT_RULES.ibanDigits) || alnumCompact.includes('AO06' + PAYMENT_RULES.ibanDigits);
+            const hasIban = digitsOnly.includes(PAYMENT_RULES.ibanDigits) ||
+                digitsOnly.includes('6562149410192') ||
+                alnumCompact.includes('AO06' + PAYMENT_RULES.ibanDigits);
 
             if (!hasName) missing.push('Nome do titular (José Eduardo Loneke)');
             if (!hasIban) missing.push('IBAN AO06 0040 0000 6562 1494 1019 2');
@@ -3212,9 +3281,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const btn = document.getElementById('btn-confirm-upgrade');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lendo comprovativo (OCR)...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando comprovativo...';
 
         try {
+            const receiptHash = await computeFileHash(upgradeReceiptFile);
+            const dupSnap = await db.collection('transactions').where('receiptHash', '==', receiptHash).limit(1).get();
+            if (!dupSnap.empty) {
+                throw new Error('Este comprovativo já foi utilizado anteriormente. Envie um novo comprovativo.');
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lendo comprovativo (OCR)...';
+
             const plan = PLANS_CONFIG[selectedUpgradePlanId];
             const methodLabel = selectedUpgradeMethod === 'reference'
                 ? 'Pagamento por Referência (Ent. 10116)'
@@ -3263,6 +3340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 paymentMethod: methodLabel,
                 paymentType: selectedUpgradeMethod,
                 ocrVerified: true,
+                receiptHash: receiptHash,
                 receiptType: isPdfFile(upgradeReceiptFile) ? 'pdf' : 'image',
                 hasInstallLessons: plan.hasInstallLessons,
                 receiptUrl: receiptUrl,
