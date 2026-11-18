@@ -596,12 +596,12 @@
 </head>
 <body>
 
-    <header>
+<header>
         <div class="container nav-container">
             <a href="index.html" class="logo">N<span>PLUGINS</span></a>
             <nav class="nav-menu" id="navMenu">
                 <a href="index.html" class="nav-link">Home</a>
-                <a href="catalogo.html" class="nav-link active">Catálogo Completo</a>
+                <a href="catalogo_2.html" class="nav-link active">Catálogo Completo</a>
                 <a href="index.html#planos" class="nav-link">Planos</a>
                 <a href="index.html#faq" class="nav-link">FAQ</a>
                 <a href="login.html" id="navAuthBtn" class="btn-vip">Login</a>
@@ -719,7 +719,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-    <script>
+<script>
         const firebaseConfig = {
             apiKey: "AIzaSyAC5RCf9g1E8riCmKDDyIWu_8wthqBUglg",
             authDomain: "bd-nplugins.firebaseapp.com",
@@ -748,7 +748,6 @@
         const ITEMS_PER_PAGE = 20;
         let pluginSelecionado = '';
 
-        // Atualiza o botão Login do topo caso o usuário já esteja autenticado
         auth.onAuthStateChanged(async (user) => {
             const navBtn = document.getElementById("navAuthBtn");
             if (!navBtn) return;
@@ -801,7 +800,6 @@
             return `<i class="fa-brands fa-windows"></i> <i class="fa-brands fa-apple"></i> Mac / Win`;
         }
 
-        // Carrega todos os produtos cadastrados (mesmo que só tenham título e imagem)
         function carregarCatalogo() {
             db.collection("produtos").onSnapshot((snap) => {
                 allProducts = snap.docs
@@ -885,7 +883,7 @@
             const idEncoded = encodeURIComponent(prod.id);
 
             return `
-                <article class="product-card-premium" onclick="window.location.href='index.html?id=${idEncoded}'">
+                <article class="product-card-premium" onclick="window.location.href='produto.html?id=${idEncoded}'">
                     <div class="card-img-wrapper">
                         <img src="${imgEsc}" alt="${tituloEsc}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'">
                         <span class="card-badge-vip">${catEsc}</span>
