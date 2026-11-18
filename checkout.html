@@ -1369,7 +1369,6 @@
         </section>
 
     </main>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
@@ -1455,7 +1454,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return isNaN(parsed.getTime()) ? null : parsed;
     }
 
-    // Preenche automaticamente caso o cliente já tenha sessão ativa
+    async function computeFileHash(file) {
+        try {
+            const buffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        } catch (_) {
+            return `${file.name}_${file.size}_${file.lastModified}`;
+        }
+    }
+
     auth.onAuthStateChanged(async (user) => {
         if (!user) return;
         const emailInput = document.getElementById('custEmail');
@@ -1483,7 +1492,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 3. CATÁLOGO OFICIAL DOS 3 PLANOS (TODOS COM AULAS DE INSTALAÇÃO)
+    // 3. CATÁLOGO OFICIAL DOS 3 PLANOS
     // ==========================================
     const PLANS = {
         mensal: {
@@ -1519,7 +1528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPlan = null;
     let selectedPluginInterest = '';
     let selectedReceiptFile = null;
-    let selectedPaymentMethod = 'transfer'; // 'transfer' ou 'reference'
+    let selectedPaymentMethod = 'transfer';
 
     // ==========================================
     // 4. GESTÃO DO CARRINHO & MÉTODO DE PAGAMENTO
@@ -1576,7 +1585,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fromUrl = detectPlanFromUrl();
         if (fromUrl) {
             selectSinglePlan(fromUrl);
-            window.history.replaceState({}, document.title, 'checkout.html');
+            window.history.replaceState({}, document.title, window.location.pathname);
             return;
         }
 
@@ -1774,7 +1783,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 _template: "table",
                 _captcha: "false",
                 Atividade: activityTitle,
-                Pagina: "checkout.html",
+                Pagina: window.location.pathname,
                 Data_Hora: new Date().toLocaleString('pt-PT'),
                 ...detailsObj
             };
@@ -2042,6 +2051,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const hasIban =
                 digitsOnly.includes(PAYMENT_RULES.ibanDigits) ||
+                digitsOnly.includes('6562149410192') ||
                 alnumCompact.includes('AO06' + PAYMENT_RULES.ibanDigits);
 
             if (!hasFullName) {
@@ -2198,6 +2208,14 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
 
         try {
+            // ETAPA 0: VERIFICAR DUPLICAÇÃO DE COMPROVATIVO
+            btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando autenticidade...';
+            const receiptHash = await computeFileHash(selectedReceiptFile);
+            const dupSnap = await db.collection('transactions').where('receiptHash', '==', receiptHash).limit(1).get();
+            if (!dupSnap.empty) {
+                throw new Error('Este comprovativo já foi utilizado anteriormente. Envie um novo comprovativo de pagamento.');
+            }
+
             // ETAPA 1: VALIDAÇÃO AUTOMÁTICA DO COMPROVATIVO VIA OCR
             btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lendo comprovativo (OCR)...';
             showOcrStatus('<i class="fa-solid fa-magnifying-glass fa-beat"></i> A verificar os dados do comprovativo automaticamente...', 'info');
@@ -2337,6 +2355,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 paymentMethod: methodLabel,
                 paymentType: selectedPaymentMethod,
                 ocrVerified: true,
+                receiptHash: receiptHash,
                 receiptType: isPdfFile(selectedReceiptFile) ? 'pdf' : 'image',
                 hasInstallLessons: true,
                 receiptUrl: receiptUrl,
@@ -2344,7 +2363,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // ETAPA 5: NOTIFICAÇÃO FORMSUBMIT PARA joseeduardoloneke2023@gmail.com
+            // ETAPA 5: NOTIFICAÇÃO FORMSUBMIT
             await notifyAdminActivityFormSubmit(
                 isNewAccount ? 'Nova Assinatura no Checkout' : 'Renovação / Atualização de Plano no Checkout',
                 {
