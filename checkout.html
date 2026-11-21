@@ -2129,10 +2129,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    async function uploadReceiptAsLink(file) {
+    async function uploadReceiptAsLink(file, userId) {
         const uploadTaskPromise = (async () => {
             const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-            const ref = storage.ref(`receipts/${Date.now()}_${safeName}`);
+            const folder = userId ? `receipts/${userId}` : 'receipts';
+            const ref = storage.ref(`${folder}/${Date.now()}_${safeName}`);
             const metadata = { contentType: file.type || (isPdfFile(file) ? 'application/pdf' : 'image/jpeg') };
             const snap = await ref.put(file, metadata);
             return await snap.ref.getDownloadURL();
@@ -2208,14 +2209,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
 
         try {
-            // ETAPA 0: VERIFICAR DUPLICAÇÃO DE COMPROVATIVO
-            btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando autenticidade...';
-            const receiptHash = await computeFileHash(selectedReceiptFile);
-            const dupSnap = await db.collection('transactions').where('receiptHash', '==', receiptHash).limit(1).get();
-            if (!dupSnap.empty) {
-                throw new Error('Este comprovativo já foi utilizado anteriormente. Envie um novo comprovativo de pagamento.');
-            }
-
             // ETAPA 1: VALIDAÇÃO AUTOMÁTICA DO COMPROVATIVO VIA OCR
             btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lendo comprovativo (OCR)...';
             showOcrStatus('<i class="fa-solid fa-magnifying-glass fa-beat"></i> A verificar os dados do comprovativo automaticamente...', 'info');
@@ -2260,11 +2253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'ok'
             );
 
-            // ETAPA 2: ARMAZENAR COMPROVATIVO
-            btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando comprovativo...';
-            const receiptUrl = await uploadReceiptAsLink(selectedReceiptFile);
-
-            // ETAPA 3: CRIAR / AUTENTICAR CONTA AUTOMATICAMENTE (Senha inicial = próprio e-mail)
+            // ETAPA 2: CRIAR / AUTENTICAR CONTA PRIMEIRO (GARANTE PERMISSÕES NO FIRESTORE E STORAGE)
             btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando conta automática...';
             let user = auth.currentUser;
             let isNewAccount = false;
@@ -2306,11 +2295,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // ETAPA 4: ATIVAR PLANO E REGISTRAR TRANSAÇÃO NO FIRESTORE
+            // ETAPA 3: VERIFICAR DUPLICAÇÃO DE COMPROVATIVO (JÁ AUTENTICADO)
+            btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando autenticidade...';
+            const receiptHash = await computeFileHash(selectedReceiptFile);
+            try {
+                const dupSnap = await db.collection('transactions').where('receiptHash', '==', receiptHash).limit(1).get();
+                if (!dupSnap.empty) {
+                    throw new Error('Este comprovativo já foi utilizado anteriormente. Envie um novo comprovativo de pagamento.');
+                }
+            } catch (dupErr) {
+                if (dupErr && dupErr.message && dupErr.message.includes('já foi utilizado')) {
+                    throw dupErr;
+                }
+                console.warn('Aviso verificação de hash:', dupErr);
+            }
+
+            // ETAPA 4: ARMAZENAR COMPROVATIVO (COM USUÁRIO AUTENTICADO)
+            btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando comprovativo...';
+            const receiptUrl = await uploadReceiptAsLink(selectedReceiptFile, user.uid);
+
+            // ETAPA 5: ATIVAR PLANO E REGISTRAR TRANSAÇÃO NO FIRESTORE
             btnLabel.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Liberando seu painel...';
 
-            const existingUserSnap = await db.collection('users').doc(user.uid).get();
-            const existingData = existingUserSnap.exists ? existingUserSnap.data() : {};
+            let existingData = {};
+            let userDocExists = false;
+            try {
+                const existingUserSnap = await db.collection('users').doc(user.uid).get();
+                userDocExists = existingUserSnap.exists;
+                existingData = userDocExists ? existingUserSnap.data() : {};
+            } catch (_) {}
 
             let expiresAt = null;
             if (currentPlan.durationDays) {
@@ -2337,7 +2350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 lastAccessAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-            if (!existingUserSnap.exists) {
+            if (!userDocExists) {
                 userPayload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             }
 
@@ -2363,7 +2376,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // ETAPA 5: NOTIFICAÇÃO FORMSUBMIT
+            // ETAPA 6: NOTIFICAÇÃO FORMSUBMIT
             await notifyAdminActivityFormSubmit(
                 isNewAccount ? 'Nova Assinatura no Checkout' : 'Renovação / Atualização de Plano no Checkout',
                 {
@@ -2416,5 +2429,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupDropzone();
 });
 </script>
+
 </body>
 </html>
